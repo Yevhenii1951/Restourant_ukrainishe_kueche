@@ -12,7 +12,10 @@
     "test:integration": "vitest run tests/integration --no-file-parallelism",
     "test": "npm run test:unit && npm run test:integration",
     "check": "npm run lint && npm run typecheck && npm run test",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "db:reset": "node --experimental-strip-types scripts/db-reset.mts",
+    "db:migrate": "node --experimental-strip-types scripts/db-migrate.mts",
+    "db:seed": "node --experimental-strip-types scripts/db-seed.mts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
@@ -27,9 +30,11 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "22.0.0",
+    "@types/pg": "^8.23.1",
     "@types/react": "19.0.0",
     "eslint": "9.0.0",
     "eslint-config-next": "16.0.0",
+    "pg": "^8.23.0",
     "typescript": "5.8.2",
     "vitest": "3.0.0"
   },

@@ -10,5 +10,6 @@ export default defineProject({
   test: {
     name: "integration",
     include: ["tests/integration/**/*.test.ts"],
+    setupFiles: ["tests/integration/setup-env.ts"],
   },
 });
