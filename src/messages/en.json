@@ -1,0 +1,22 @@
+{
+  "a11y": {
+    "skipToContent": "Skip to content"
+  },
+  "brand": {
+    "name": "Kalyna"
+  },
+  "home": {
+    "title": "Kalyna — Ukrainian cuisine in Kassel",
+    "intro": "Borscht, varenyky, pampushky and more — our Ukrainian kitchen in Kassel."
+  },
+  "nav": {
+    "menu": "Menu",
+    "order": "Order",
+    "cart": "Cart",
+    "reserve": "Reserve a table",
+    "call": "Call us"
+  },
+  "footer": {
+    "demoDisclosure": "Portfolio demo — not a real restaurant."
+  }
+}

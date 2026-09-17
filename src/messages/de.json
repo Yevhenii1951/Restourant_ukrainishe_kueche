@@ -1,0 +1,22 @@
+{
+  "a11y": {
+    "skipToContent": "Zum Inhalt springen"
+  },
+  "brand": {
+    "name": "Kalyna"
+  },
+  "home": {
+    "title": "Kalyna — Ukrainische Küche in Kassel",
+    "intro": "Borschtsch, Wareniki, Pampuschky und mehr — unsere ukrainische Küche in Kassel."
+  },
+  "nav": {
+    "menu": "Speisekarte",
+    "order": "Bestellen",
+    "cart": "Warenkorb",
+    "reserve": "Tisch reservieren",
+    "call": "Anrufen"
+  },
+  "footer": {
+    "demoDisclosure": "Portfolio-Demo — kein realer Restaurantbetrieb."
+  }
+}
