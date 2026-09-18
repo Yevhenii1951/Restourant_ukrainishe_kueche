@@ -31,6 +31,7 @@ type MenuItemDbRow = {
   image_storage_path: string | null;
   image_alt_localized: unknown;
   image_mime: string | null;
+  modifier_groups: unknown;
 };
 
 function rowToItemRow(row: MenuItemDbRow): MenuItemRow {
@@ -45,7 +46,7 @@ export function createPostgresMenuStore(db: Client): MenuStore {
                 name_localized, description_localized, portion_label_localized,
                 base_price_cents, gluten_free, vegan, vegetarian, spicy, popular,
                 sort_order, category_sort_order, allergens, additives,
-                image_storage_path, image_alt_localized, image_mime
+                image_storage_path, image_alt_localized, image_mime, modifier_groups
          FROM menu_items_public`,
       );
       const allergensResult = await db.query<Record<string, unknown>>(

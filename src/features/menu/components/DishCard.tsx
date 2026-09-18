@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { formatEuroCents } from "@/lib/format";
 import type { PublicMenuItem } from "../domain";
+import ModifierGroupSelector from "./ModifierGroupSelector";
 
 export default async function DishCard({
   item,
@@ -75,6 +76,11 @@ export default async function DishCard({
             {t("additives")}: {item.additives.map((additive) => additive.label).join(", ")}
           </p>
         ) : null}
+        <ModifierGroupSelector
+          groups={item.modifierGroups}
+          basePriceCents={item.basePriceCents}
+          locale={locale}
+        />
       </div>
     </article>
   );

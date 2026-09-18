@@ -20,7 +20,7 @@ export function createSupabaseMenuStore(db: SupabaseClient): MenuStore {
       const itemsResult = await db
         .from("menu_items_public")
         .select(
-          "id, slug, category_id, category_slug, category_name_localized, name_localized, description_localized, portion_label_localized, base_price_cents, gluten_free, vegan, vegetarian, spicy, popular, sort_order, category_sort_order, allergens, additives, image_storage_path, image_alt_localized, image_mime",
+          "id, slug, category_id, category_slug, category_name_localized, name_localized, description_localized, portion_label_localized, base_price_cents, gluten_free, vegan, vegetarian, spicy, popular, sort_order, category_sort_order, allergens, additives, image_storage_path, image_alt_localized, image_mime, modifier_groups",
         );
       if (itemsResult.error) throw itemsResult.error;
 
