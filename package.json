@@ -15,11 +15,13 @@
     "test:e2e": "playwright test",
     "db:reset": "node --experimental-strip-types scripts/db-reset.mts",
     "db:migrate": "node --experimental-strip-types scripts/db-migrate.mts",
-    "db:seed": "node --experimental-strip-types scripts/db-seed.mts"
+    "db:seed": "node --experimental-strip-types scripts/db-seed.mts",
+    "db:bootstrap-admin": "node --experimental-strip-types scripts/bootstrap-admin.mts"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.116.0",
-    "next": "16.0.0",
+    "next": "^16.3.5",
     "next-intl": "^4.14.5",
     "react": "19.2.0",
     "react-dom": "19.2.0",
@@ -33,7 +35,7 @@
     "@types/pg": "^8.23.1",
     "@types/react": "19.0.0",
     "eslint": "9.0.0",
-    "eslint-config-next": "16.0.0",
+    "eslint-config-next": "^16.3.5",
     "pg": "^8.23.0",
     "typescript": "5.8.2",
     "vitest": "3.0.0"
