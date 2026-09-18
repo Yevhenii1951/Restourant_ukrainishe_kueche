@@ -48,7 +48,28 @@
     "order": "Замовити",
     "reserve": "Забронювати столик",
     "call": "Подзвонити",
-    "cart": "Кошик"
+    "cart": "Кошик",
+    "ueberUns": "Про нас",
+    "faq": "FAQ",
+    "catering": "Кейтеринг",
+    "lunch": "Обіднє меню",
+    "events": "Події",
+    "gallery": "Галерея"
+  },
+  "content": {
+    "aboutTitle": "Про нас",
+    "aboutLead": "Історія Kalyna.",
+    "faqTitle": "Поширені запитання",
+    "faqLead": "Відповіді про ресторан, замовлення та бронювання.",
+    "cateringTitle": "Кейтеринг",
+    "cateringLead": "Свята та заходи від 10 гостей.",
+    "lunchTitle": "Обіднє меню",
+    "lunchLead": "Наш щоденний обідній асортимент.",
+    "eventsTitle": "Події",
+    "eventsLead": "Актуальні події в Kalyna.",
+    "galleryTitle": "Галерея",
+    "galleryLead": "Погляд у нашу кухню та наш дім.",
+    "empty": "Контент ще не додано."
   },
   "footer": {
     "demoDisclosure": "Портфоліо-демо — не справжній ресторан."

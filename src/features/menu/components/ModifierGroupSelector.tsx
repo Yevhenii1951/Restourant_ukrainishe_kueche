@@ -6,7 +6,6 @@ import {
   computeModifierPriceDelta,
   type ModifierSelection,
   type PublicModifierGroup,
-  validateModifierSelections,
 } from "../domain";
 import { formatEuroCents } from "@/lib/format";
 
