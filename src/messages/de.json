@@ -9,6 +9,23 @@
     "title": "Kalyna — Ukrainische Küche in Kassel",
     "intro": "Borschtsch, Wareniki, Pampuschky und mehr — unsere ukrainische Küche in Kassel."
   },
+  "menu": {
+    "title": "Speisekarte",
+    "subtitle": "Unsere ukrainische Küche in Kassel. Alle Preise inklusive Mehrwertsteuer.",
+    "allergens": "Allergene",
+    "allergenNote": "Die 14 EU-Allergene: enthalten oder in Spuren möglich — stand bei jedem Gericht.",
+    "contains": "Enthalten",
+    "mayContain": "Spuren möglich",
+    "additives": "Zusatzstoffe",
+    "vegan": "Vegan",
+    "vegetarian": "Vegetarisch",
+    "spicy": "Scharf",
+    "popular": "Beliebt",
+    "glutenFree": "Glutenfrei",
+    "portion": "Portion",
+    "empty": "Zurzeit sind keine Gerichte verfügbar.",
+    "legendTitle": "Allergen- und Zusatzstoff-Legende"
+  },
   "nav": {
     "menu": "Speisekarte",
     "order": "Bestellen",
