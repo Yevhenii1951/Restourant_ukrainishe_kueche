@@ -48,7 +48,28 @@
     "order": "Order",
     "cart": "Cart",
     "reserve": "Reserve a table",
-    "call": "Call us"
+    "call": "Call us",
+    "ueberUns": "About us",
+    "faq": "FAQ",
+    "catering": "Catering",
+    "lunch": "Lunch menu",
+    "events": "Events",
+    "gallery": "Gallery"
+  },
+  "content": {
+    "aboutTitle": "About us",
+    "aboutLead": "The story of Kalyna.",
+    "faqTitle": "Frequently asked questions",
+    "faqLead": "Answers about the restaurant, orders and reservations.",
+    "cateringTitle": "Catering",
+    "cateringLead": "Celebrations and events from 10 guests.",
+    "lunchTitle": "Lunch menu",
+    "lunchLead": "Our daily changing lunch offer.",
+    "eventsTitle": "Events",
+    "eventsLead": "Upcoming events at Kalyna.",
+    "galleryTitle": "Gallery",
+    "galleryLead": "A look into our kitchen and our house.",
+    "empty": "No content available yet."
   },
   "footer": {
     "demoDisclosure": "Portfolio demo — not a real restaurant."

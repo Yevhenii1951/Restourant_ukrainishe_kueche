@@ -48,7 +48,28 @@
     "order": "Bestellen",
     "cart": "Warenkorb",
     "reserve": "Tisch reservieren",
-    "call": "Anrufen"
+    "call": "Anrufen",
+    "ueberUns": "Über uns",
+    "faq": "FAQ",
+    "catering": "Catering",
+    "lunch": "Mittagstisch",
+    "events": "Veranstaltungen",
+    "gallery": "Galerie"
+  },
+  "content": {
+    "aboutTitle": "Über uns",
+    "aboutLead": "Die Geschichte von Kalyna.",
+    "faqTitle": "Häufige Fragen",
+    "faqLead": "Antworten zu Restaurant, Bestellung und Reservierung.",
+    "cateringTitle": "Catering",
+    "cateringLead": "Feiern und Veranstaltungen ab 10 Gästen.",
+    "lunchTitle": "Mittagstisch",
+    "lunchLead": "Unser täglich wechselndes Mittagsangebot.",
+    "eventsTitle": "Veranstaltungen",
+    "eventsLead": "Aktuelle Veranstaltungen im Kalyna.",
+    "galleryTitle": "Galerie",
+    "galleryLead": "Ein Blick in unsere Küche und unser Haus.",
+    "empty": "Noch keine Inhalte hinterlegt."
   },
   "footer": {
     "demoDisclosure": "Portfolio-Demo — kein realer Restaurantbetrieb."

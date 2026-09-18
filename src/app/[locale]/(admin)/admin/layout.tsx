@@ -23,7 +23,12 @@ export default async function AdminLayout({
           >
             Kalyna Admin
           </Link>
-          <span className="text-sm font-medium">{staff.role}</span>
+          <nav className="flex items-center gap-4 text-sm font-medium">
+            <Link href={`/${locale}/admin/inhalte`} className="underline-offset-4 hover:underline">
+              Inhalte
+            </Link>
+            <span>{staff.role}</span>
+          </nav>
         </div>
       </header>
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
