@@ -4,7 +4,7 @@ import { clientPublicEnv } from "@/lib/env/client";
 import { serverEnv } from "@/lib/env/server";
 import { createSupabaseSessionClient } from "@/lib/supabase/session";
 import { type StaffContext } from "./domain";
-import { createQueryableSupabaseStaffStore } from "./supabaseStaffStore";
+import { createSupabaseStaffStore } from "./supabaseStaffStore";
 import { resolveCurrentStaff } from "./service";
 
 export async function getCurrentStaff(): Promise<StaffContext | null> {
@@ -19,7 +19,11 @@ export async function getCurrentStaff(): Promise<StaffContext | null> {
   const sessionClient = await createSupabaseSessionClient();
   const { data, error } = await sessionClient.auth.getClaims();
   if (error || !data?.claims.sub) return null;
+  const { data: userData, error: userError } =
+    await sessionClient.auth.getUser();
+  if (userError || !userData.user?.email_confirmed_at) return null;
+  if (userData.user.id !== data.claims.sub) return null;
 
-  const store = createQueryableSupabaseStaffStore(getSupabaseServerClient());
+  const store = createSupabaseStaffStore(getSupabaseServerClient());
   return resolveCurrentStaff(data.claims.sub, store);
 }

@@ -1,13 +1,13 @@
 import {
   assertCanManageStaff,
-  Decision,
+  type Decision,
   StaffDeniedError,
-  StaffRole,
+  type StaffRole,
   type StaffContext,
 } from "./domain";
 import { decideDeactivation, decideRoleChange } from "./domain";
 import { toStaffContext } from "./postgresStaffStore";
-import type { StaffStore, StaffInvitation } from "./store";
+import type { StaffInvitation, StaffStore } from "./store";
 
 export async function resolveCurrentStaff(
   authUserId: string | null,
@@ -26,8 +26,7 @@ export class StaffService {
   ) {}
 
   private async listContexts(): Promise<StaffContext[]> {
-    const profiles = await this.store.listStaff();
-    return profiles.map(toStaffContext);
+    return (await this.store.listStaff()).map(toStaffContext);
   }
 
   async changeRole(
@@ -42,8 +41,7 @@ export class StaffService {
       await this.listContexts(),
     );
     if (!decision.ok) return decision;
-    await this.store.updateRole(targetId, newRole);
-    await this.store.writeAudit({
+    await this.store.changeRole(targetId, newRole, {
       actorId: actor.id,
       action: "staff.role.change",
       entityType: "staff_profile",
@@ -65,8 +63,7 @@ export class StaffService {
       await this.listContexts(),
     );
     if (!decision.ok) return decision;
-    await this.store.setActive(targetId, active);
-    await this.store.writeAudit({
+    await this.store.setActive(targetId, active, {
       actorId: actor.id,
       action: active ? "staff.active.set" : "staff.active.clear",
       entityType: "staff_profile",
@@ -81,24 +78,22 @@ export class StaffService {
     authUserId: string;
     displayName: string;
   }): Promise<Decision & { profileId?: string }> {
-    const staff = await this.listContexts();
-    if (staff.some((member) => member.active && member.role === "ADMIN")) {
-      return { ok: false, code: "CONFLICT" };
+    try {
+      const created = await this.store.bootstrapAdmin(
+        { ...profile, role: "ADMIN" },
+        {
+          actorId: null,
+          action: "staff.bootstrap.admin",
+          entityType: "staff_profile",
+          afterData: { role: "ADMIN" },
+          correlationId: this.correlationId,
+        },
+      );
+      return { ok: true, profileId: created.id };
+    } catch (error) {
+      if (isConflict(error)) return { ok: false, code: "CONFLICT" };
+      throw error;
     }
-    const created = await this.store.createProfile({
-      authUserId: profile.authUserId,
-      displayName: profile.displayName,
-      role: "ADMIN",
-    });
-    await this.store.writeAudit({
-      actorId: created.id,
-      action: "staff.bootstrap.admin",
-      entityType: "staff_profile",
-      entityId: created.id,
-      afterData: { role: "ADMIN" },
-      correlationId: this.correlationId,
-    });
-    return { ok: true, profileId: created.id };
   }
 
   async invite(
@@ -112,15 +107,21 @@ export class StaffService {
         return { ok: false, code: "FORBIDDEN" };
       throw error;
     }
-    await this.store.createInvitation(invitation);
-    await this.store.writeAudit({
+    await this.store.createInvitation(invitation, {
       actorId: actor.id,
       action: "staff.invitation.create",
       entityType: "staff_invitation",
       entityId: invitation.id,
-      afterData: { email: invitation.email, role: invitation.role },
+      afterData: { role: invitation.role },
       correlationId: this.correlationId,
     });
     return { ok: true };
   }
+}
+
+function isConflict(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    error.message.includes("active admin already exists")
+  );
 }

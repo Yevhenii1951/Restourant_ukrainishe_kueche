@@ -5,7 +5,7 @@ import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { createCorrelationId } from "@/lib/correlationId";
 import { STAFF_ROLES, type StaffRole } from "./domain";
 import { StaffService } from "./service";
-import { createQueryableSupabaseStaffStore } from "./supabaseStaffStore";
+import { createSupabaseStaffStore } from "./supabaseStaffStore";
 import { getCurrentStaff } from "./session";
 
 export type ActionResult<T> =
@@ -41,7 +41,7 @@ export async function changeStaffRoleAction(
   }
 
   const client = getSupabaseServerClient();
-  const store = createQueryableSupabaseStaffStore(client);
+  const store = createSupabaseStaffStore(client);
   const decision = await new StaffService(store, correlationId).changeRole(
     actor,
     parsed.data.targetId,
@@ -79,7 +79,7 @@ export async function setStaffActiveAction(
   }
 
   const client = getSupabaseServerClient();
-  const store = createQueryableSupabaseStaffStore(client);
+  const store = createSupabaseStaffStore(client);
   const decision = await new StaffService(store, correlationId).setActiveStatus(
     actor,
     parsed.data.targetId,

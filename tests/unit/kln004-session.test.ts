@@ -6,13 +6,12 @@ function createStore(profile: StaffProfile | null): StaffStore {
   return {
     listStaff: async () => [],
     findByAuthUserId: async () => profile,
-    createProfile: async () => {
-      throw new Error("not used");
-    },
-    updateRole: async () => undefined,
+    changeRole: async () => undefined,
     setActive: async () => undefined,
     createInvitation: async () => undefined,
-    writeAudit: async () => undefined,
+    bootstrapAdmin: async () => {
+      throw new Error("not used");
+    },
   };
 }
 

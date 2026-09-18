@@ -3,7 +3,6 @@ import { StaffService } from "@/features/identity/service";
 import type { StaffContext } from "@/features/identity/domain";
 import type {
   AuditEventInput,
-  NewStaffProfile,
   StaffInvitation,
   StaffProfile,
   StaffStore,
@@ -22,38 +21,48 @@ function context(overrides: Partial<StaffContext>): StaffContext {
 function createMemoryStore() {
   const profiles = new Map<string, StaffProfile>();
   const audits: AuditEventInput[] = [];
+  const invitations: StaffInvitation[] = [];
   const store: StaffStore = {
     async listStaff() {
       return [...profiles.values()];
     },
     async findByAuthUserId(authUserId) {
       return (
-        [...profiles.values()].find((p) => p.authUserId === authUserId) ?? null
+        [...profiles.values()].find(
+          (profile) => profile.authUserId === authUserId,
+        ) ?? null
       );
     },
-    async createProfile(profile: NewStaffProfile) {
+    async changeRole(profileId, role, audit) {
+      profiles.get(profileId)!.role = role;
+      audits.push(audit);
+    },
+    async setActive(profileId, active, audit) {
+      profiles.get(profileId)!.active = active;
+      audits.push(audit);
+    },
+    async createInvitation(invitation, audit) {
+      invitations.push(invitation);
+      audits.push(audit);
+    },
+    async bootstrapAdmin(profile, audit) {
+      if (
+        [...profiles.values()].some(
+          (member) => member.active && member.role === "ADMIN",
+        )
+      ) {
+        throw new Error("active admin already exists");
+      }
       const created: StaffProfile = {
         id: `profile-${profiles.size + 1}`,
         ...profile,
         active: true,
       };
       profiles.set(created.id, created);
+      audits.push({ ...audit, actorId: created.id, entityId: created.id });
       return created;
     },
-    async updateRole(profileId, role) {
-      profiles.get(profileId)!.role = role;
-    },
-    async setActive(profileId, active) {
-      profiles.get(profileId)!.active = active;
-    },
-    async createInvitation(invitation: StaffInvitation) {
-      invitations.push(invitation);
-    },
-    async writeAudit(event) {
-      audits.push(event);
-    },
   };
-  const invitations: StaffInvitation[] = [];
   return { store, profiles, audits, invitations };
 }
 

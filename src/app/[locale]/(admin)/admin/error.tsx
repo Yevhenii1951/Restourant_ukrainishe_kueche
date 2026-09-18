@@ -1,6 +1,10 @@
 "use client";
 
-export default function AdminError({ reset }: { reset: () => void }) {
+export default function AdminError({
+  reset,
+}: {
+  reset: () => void;
+}): React.ReactNode {
   return (
     <section className="space-y-4" role="alert">
       <h1 className="font-display text-2xl font-semibold">

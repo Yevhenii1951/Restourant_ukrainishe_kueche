@@ -1,6 +1,6 @@
 import pg from "pg";
 
-import { createQueryableStaffStore } from "../src/features/identity/postgresStaffStore.ts";
+import { createPostgresStaffStore } from "../src/features/identity/postgresStaffStore.ts";
 import { StaffService } from "../src/features/identity/service.ts";
 import { createCorrelationId } from "../src/lib/correlationId.ts";
 
@@ -25,7 +25,7 @@ const client = new pg.Client({ connectionString: databaseUrl });
 await client.connect();
 
 try {
-  const store = createQueryableStaffStore(client);
+  const store = createPostgresStaffStore(client);
   const result = await new StaffService(
     store,
     createCorrelationId(),

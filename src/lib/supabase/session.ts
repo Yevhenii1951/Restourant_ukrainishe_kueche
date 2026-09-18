@@ -1,9 +1,10 @@
 import "server-only";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { clientPublicEnv } from "@/lib/env/client";
 
-export async function createSupabaseSessionClient() {
+export async function createSupabaseSessionClient(): Promise<SupabaseClient> {
   const { NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY } =
     clientPublicEnv;
   if (!NEXT_PUBLIC_SUPABASE_URL || !NEXT_PUBLIC_SUPABASE_ANON_KEY) {

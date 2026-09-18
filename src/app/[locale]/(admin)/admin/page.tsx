@@ -1,4 +1,4 @@
-export default function AdminPage() {
+export default function AdminPage(): React.ReactNode {
   return (
     <section className="space-y-3">
       <h1 className="font-display text-3xl font-semibold">Betriebsbereich</h1>

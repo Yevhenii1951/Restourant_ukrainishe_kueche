@@ -1,13 +1,6 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { StaffRole } from "./domain";
-import {
-  AuditEventInput,
-  NewStaffProfile,
-  StaffInvitation,
-  StaffProfile,
-  StaffStore,
-} from "./store";
+import { parseStaffProfile, type StaffProfile, type StaffStore } from "./store";
 
 type StaffRow = {
   id: string;
@@ -18,90 +11,79 @@ type StaffRow = {
 };
 
 function rowToProfile(row: StaffRow): StaffProfile {
-  return {
+  return parseStaffProfile({
     id: row.id,
     authUserId: row.auth_user_id,
     displayName: row.display_name,
-    role: row.role as StaffRole,
+    role: row.role,
     active: row.active,
-  };
+  });
 }
 
-export function createQueryableSupabaseStaffStore(
-  db: SupabaseClient
-): StaffStore {
+export function createSupabaseStaffStore(db: SupabaseClient): StaffStore {
   return {
     async listStaff(): Promise<StaffProfile[]> {
       const { data, error } = await db
         .from("staff_profiles")
-        .select("*")
+        .select("id, auth_user_id, display_name, role, active")
         .order("created_at", { ascending: true });
       if (error) throw error;
       return (data as StaffRow[]).map(rowToProfile);
     },
 
-    async findByAuthUserId(authUserId: string): Promise<StaffProfile | null> {
+    async findByAuthUserId(authUserId): Promise<StaffProfile | null> {
       const { data, error } = await db
         .from("staff_profiles")
-        .select("*")
+        .select("id, auth_user_id, display_name, role, active")
         .eq("auth_user_id", authUserId)
         .maybeSingle();
       if (error) throw error;
       return data ? rowToProfile(data as StaffRow) : null;
     },
 
-    async createProfile(profile: NewStaffProfile): Promise<StaffProfile> {
+    async changeRole(profileId, role, audit): Promise<void> {
+      const { error } = await db.rpc("change_staff_role_with_audit", {
+        target_id: profileId,
+        new_role: role,
+        audit_actor_id: audit.actorId,
+        audit_correlation_id: audit.correlationId,
+      });
+      if (error) throw error;
+    },
+
+    async setActive(profileId, active, audit): Promise<void> {
+      const { error } = await db.rpc("set_staff_active_with_audit", {
+        target_id: profileId,
+        new_active: active,
+        audit_actor_id: audit.actorId,
+        audit_correlation_id: audit.correlationId,
+      });
+      if (error) throw error;
+    },
+
+    async createInvitation(invitation, audit): Promise<void> {
+      const { error } = await db.rpc("create_staff_invitation_with_audit", {
+        invitation_id: invitation.id,
+        invitation_email: invitation.email,
+        invitation_role: invitation.role,
+        invitation_token_hash: invitation.tokenHash,
+        invitation_expires_at: invitation.expiresAt.toISOString(),
+        invitation_inviter_id: invitation.inviterId,
+        audit_correlation_id: audit.correlationId,
+      });
+      if (error) throw error;
+    },
+
+    async bootstrapAdmin(profile, audit): Promise<StaffProfile> {
       const { data, error } = await db
-        .from("staff_profiles")
-        .insert({
-          auth_user_id: profile.authUserId,
-          display_name: profile.displayName,
-          role: profile.role,
+        .rpc("bootstrap_staff_admin", {
+          admin_auth_user_id: profile.authUserId,
+          admin_display_name: profile.displayName,
+          audit_correlation_id: audit.correlationId,
         })
-        .select()
         .single();
       if (error) throw error;
       return rowToProfile(data as StaffRow);
-    },
-
-    async updateRole(profileId: string, role: StaffRole): Promise<void> {
-      const { error } = await db
-        .from("staff_profiles")
-        .update({ role, updated_at: new Date().toISOString() })
-        .eq("id", profileId);
-      if (error) throw error;
-    },
-
-    async setActive(profileId: string, active: boolean): Promise<void> {
-      const { error } = await db
-        .from("staff_profiles")
-        .update({ active, updated_at: new Date().toISOString() })
-        .eq("id", profileId);
-      if (error) throw error;
-    },
-
-    async createInvitation(invitation: StaffInvitation): Promise<void> {
-      const { error } = await db.from("staff_invitations").insert({
-        email: invitation.email,
-        role: invitation.role,
-        token_hash: invitation.tokenHash,
-        expires_at: invitation.expiresAt.toISOString(),
-        inviter_id: invitation.inviterId,
-      });
-      if (error) throw error;
-    },
-
-    async writeAudit(event: AuditEventInput): Promise<void> {
-      const { error } = await db.from("audit_events").insert({
-        actor_id: event.actorId,
-        action: event.action,
-        entity_type: event.entityType,
-        entity_id: event.entityId ?? null,
-        before_data: event.beforeData ?? null,
-        after_data: event.afterData ?? null,
-        correlation_id: event.correlationId,
-      });
-      if (error) throw error;
     },
   };
 }

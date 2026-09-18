@@ -1,21 +1,24 @@
 import { createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+import createMiddleware from "next-intl/middleware";
+import { type NextRequest, type NextResponse } from "next/server";
+import { routing } from "./i18n/routing";
 
-export async function proxy(request: NextRequest): Promise<NextResponse> {
+const handleLocalization = createMiddleware(routing);
+
+export default async function proxy(
+  request: NextRequest,
+): Promise<NextResponse> {
+  const response = handleLocalization(request);
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  let response = NextResponse.next({ request });
   if (!url || !anonKey) return response;
 
   const supabase = createServerClient(url, anonKey, {
     cookies: {
       getAll: () => request.cookies.getAll(),
       setAll(cookiesToSet) {
-        for (const { name, value } of cookiesToSet) {
-          request.cookies.set(name, value);
-        }
-        response = NextResponse.next({ request });
         for (const { name, value, options } of cookiesToSet) {
+          request.cookies.set(name, value);
           response.cookies.set(name, value, options);
         }
       },
@@ -27,7 +30,5 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
 };
