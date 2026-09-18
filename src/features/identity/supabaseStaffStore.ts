@@ -64,12 +64,21 @@ export function createSupabaseStaffStore(db: SupabaseClient): StaffStore {
     async createInvitation(invitation, audit): Promise<void> {
       const { error } = await db.rpc("create_staff_invitation_with_audit", {
         invitation_id: invitation.id,
+        invitation_auth_user_id: invitation.authUserId,
         invitation_email: invitation.email,
+        invitation_display_name: invitation.displayName,
         invitation_role: invitation.role,
         invitation_token_hash: invitation.tokenHash,
-        invitation_expires_at: invitation.expiresAt.toISOString(),
+        invitation_expires_at: invitation.expiresAt?.toISOString() ?? null,
         invitation_inviter_id: invitation.inviterId,
         audit_correlation_id: audit.correlationId,
+      });
+      if (error) throw error;
+    },
+
+    async markInvitationAccepted(authUserId): Promise<void> {
+      const { error } = await db.rpc("mark_staff_invitation_accepted", {
+        invitation_auth_user_id: authUserId,
       });
       if (error) throw error;
     },

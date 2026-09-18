@@ -1,26 +1,30 @@
 import pg from "pg";
 
+import { z } from "zod";
 import { createPostgresStaffStore } from "../src/features/identity/postgresStaffStore.ts";
 import { StaffService } from "../src/features/identity/service.ts";
 import { createCorrelationId } from "../src/lib/correlationId.ts";
+const bootstrapEnvSchema = z.object({
+  DATABASE_URL: z.string().url(),
+  BOOTSTRAP_ADMIN_AUTH_USER_ID: z.string().uuid(),
+  BOOTSTRAP_ADMIN_DISPLAY_NAME: z
+    .string()
+    .trim()
+    .min(1)
+    .max(100)
+    .default("Bootstrap Admin"),
+});
 
-const env = process.env as Record<string, string | undefined>;
-const databaseUrl = env.DATABASE_URL;
-if (!databaseUrl) {
-  console.error("DATABASE_URL is required for the admin bootstrap.");
-  process.exit(1);
-}
-
-const authUserId = env.BOOTSTRAP_ADMIN_AUTH_USER_ID;
-const displayName = env.BOOTSTRAP_ADMIN_DISPLAY_NAME ?? "Bootstrap Admin";
-
-if (!authUserId) {
+const parsed = bootstrapEnvSchema.safeParse(process.env);
+if (!parsed.success) {
   console.error(
-    "BOOTSTRAP_ADMIN_AUTH_USER_ID is required (the Supabase auth user id for the first admin).",
+    "DATABASE_URL, a UUID auth user id, and a valid display name are required.",
   );
   process.exit(1);
 }
-
+const databaseUrl = parsed.data.DATABASE_URL;
+const authUserId = parsed.data.BOOTSTRAP_ADMIN_AUTH_USER_ID;
+const displayName = parsed.data.BOOTSTRAP_ADMIN_DISPLAY_NAME;
 const client = new pg.Client({ connectionString: databaseUrl });
 await client.connect();
 

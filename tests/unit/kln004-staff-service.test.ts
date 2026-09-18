@@ -7,7 +7,6 @@ import type {
   StaffProfile,
   StaffStore,
 } from "@/features/identity/store";
-
 function context(overrides: Partial<StaffContext>): StaffContext {
   return {
     id: "ctx-1",
@@ -17,7 +16,6 @@ function context(overrides: Partial<StaffContext>): StaffContext {
     ...overrides,
   };
 }
-
 function createMemoryStore() {
   const profiles = new Map<string, StaffProfile>();
   const audits: AuditEventInput[] = [];
@@ -44,7 +42,15 @@ function createMemoryStore() {
     async createInvitation(invitation, audit) {
       invitations.push(invitation);
       audits.push(audit);
+      profiles.set(invitation.id, {
+        id: invitation.id,
+        authUserId: invitation.authUserId,
+        displayName: invitation.displayName,
+        role: invitation.role,
+        active: true,
+      });
     },
+    async markInvitationAccepted() {},
     async bootstrapAdmin(profile, audit) {
       if (
         [...profiles.values()].some(
@@ -65,7 +71,6 @@ function createMemoryStore() {
   };
   return { store, profiles, audits, invitations };
 }
-
 describe("KLN-004 staff service orchestration", () => {
   it("changes role and records an audit event when allowed", async () => {
     const { store, profiles, audits } = createMemoryStore();
@@ -77,16 +82,13 @@ describe("KLN-004 staff service orchestration", () => {
       active: true,
     });
     const service = new StaffService(store, "corr-1");
-
     const decision = await service.changeRole(context({}), "target", "MANAGER");
-
     expect(decision).toEqual({ ok: true });
     expect(profiles.get("target")!.role).toBe("MANAGER");
     expect(audits).toHaveLength(1);
     expect(audits[0].action).toBe("staff.role.change");
     expect(audits[0].correlationId).toBe("corr-1");
   });
-
   it("refuses to demote the last active admin without touching the store", async () => {
     const { store, profiles, audits } = createMemoryStore();
     profiles.set("ctx-1", {
@@ -174,6 +176,8 @@ describe("KLN-004 staff service orchestration", () => {
     const service = new StaffService(store, "corr-1");
     const invitation: StaffInvitation = {
       id: "inv-1",
+      authUserId: "00000000-0000-0000-0000-000000000020",
+      displayName: "Invitee",
       email: "x@example.com",
       role: "MANAGER",
       tokenHash: "hash",

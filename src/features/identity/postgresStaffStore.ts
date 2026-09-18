@@ -99,11 +99,17 @@ export function createPostgresStaffStore(db: Client): StaffStore {
     async createInvitation(invitation, audit): Promise<void> {
       await inTransaction(db, async () => {
         await db.query(
+          `INSERT INTO staff_profiles (auth_user_id, display_name, role)
+           VALUES ($1, $2, $3)`,
+          [invitation.authUserId, invitation.displayName, invitation.role],
+        );
+        await db.query(
           `INSERT INTO staff_invitations
-             (id, email, role, token_hash, expires_at, accepted_at, inviter_id)
-           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+             (id, auth_user_id, email, role, token_hash, expires_at, accepted_at, inviter_id)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
           [
             invitation.id,
+            invitation.authUserId,
             invitation.email,
             invitation.role,
             invitation.tokenHash,
@@ -114,6 +120,13 @@ export function createPostgresStaffStore(db: Client): StaffStore {
         );
         await writeAudit(db, audit);
       });
+    },
+
+    async markInvitationAccepted(authUserId): Promise<void> {
+      await db.query(
+        "UPDATE staff_invitations SET accepted_at = COALESCE(accepted_at, now()) WHERE auth_user_id = $1",
+        [authUserId],
+      );
     },
 
     async bootstrapAdmin(profile, audit): Promise<StaffProfile> {

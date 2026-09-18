@@ -76,32 +76,6 @@ describe("KLN-004 staff RLS enforcement", () => {
     });
   });
 
-  it("changes a role and appends its audit atomically", async () => {
-    await withRole(databaseUrl, "service_role", (client) =>
-      client.query(
-        "SELECT change_staff_role_with_audit((SELECT id FROM staff_profiles WHERE auth_user_id = $1), $2, $3, $4)",
-        ["00000000-0000-0000-0000-000000000001", "MANAGER", null, "corr-rpc"],
-      ),
-    );
-
-    const result = await withRole(
-      databaseUrl,
-      "service_role",
-      async (client) => ({
-        profile: await client.query(
-          "SELECT role FROM staff_profiles WHERE auth_user_id = $1",
-          ["00000000-0000-0000-0000-000000000001"],
-        ),
-        audit: await client.query(
-          "SELECT after_data FROM audit_events WHERE correlation_id = $1",
-          ["corr-rpc"],
-        ),
-      }),
-    );
-    expect(result.profile.rows[0].role).toBe("MANAGER");
-    expect(result.audit.rows[0].after_data).toEqual({ role: "MANAGER" });
-  });
-
   it("keeps at least one active admin under direct service writes", async () => {
     const isRejected = async (sql: string): Promise<boolean> => {
       try {

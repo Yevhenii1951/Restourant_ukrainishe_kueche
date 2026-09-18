@@ -16,6 +16,7 @@ export async function resolveCurrentStaff(
   if (!authUserId) return null;
   const profile = await store.findByAuthUserId(authUserId);
   if (!profile?.active) return null;
+  await store.markInvitationAccepted(authUserId);
   return toStaffContext(profile);
 }
 

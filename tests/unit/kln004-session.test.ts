@@ -9,6 +9,7 @@ function createStore(profile: StaffProfile | null): StaffStore {
     changeRole: async () => undefined,
     setActive: async () => undefined,
     createInvitation: async () => undefined,
+    markInvitationAccepted: async () => undefined,
     bootstrapAdmin: async () => {
       throw new Error("not used");
     },

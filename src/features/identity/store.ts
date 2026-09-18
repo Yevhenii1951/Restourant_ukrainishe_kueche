@@ -11,10 +11,12 @@ export interface StaffProfile {
 
 export interface StaffInvitation {
   id: string;
+  authUserId: string;
+  displayName: string;
   email: string;
   role: StaffRole;
-  tokenHash: string;
-  expiresAt: Date;
+  tokenHash: string | null;
+  expiresAt: Date | null;
   acceptedAt: Date | null;
   inviterId: string;
 }
@@ -52,6 +54,7 @@ export interface StaffStore {
     invitation: StaffInvitation,
     audit: AuditEventInput,
   ): Promise<void>;
+  markInvitationAccepted(authUserId: string): Promise<void>;
   bootstrapAdmin(
     profile: NewStaffProfile,
     audit: AuditEventInput,
