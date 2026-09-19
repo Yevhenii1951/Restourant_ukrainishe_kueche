@@ -109,5 +109,36 @@
     "imprint": "Impressum",
     "privacy": "Datenschutz",
     "terms": "AGB"
+  },
+  "orderForm": {
+    "addToCart": "In den Warenkorb",
+    "added": "Zum Warenkorb hinzugefügt.",
+    "quantityLabel": "Menge: {quantity}",
+    "increaseQuantity": "Menge erhöhen",
+    "decreaseQuantity": "Menge verringern"
+  },
+  "cart": {
+    "title": "Warenkorb",
+    "description": "Deine Auswahl liegt bereit. Die Preise sind eine Vorschau – verbindlich abgerechnet wird erst beim Bestellen.",
+    "openCart": "Warenkorb öffnen ({count})",
+    "emptyTitle": "Dein Warenkorb ist leer.",
+    "emptyHint": "Stöbere durch die Speisekarte und füge Gerichte hinzu.",
+    "menuCta": "Zur Speisekarte",
+    "itemCount": "{count, plural, =0 {keine Gerichte} one {1 Gericht} other {# Gerichte}}",
+    "estimateNote": "Vorläufige Schätzung auf Basis der aktuellen Speisekarte. Der Endpreis wird beim Bestellen verbindlich im Restaurant berechnet.",
+    "checkout": "Zur Kasse",
+    "checkoutSoon": "Die Bestellstrecke folgt in einem späteren Schritt (Demo).",
+    "blockedTitle": "Deine Auswahl hat sich geändert",
+    "blockedHint": "Ein oder mehrere Gerichte, Optionen oder Mengen entsprechen nicht mehr der aktuellen Speisekarte. Bitte passe die betroffenen Positionen an, bevor du weitergehst.",
+    "notOnMenu": "Dieses Gericht steht aktuell nicht mehr auf der Speisekarte.",
+    "unavailableOption": "Eine ausgewählte Zusatz-Option ist nicht mehr verfügbar.",
+    "tooFew": "Bitte {min} bis {max} Optionen wählen.",
+    "tooMany": "Maximal {max} Optionen möglich.",
+    "repairOptions": "Nur verfügbare Optionen übernehmen",
+    "quantityLabel": "Menge: {quantity}",
+    "increaseQuantity": "Menge erhöhen",
+    "decreaseQuantity": "Menge verringern",
+    "removeLine": "Position entfernen",
+    "removeTitle": "Entfernen"
   }
 }

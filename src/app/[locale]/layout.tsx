@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { Inter, Playfair_Display } from "next/font/google";
+import { CartProvider } from "@/features/cart/cart-provider";
 import { routing } from "@/i18n/routing";
 import { SITE_URL } from "@/features/seo/site";
 import "../globals.css";
@@ -45,7 +46,9 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${inter.variable} ${playfair.variable}`}>
       <body className="min-h-screen bg-linen text-ink font-sans antialiased">
-        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider messages={messages}>
+          <CartProvider>{children}</CartProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
