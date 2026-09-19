@@ -10,9 +10,15 @@ interface QuoteSummaryProps {
   result: QuoteEngineResult;
   items: PublicMenuItem[];
   locale: string;
+  paymentPending?: boolean;
 }
 
-export default function QuoteSummary({ result, items, locale }: QuoteSummaryProps) {
+export default function QuoteSummary({
+  result,
+  items,
+  locale,
+  paymentPending = true,
+}: QuoteSummaryProps) {
   const t = useTranslations("bestellen");
   const itemsById = new Map(items.map((item) => [item.id, item]));
 
@@ -118,13 +124,15 @@ export default function QuoteSummary({ result, items, locale }: QuoteSummaryProp
         <span>{formatEuroCents(breakdown.totalCents, locale)}</span>
       </div>
       <p className="mt-3 text-xs text-ink/55">{t("minimumNote", { minimum: formatEuroCents(breakdown.minimumCents, locale) })}</p>
-      <button
-        type="button"
-        disabled
-        className="mt-4 w-full rounded-lg bg-kalyna px-4 py-2 font-medium text-white opacity-60"
-      >
-        {t("checkoutSoon")}
-      </button>
+      {paymentPending ? (
+        <button
+          type="button"
+          disabled
+          className="mt-4 w-full rounded-lg bg-kalyna px-4 py-2 font-medium text-white opacity-60"
+        >
+          {t("checkoutSoon")}
+        </button>
+      ) : null}
     </div>
   );
 }

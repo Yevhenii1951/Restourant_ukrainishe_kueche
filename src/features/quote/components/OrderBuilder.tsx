@@ -8,6 +8,7 @@ import { requestQuoteAction, requestSlotsAction } from "../actions";
 import type { QuoteEngineResult, SlotsResult } from "../service";
 import { berlinDateKey } from "../slots";
 import { useCart } from "../../cart/cart-provider";
+import CheckoutForm from "@/features/order/components/CheckoutForm";
 import QuoteSummary from "./QuoteSummary";
 
 interface OrderBuilderProps {
@@ -28,6 +29,7 @@ export default function OrderBuilder({ items, locale }: OrderBuilderProps) {
   const [slotStartUtc, setSlotStartUtc] = useState<string | null>(null);
   const [slots, setSlots] = useState<SlotsResult | null>(null);
   const [quote, setQuote] = useState<QuoteEngineResult | null>(null);
+  const [quotedTip, setQuotedTip] = useState(0);
   const [busy, setBusy] = useState(false);
 
   if (!hydrated) return null;
@@ -72,6 +74,7 @@ export default function OrderBuilder({ items, locale }: OrderBuilderProps) {
       { locale },
     );
     setQuote(result);
+    setQuotedTip(parsedTip);
     setBusy(false);
   }
 
@@ -207,8 +210,25 @@ export default function OrderBuilder({ items, locale }: OrderBuilderProps) {
         </button>
       </form>
 
-      <aside>
-        {quote ? <QuoteSummary result={quote} items={items} locale={locale} /> : null}
+      <aside className="space-y-5">
+        {quote ? (
+          <QuoteSummary
+            result={quote}
+            items={items}
+            locale={locale}
+            paymentPending={fulfilment !== "pickup"}
+          />
+        ) : null}
+        {quote?.status === "quote" && slotStartUtc && fulfilment === "pickup" ? (
+          <CheckoutForm
+            quoteToken={quote.quoteToken}
+            cart={cart}
+            slotStartUtc={slotStartUtc}
+            promoCode={promoCode || null}
+            tipCents={quotedTip}
+            locale={locale}
+          />
+        ) : null}
       </aside>
     </div>
   );

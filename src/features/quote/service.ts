@@ -19,10 +19,9 @@ import {
   signQuote,
   type QuoteBreakdown,
 } from "./domain";
-import { berlinDateKey, buildOrderSlots } from "./slots";
-import type { OrderSlot } from "./slots";
 import { promoWindowOpen, type QuoteStore } from "./store";
 import { createSupabaseQuoteStore } from "./supabaseQuoteStore";
+import { getSlotsFromStore, type CoreSlotsResult } from "./slotsService";
 
 export const SUPPORTED_SETTING_KEYS = [
   "pickup_minimum_cents",
@@ -73,10 +72,7 @@ export type QuoteEngineResult =
       lines: QuoteLineTotal[];
     };
 
-export type SlotsResult =
-  | { status: "error"; reason: "service-unavailable" }
-  | { status: "slots"; slots: OrderSlot[] }
-  | { status: "rejected"; reason: "zone-not-eligible" | "date-in-past" | "horizon-exceeded" };
+export type SlotsResult = CoreSlotsResult;
 
 interface QuoteServiceDeps {
   now?: Date;
@@ -209,54 +205,10 @@ export async function getOrderSlots(
   if (!storeAvailable()) {
     return { status: "error", reason: "service-unavailable" };
   }
-  const current = now ?? new Date();
   const store: QuoteStore = createSupabaseQuoteStore(getSupabaseServerClient());
-
-  const settings = await store.getCommerceSettings();
-  if (!settings) return { status: "error", reason: "service-unavailable" };
-
-  const plz =
-    input.fulfilment === "delivery" ? normalizeGermanPlz(input.plz ?? "") : null;
-  if (input.fulfilment === "delivery" && !plz) {
-    return { status: "rejected", reason: "zone-not-eligible" };
-  }
-  const zone = plz ? await store.getDeliveryZoneByPlz(plz) : null;
-  if (input.fulfilment === "delivery" && !zone) {
-    return { status: "rejected", reason: "zone-not-eligible" };
-  }
-
-  const [year, month, day] = input.date.split("-").map(Number);
-  const requestedUtc = Date.UTC(year, month - 1, day);
-  const todayKey = berlinDateKey(current.getTime());
-  const [todayYear, todayMonth, todayDay] = todayKey.split("-").map(Number);
-  const todayUtc = Date.UTC(todayYear, todayMonth - 1, todayDay);
-  if (requestedUtc < todayUtc) return { status: "rejected", reason: "date-in-past" };
-  if (requestedUtc >= todayUtc + settings.schedulingHorizonDays * 24 * 60 * 60 * 1000) {
-    return { status: "rejected", reason: "horizon-exceeded" };
-  }
-
-  const windows = await store.listServiceWindows();
-  const closures = await store.listClosures();
-  const slots = buildOrderSlots({
-    now: current,
-    fulfilment: input.fulfilment,
-    date: input.date,
-    settings,
-    windows: windows.map((window) => ({
-      id: window.id,
-      weekday: window.weekday,
-      dateOverride: window.dateOverride,
-      opensAt: window.opensAt,
-      closesAt: window.closesAt,
-      capacityPerSlot: window.capacityPerSlot,
-      active: window.active,
-    })),
-    closures: closures.map((closure) => ({
-      startsAt: closure.startsAt,
-      endsAt: closure.endsAt,
-      affectedServices: closure.affectedServices,
-    })),
-  });
-
-  return { status: "slots", slots };
+  return getSlotsFromStore(
+    { fulfilment: input.fulfilment, plz: input.plz, date: input.date },
+    now ?? new Date(),
+    { store },
+  );
 }
