@@ -27,6 +27,7 @@ Written: 2026-09-19 (workflow-system overhaul)
 
 ## Branch / env
 
-- Branch: `feature/kln-008-contact-legal-seo` (off `main` @ `32a0e95`).
+- Branch: `main` @ `4cfccae` (PR #13 merged). Next branch: `feature/kln-009-cart`.
 - Env: no `.env.local` → runtime fail-closed; admin redirects locally
   (expected). `.env.test.local` exists for tests.
+- `gh` v2.101.0 installed at `~/.local/bin/gh`; agent opens and merges PRs.
