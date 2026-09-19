@@ -109,5 +109,36 @@
     "imprint": "Legal notice",
     "privacy": "Privacy",
     "terms": "Terms"
+  },
+  "orderForm": {
+    "addToCart": "Add to cart",
+    "added": "Added to your cart.",
+    "quantityLabel": "Quantity: {quantity}",
+    "increaseQuantity": "Increase quantity",
+    "decreaseQuantity": "Decrease quantity"
+  },
+  "cart": {
+    "title": "Your cart",
+    "description": "Your selection is ready. Prices are an estimate – the final amount is calculated when you order.",
+    "openCart": "Open cart ({count})",
+    "emptyTitle": "Your cart is empty.",
+    "emptyHint": "Browse the menu and add dishes.",
+    "menuCta": "Go to the menu",
+    "itemCount": "{count, plural, =0 {no dishes} one {1 dish} other {# dishes}}",
+    "estimateNote": "Preliminary estimate based on the current menu. The final price is calculated in the restaurant when you order.",
+    "checkout": "Checkout",
+    "checkoutSoon": "Checkout will follow in a later step (demo).",
+    "blockedTitle": "Your selection changed",
+    "blockedHint": "One or more dishes, options or quantities no longer match the current menu. Please adjust the affected lines before continuing.",
+    "notOnMenu": "This dish is no longer on the menu.",
+    "unavailableOption": "A selected option is no longer available.",
+    "tooFew": "Please choose {min} to {max} options.",
+    "tooMany": "A maximum of {max} options is possible.",
+    "repairOptions": "Keep only available options",
+    "quantityLabel": "Quantity: {quantity}",
+    "increaseQuantity": "Increase quantity",
+    "decreaseQuantity": "Decrease quantity",
+    "removeLine": "Remove item",
+    "removeTitle": "Remove"
   }
 }

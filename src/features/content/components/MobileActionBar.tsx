@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import CartBadge from "@/features/cart/components/CartBadge";
 
 export default async function MobileActionBar(): Promise<React.ReactElement> {
   const translations = await getTranslations("nav");
@@ -7,7 +8,6 @@ export default async function MobileActionBar(): Promise<React.ReactElement> {
   const actions = [
     { label: translations("menu"), href: "/speisekarte" },
     { label: translations("order"), href: "/bestellen" },
-    { label: translations("cart"), href: "/warenkorb" },
     { label: translations("reserve"), href: "/reservierung" },
   ];
 
@@ -27,6 +27,9 @@ export default async function MobileActionBar(): Promise<React.ReactElement> {
             </Link>
           </li>
         ))}
+        <li>
+          <CartBadge />
+        </li>
         <li>
           <a
             href="tel:+495610000000"

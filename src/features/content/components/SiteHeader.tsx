@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import MobileActionBar from "./MobileActionBar";
 import LocaleSwitcher from "./LocaleSwitcher";
+import CartBadge from "@/features/cart/components/CartBadge";
 
 export default async function SiteHeader(): Promise<React.ReactElement> {
   const navigationTranslations = await getTranslations("nav");
@@ -23,6 +24,7 @@ export default async function SiteHeader(): Promise<React.ReactElement> {
           <Link href="/reservierung" className="font-medium text-ink/80 hover:text-kalyna">
             {navigationTranslations("reserve")}
           </Link>
+          <CartBadge />
           <a
             href="tel:+495610000000"
             className="rounded-lg bg-kalyna px-4 py-2 font-medium text-white"
