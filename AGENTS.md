@@ -11,14 +11,16 @@ deploy: Vercel + Supabase EU
 
 Before changing code, read:
 
-1. `docs/sdd/README.md`
-2. `docs/sdd/spec.md`
-3. the ticket being implemented
-4. the domain document referenced by that ticket
+1. `docs/sdd/tier.md` (the locked ceremony tier)
+2. the ticket being implemented
+3. the domain document referenced by that ticket
+4. `docs/sdd/state.md` (latest session handover)
 5. workspace `AGENTS.md`
 
-The SDD is authoritative. `beschreibung 1.md` is source material only.
-When they conflict, stop and follow the SDD.
+`spec.md` is authoritative but read once per project, not per ticket; re-read
+only the relevant section when a ticket's acceptance criteria are ambiguous.
+`beschreibung 1.md` is source material only. When they conflict, stop and
+follow the SDD.
 
 ## Product Boundary
 
@@ -30,15 +32,18 @@ When they conflict, stop and follow the SDD.
 
 ## Delivery Workflow
 
+- Tier: **Standard** (see `docs/sdd/tier.md`). Ceremony stays at this tier.
 - Work ticket by ticket in numeric order unless its `Blocked By` permits otherwise.
-- One feature branch per ticket: `feature/kln-<number>-<slug>`.
-- Write the ticket's failing test first when behaviour computes.
-- Do not change the test and implementation in the same pass.
+- One ticket = one branch = one PR: `feature/kln-<number>-<slug>`.
+- Write the ticket's failing test first when behaviour computes; structural-only
+  tickets need no test. Test and implementation may land in the same commit.
 - Run `npm run check` before committing and show its output.
 - Run the ticket's browser scenario where one is specified.
 - Commit each completed ticket using Conventional Commits and push the branch.
-- The human opens and merges pull requests; the agent must not merge.
-- Never commit directly to `main`.
+- Open a PR with a description (`03_TEMPLATES/pr-template.md`) and merge it
+  yourself once `npm run check` is green. Never commit directly to `main`
+  and never merge red.
+- Update `docs/sdd/state.md` at the end of every session.
 
 ## Quality Rules
 
