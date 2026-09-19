@@ -9,6 +9,7 @@ const serverEnvSchema = z.object({
   STRIPE_SECRET_KEY: z.string().min(1).optional(),
   STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
   BREVO_API_KEY: z.string().min(1).optional(),
+  QUOTE_SIGNING_SECRET: z.string().min(32).optional(),
   AI_PROVIDER_KEY: z.string().min(1).optional(),
   CRON_SECRET: z.string().min(1).optional(),
 });
@@ -31,6 +32,7 @@ export function parseServerEnv(source: EnvSource): z.infer<typeof serverEnvSchem
     STRIPE_SECRET_KEY: source.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: source.STRIPE_WEBHOOK_SECRET,
     BREVO_API_KEY: source.BREVO_API_KEY,
+    QUOTE_SIGNING_SECRET: source.QUOTE_SIGNING_SECRET,
     AI_PROVIDER_KEY: source.AI_PROVIDER_KEY,
     CRON_SECRET: source.CRON_SECRET,
   });
