@@ -8,26 +8,29 @@ Written: 2026-09-19 (workflow-system overhaul)
 - Workflow system updated (2026-09-19): tier gate (`tier.md`), session
   handover (`state.md`), per-ticket PR merged by the agent,
   `code-standards.md` extracted, ticket cap hardened.
-- KLN-008 (contact + directions + legal + SEO) committed, pushed, PR merged.
-  Checks: 92 unit + 34 integration, lint + tsc green; `npm run build` ok.
+- KLN-008 (contact + directions + legal + SEO): 92 unit + 34 integration,
+  lint + tsc green, build ok; PR #13 merged.
+- KLN-009 (persistent PII-free cart) PR #14 merged: `npm run check` green
+  (113 unit incl. 21 `kln009-*` + 34 integration), lint + tsc + build ok.
+  Cart: strict versioned localStorage (ids/quantity only), quantity 1-100,
+  modifier rules + stale revalidation with repair actions, mobile sticky
+  summary + `/warenkorb` route, `DishOrderForm` on cards, header/mobile badge.
 
 ## Current
 
-- KLN-008 fully implemented (from the previous session's working tree),
-  VERIFIED: `npm run check` green (92 unit incl. 6 `kln008-*` + 34
-  integration), `npm run build` ok. All routes present: `/kontakt`,
-  `/anfahrt`, `/impressum`, `/datenschutz`, `/agb`, `robots.txt`,
-  `sitemap.xml`, `opengraph-image`.
-- Committed, pushed, PR opened and merged (see "Branch / env" below).
+- Branch `main` @ `98ef17f` (PR #14 merged), clean, in sync with origin.
+- Browser scenario of KLN-009 not runnable locally (no `.env.local` →
+  runtime fail-closed; same as KLN-008). Deferred to a future e2e/non-prod env.
 
 ## Next
 
-- KLN-009..012 (cart, quote engine, pickup/cash checkout, admin order queue)
-  per `implementation-plan.md` Stage 2.
+- KLN-010 (quote engine — server-authoritative totals), then KLN-011
+  (pickup/cash checkout), KLN-012 (admin order queue) per
+  `implementation-plan.md` Stage 2. Branch: `feature/kln-010-quote`.
 
 ## Branch / env
 
-- Branch: `main` @ `4cfccae` (PR #13 merged). Next branch: `feature/kln-009-cart`.
+- Branch: `main` @ `98ef17f` (PR #14 merged). Next branch: `feature/kln-010-quote`.
 - Env: no `.env.local` → runtime fail-closed; admin redirects locally
   (expected). `.env.test.local` exists for tests.
 - `gh` v2.101.0 installed at `~/.local/bin/gh`; agent opens and merges PRs.
