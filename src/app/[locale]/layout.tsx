@@ -4,6 +4,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { Inter, Playfair_Display } from "next/font/google";
 import { routing } from "@/i18n/routing";
+import { SITE_URL } from "@/features/seo/site";
 import "../globals.css";
 
 export function generateStaticParams() {
@@ -21,6 +22,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Kalyna — Ukrainische Küche in Kassel",
   description: "Portfolio-Demo — kein realer Restaurantbetrieb.",
 };

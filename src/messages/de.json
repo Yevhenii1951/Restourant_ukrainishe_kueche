@@ -10,7 +10,7 @@
     "intro": "Borschtsch, Wareniki, Pampuschky und mehr — unsere ukrainische Küche in Kassel."
   },
   "menu": {
-    "title": "Speisekarte",
+    "title": "Speisekarte – Ukrainische Küche in Kassel",
     "subtitle": "Unsere ukrainische Küche in Kassel. Alle Preise inklusive Mehrwertsteuer.",
     "search": "Suchen",
     "searchPlaceholder": "Gericht oder Zutat suchen",
@@ -48,13 +48,15 @@
     "order": "Bestellen",
     "cart": "Warenkorb",
     "reserve": "Tisch reservieren",
-    "call": "Anrufen",
+    "call": "Demo-Telefon",
     "ueberUns": "Über uns",
     "faq": "FAQ",
     "catering": "Catering",
     "lunch": "Mittagstisch",
     "events": "Veranstaltungen",
-    "gallery": "Galerie"
+    "gallery": "Galerie",
+    "contact": "Kontakt",
+    "directions": "Anfahrt"
   },
   "content": {
     "aboutTitle": "Über uns",
@@ -71,7 +73,41 @@
     "galleryLead": "Ein Blick in unsere Küche und unser Haus.",
     "empty": "Noch keine Inhalte hinterlegt."
   },
+  "contactLegal": {
+    "contactTitle": "Kontakt — Ukrainisches Restaurant in Kassel",
+    "contactLead": "Alle Angaben gehören zu einem fiktiven Demo-Restaurant.",
+    "address": "Musterstraße 1, 34117 Kassel (nicht realer Standort)",
+    "phone": "+49 561 0000000 (Demo — nicht anrufen)",
+    "email": "hallo@kalyna-demo.example",
+    "hoursTitle": "Öffnungszeiten (Demo)",
+    "monday": "Montag",
+    "tueThu": "Dienstag–Donnerstag",
+    "friSat": "Freitag–Samstag",
+    "sunday": "Sonntag",
+    "closed": "geschlossen",
+    "mapConsent": "Die interaktive Karte lädt erst nach Ihrer Zustimmung Kacheln von OpenStreetMap.",
+    "loadMap": "Karte laden",
+    "declineMap": "Ablehnen",
+    "revokeMap": "Kartenzustimmung widerrufen",
+    "mapError": "Die Karte konnte nicht geladen werden.",
+    "mapPreferenceError": "Die Auswahl gilt nur für diesen Besuch.",
+    "mapLabel": "Ungefährer Demo-Standort im Zentrum von Kassel",
+    "directionsTitle": "Anfahrt zum Demo-Standort",
+    "directionsLead": "Der Standort ist fiktiv. Nutzen Sie die Angaben nur zur Demonstration der Navigation.",
+    "openDirections": "Externe Routenplanung öffnen",
+    "imprintTitle": "Impressum — Portfolio-Demo",
+    "privacyTitle": "Datenschutz — Demo-Entwurf",
+    "termsTitle": "AGB — ungeprüfter Demo-Entwurf",
+    "legalWarning": "Portfolio-Demo — kein realer Restaurantbetrieb. Vor einem echten Betrieb müssen diese Platzhalter durch geprüfte Angaben ersetzt werden."
+  },
   "footer": {
-    "demoDisclosure": "Portfolio-Demo — kein realer Restaurantbetrieb."
+    "demoDisclosure": "Portfolio-Demo — kein realer Restaurantbetrieb.",
+    "address": "Musterstraße 1, 34117 Kassel (nicht realer Standort)",
+    "phone": "+49 561 0000000 (Demo — nicht anrufen)",
+    "openNow": "Jetzt geöffnet (Demo-Zeiten)",
+    "closedNow": "Jetzt geschlossen (Demo-Zeiten)",
+    "imprint": "Impressum",
+    "privacy": "Datenschutz",
+    "terms": "AGB"
   }
 }

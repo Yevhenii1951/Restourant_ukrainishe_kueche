@@ -2,7 +2,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 import { getPublicContentEntries } from "@/features/content/service";
 import { resolveCatering } from "@/features/content/public";
-import type { SupportedLocale } from "@/features/menu/domain";
+import { parseSupportedLocale } from "@/features/seo/site";
+import { buildPublicMetadata } from "@/features/seo/publicMetadata";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,12 @@ export async function generateMetadata({
 }: Readonly<{ params: Promise<{ locale: string }> }>): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "content" });
-  return { title: t("cateringTitle"), description: t("cateringLead") };
+  return buildPublicMetadata({
+    locale: parseSupportedLocale(locale),
+    path: "/catering",
+    title: t("cateringTitle"),
+    description: t("cateringLead"),
+  });
 }
 
 export default async function CateringPage({
@@ -22,7 +28,7 @@ export default async function CateringPage({
   const t = await getTranslations("content");
   const catering = resolveCatering(
     await getPublicContentEntries(),
-    locale as SupportedLocale,
+    parseSupportedLocale(locale),
   );
 
   return (

@@ -2,6 +2,12 @@
 
 All current assets originated in the previous `Ukrainian_Kitchen/public` exercise.
 Their presence does not prove a commercial-use license. Production status stays blocked
+## Generated Assets
+
+| Asset | Intended use | Status |
+| --- | --- | --- |
+| `src/app/opengraph-image.tsx` | 1200 × 630 social preview | Original code-generated typography; no third-party media or license dependency |
+
 until source URL, author/license and identifiable-person consent are recorded.
 
 ## Brand and Hero Candidates
