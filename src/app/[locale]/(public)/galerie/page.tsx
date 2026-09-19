@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { getPublicContentEntries } from "@/features/content/service";
 import { resolveGallery } from "@/features/content/public";
-import type { SupportedLocale } from "@/features/menu/domain";
+import { parseSupportedLocale } from "@/features/seo/site";
+import { buildPublicMetadata } from "@/features/seo/publicMetadata";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,12 @@ export async function generateMetadata({
 }: Readonly<{ params: Promise<{ locale: string }> }>): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "content" });
-  return { title: t("galleryTitle"), description: t("galleryLead") };
+  return buildPublicMetadata({
+    locale: parseSupportedLocale(locale),
+    path: "/galerie",
+    title: t("galleryTitle"),
+    description: t("galleryLead"),
+  });
 }
 
 export default async function GalleryPage({
@@ -23,7 +29,7 @@ export default async function GalleryPage({
   const t = await getTranslations("content");
   const gallery = resolveGallery(
     await getPublicContentEntries(),
-    locale as SupportedLocale,
+    parseSupportedLocale(locale),
   );
 
   return (

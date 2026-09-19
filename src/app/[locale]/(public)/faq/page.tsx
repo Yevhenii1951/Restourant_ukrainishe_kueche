@@ -2,7 +2,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 import { getPublicContentEntries } from "@/features/content/service";
 import { resolveFaq } from "@/features/content/public";
-import type { SupportedLocale } from "@/features/menu/domain";
+import { parseSupportedLocale } from "@/features/seo/site";
+import { buildPublicMetadata } from "@/features/seo/publicMetadata";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,12 @@ export async function generateMetadata({
 }: Readonly<{ params: Promise<{ locale: string }> }>): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "content" });
-  return { title: t("faqTitle"), description: t("faqLead") };
+  return buildPublicMetadata({
+    locale: parseSupportedLocale(locale),
+    path: "/faq",
+    title: t("faqTitle"),
+    description: t("faqLead"),
+  });
 }
 
 export default async function FaqPage({
@@ -20,7 +26,7 @@ export default async function FaqPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("content");
-  const faq = resolveFaq(await getPublicContentEntries(), locale as SupportedLocale);
+  const faq = resolveFaq(await getPublicContentEntries(), parseSupportedLocale(locale));
 
   return (
     <section className="space-y-6">

@@ -1,10 +1,12 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 import { getPublicMenu } from "@/features/menu/service";
-import { filterMenuItems, type SupportedLocale } from "@/features/menu/domain";
+import { filterMenuItems } from "@/features/menu/domain";
 import DishCard from "@/features/menu/components/DishCard";
 import AllergenLegend from "@/features/menu/components/AllergenLegend";
 import MenuControls from "@/features/menu/components/MenuControls";
+import { buildPublicMetadata } from "@/features/seo/publicMetadata";
+import { parseSupportedLocale } from "@/features/seo/site";
 
 export const dynamic = "force-dynamic";
 
@@ -26,12 +28,24 @@ function hasActiveFilters(searchParams: NormalizedSearchParams): boolean {
 }
 
 export async function generateMetadata({
+  params,
   searchParams,
 }: Readonly<{
+  params: Promise<{ locale: string }>;
   searchParams: Promise<RawSearchParams>;
 }>): Promise<Metadata> {
-  const params = normalizeSearchParams(await searchParams);
-  return { robots: { index: !hasActiveFilters(params), follow: true } };
+  const { locale } = await params;
+  const queryParams = normalizeSearchParams(await searchParams);
+  const translations = await getTranslations({ locale, namespace: "menu" });
+  return {
+    ...buildPublicMetadata({
+      locale: parseSupportedLocale(locale),
+      path: "/speisekarte",
+      title: translations("title"),
+      description: translations("subtitle"),
+    }),
+    robots: { index: !hasActiveFilters(queryParams), follow: true },
+  };
 }
 
 export default async function SpeisekartePage({
@@ -44,8 +58,8 @@ export default async function SpeisekartePage({
   const { locale } = await params;
   const queryParams = normalizeSearchParams(await searchParams);
   setRequestLocale(locale);
-  const t = await getTranslations("menu");
-  const menu = await getPublicMenu(locale as SupportedLocale);
+  const translations = await getTranslations("menu");
+  const menu = await getPublicMenu(parseSupportedLocale(locale));
 
   const filter = {
     query: queryParams.q ?? "",
@@ -76,20 +90,20 @@ export default async function SpeisekartePage({
     <section className="space-y-10">
       <header className="max-w-2xl space-y-3">
         <h1 className="font-display text-4xl font-semibold text-ink sm:text-5xl">
-          {t("title")}
+          {translations("title")}
         </h1>
-        <p className="text-lg text-ink/75">{t("subtitle")}</p>
+        <p className="text-lg text-ink/75">{translations("subtitle")}</p>
       </header>
 
       <MenuControls locale={locale} searchParams={queryParams} categories={categories} />
 
       <p className="text-sm text-ink/60" role="status">
-        {t("resultCount", { count: visibleItems.length })}
+        {translations("resultCount", { count: visibleItems.length })}
       </p>
 
       {visibleItems.length === 0 ? (
         <p className="rounded-2xl border border-ink/10 bg-paper p-6 text-ink/70">
-          {t("noResults")}
+          {translations("noResults")}
         </p>
       ) : (
         [...groups.entries()].map(([categoryId, category]) => (
