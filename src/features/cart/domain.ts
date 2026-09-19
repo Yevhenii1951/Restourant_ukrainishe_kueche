@@ -4,7 +4,7 @@ import { computeModifierPriceDelta, type PublicMenuItem } from "@/features/menu/
 export const CART_STORAGE_KEY = "kalyna:cart:v1";
 export const CART_VERSION = 1;
 export const MIN_LINE_QUANTITY = 1;
-export const MAX_LINE_QUANTITY = 100;
+export const MAX_LINE_QUANTITY = 20;
 export const MAX_LINES = 100;
 export const MAX_SELECTIONS_PER_GROUP = 50;
 

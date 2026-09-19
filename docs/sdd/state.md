@@ -1,33 +1,37 @@
 # State — session handover
 
-Written: 2026-09-19 (workflow-system overhaul)
+Written: 2026-09-19 (KLN-010 quote engine)
 
 ## Done
 
-- KLN-001..007 shipped and merged (PR #1, #10, #11, #12).
-- Workflow system updated (2026-09-19): tier gate (`tier.md`), session
-  handover (`state.md`), per-ticket PR merged by the agent,
-  `code-standards.md` extracted, ticket cap hardened.
-- KLN-008 (contact + directions + legal + SEO) committed, pushed, PR merged.
-  Checks: 92 unit + 34 integration, lint + tsc green; `npm run build` ok.
+- KLN-001..009 shipped and merged (PR #1, #10, #11, #12, #13, #14).
+- KLN-010 (server quote engine) PR #15 merged: `npm run check` green
+  (141 unit incl. 28 `kln010-*` + 44 integration), lint + tsc + build ok.
+  Delivers: migration `0007_commerce_quote.sql` (delivery_zones w/ no-overlap
+  guard, promo_codes hashed, service_windows, closures, settings) + seed
+  `0005_commerce_quote_demo.sql`; pure pricing domain + HMAC-signed opaque
+  10-minute quote token; Europe/Berlin DST-safe slot generator; server action
+  `quoteCart`/`getOrderSlots` (client prices ignored, min/free per zone); itemized
+  UI at `/bestellen` (fulfilment, PLZ+slots, promo, tip, breakdown). Cart
+  `MAX_LINE_QUANTITY` aligned 100→20 (business-rules default).
 
 ## Current
 
-- KLN-008 fully implemented (from the previous session's working tree),
-  VERIFIED: `npm run check` green (92 unit incl. 6 `kln008-*` + 34
-  integration), `npm run build` ok. All routes present: `/kontakt`,
-  `/anfahrt`, `/impressum`, `/datenschutz`, `/agb`, `robots.txt`,
-  `sitemap.xml`, `opengraph-image`.
-- Committed, pushed, PR opened and merged (see "Branch / env" below).
+- Branch `main` @ `…` (PR #15 merged), clean, in sync with origin.
+- Quote token verification is exercised by unit tests; a full forged-price
+  browser scenario is not runnable locally (no `.env.local` → runtime
+  fail-closed, same as KLN-008/009).
 
 ## Next
 
-- KLN-009..012 (cart, quote engine, pickup/cash checkout, admin order queue)
-  per `implementation-plan.md` Stage 2.
+- KLN-011 (pickup/cash checkout — consume verified quote token), then KLN-012
+  (admin order queue) per `implementation-plan.md` Stage 2.
+  Branch: `feature/kln-011-…`.
 
 ## Branch / env
 
-- Branch: `main` @ `4cfccae` (PR #13 merged). Next branch: `feature/kln-009-cart`.
+- Branch: `main` (PR #15 merged). Next branch: `feature/kln-011-…`.
 - Env: no `.env.local` → runtime fail-closed; admin redirects locally
-  (expected). `.env.test.local` exists for tests.
+  (expected). `.env.test.local` exists for tests. New server env key:
+  `QUOTE_SIGNING_SECRET` (≥32 chars, required for quote actions).
 - `gh` v2.101.0 installed at `~/.local/bin/gh`; agent opens and merges PRs.
