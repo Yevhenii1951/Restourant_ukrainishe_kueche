@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { staffGetOrderDetail } from "@/features/order/staffRuntime";
 import { OrderTransitionControls } from "@/features/order/components/OrderTransitionControls";
+import { RefundControls } from "@/features/payments/components/RefundControls";
+import { getCurrentStaff } from "@/features/identity/session";
 import {
   formatEuros,
   formatSchedule,
@@ -27,6 +29,7 @@ export default async function BestellungDetailPage({
     );
   }
   const order = result.order;
+  const staff = await getCurrentStaff();
 
   return (
     <section className="space-y-6">
@@ -51,6 +54,7 @@ export default async function BestellungDetailPage({
         expectedVersion={order.version}
         state={order.state}
       />
+      {staff?.role === "ADMIN" ? <RefundControls orderId={order.orderId} /> : null}
 
       <dl className="grid grid-cols-2 gap-3 rounded-md border border-ink/10 bg-linen p-4 text-sm">
         <Row label="Abholtermin">{formatSchedule(order.scheduledFor)}</Row>

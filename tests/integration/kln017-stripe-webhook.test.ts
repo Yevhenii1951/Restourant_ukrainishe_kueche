@@ -35,6 +35,16 @@ function signedCheckoutEvent(sessionId: string, amountCents: number, eventId = `
   };
 }
 
+function signedRefundEvent(refundId: string, amountCents: number, eventId = "evt_" + randomUUID()) {
+  const payload = JSON.stringify({
+    id: eventId,
+    object: "event",
+    type: "refund.updated",
+    data: { object: { id: refundId, object: "refund", amount: amountCents, currency: "eur", status: "succeeded" } },
+  });
+  return { payload, signature: Stripe.webhooks.generateTestHeaderString({ payload, secret: SECRET }) };
+}
+
 describe("KLN-017 Stripe webhook payment truth", () => {
   let pool: Pool;
 
@@ -110,6 +120,49 @@ describe("KLN-017 Stripe webhook payment truth", () => {
     expect(order.rows[0].state).toBe("pending_confirmation");
     expect(statusEvents.rows[0].n).toBe(1);
     expect(providerEvents.rows[0].n).toBe(1);
+  });
+
+  it("starts one full refund and finalizes one replayed provider webhook", async () => {
+    const { orderId, sessionId } = await insertBoundOrder();
+    const paid = signedCheckoutEvent(sessionId, 1990, "evt_kln018_paid");
+    await processStripeWebhookEvent(constructStripeWebhookEvent(paid.payload, paid.signature, SECRET), pool);
+    const createdStaff = await pool.query<{ id: string }>(
+      "SELECT id FROM bootstrap_staff_admin($1::uuid,$2,$3)",
+      [randomUUID(), "Refund Admin", "corr-kln018-admin"],
+    );
+    const actorId = createdStaff.rows[0].id;
+
+    const first = await pool.query<{ prepare_stripe_full_refund: { refundId: string; amountCents: number } }>(
+      "SELECT prepare_stripe_full_refund($1,$2,$3,$4)", [orderId, "Gast hat storniert", actorId, "corr-kln018-1"],
+    );
+    const second = await pool.query<{ prepare_stripe_full_refund: { refundId: string; amountCents: number } }>(
+      "SELECT prepare_stripe_full_refund($1,$2,$3,$4)", [orderId, "Gast hat storniert", actorId, "corr-kln018-2"],
+    );
+    expect(second.rows[0].prepare_stripe_full_refund.refundId).toBe(first.rows[0].prepare_stripe_full_refund.refundId);
+    expect(first.rows[0].prepare_stripe_full_refund.amountCents).toBe(1990);
+
+    const refundId = first.rows[0].prepare_stripe_full_refund.refundId;
+    await pool.query("SELECT record_stripe_refund_provider_result($1,$2,$3,$4)", [refundId, "re_kln018_failed", false, "provider_error"]);
+    const retry = await pool.query<{ prepare_stripe_full_refund: { refundId: string } }>(
+      "SELECT prepare_stripe_full_refund($1,$2,$3,$4)", [orderId, "Gast hat storniert", actorId, "corr-kln018-retry"],
+    );
+    expect(retry.rows[0].prepare_stripe_full_refund.refundId).toBe(refundId);
+    const failedAudit = await pool.query<{ n: number }>(
+      "SELECT count(*)::int AS n FROM audit_events WHERE action = 'payment.refund.failed' AND entity_id = $1", [refundId],
+    );
+    expect(failedAudit.rows[0].n).toBe(1);
+
+    await pool.query("SELECT record_stripe_refund_provider_result($1,$2,$3)", [refundId, "re_kln018_once", true]);
+    const signed = signedRefundEvent("re_kln018_once", 1990, "evt_kln018_refunded");
+    const event = constructStripeWebhookEvent(signed.payload, signed.signature, SECRET);
+    await expect(processStripeWebhookEvent(event, pool)).resolves.toBe("refunded");
+    await expect(processStripeWebhookEvent(event, pool)).resolves.toBe("duplicate");
+
+    const states = await pool.query<{ payment_state: string; refund_state: string; amount_cents: number }>(
+      "SELECT p.state AS payment_state, r.state AS refund_state, r.amount_cents FROM refunds r JOIN payments p ON p.id = r.payment_id WHERE r.id = $1",
+      [refundId],
+    );
+    expect(states.rows[0]).toEqual({ payment_state: "refunded", refund_state: "succeeded", amount_cents: 1990 });
   });
 
   it("fails safely for amount mismatch and invalid signatures", async () => {
