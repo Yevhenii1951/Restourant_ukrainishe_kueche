@@ -1,38 +1,39 @@
-# SDD Session State (KLN-015)
+# SDD Session State (KLN-016)
 
 ## Done
-- **KLN-015 — Admin reservation operations** implemented on
-  `feature/kln-015-reservation-operations`, merged via PR #20
-  (`main` @ fd69723).
+- **KLN-016 — PLZ delivery and scheduled orders** implemented on
+  `feature/kln-016-delivery-checkout`, merged via PR #21
+  (`main` @ 1ae61b1).
 
 ## Finished this session
-- Migration `0012_reservation_operations.sql`: `apply_reservation_transition(...)`
-  for staff operations with optimistic `version` check, invalid-transition return,
-  status event + audit event writes, contact masking on declined/cancelled/expired,
-  and expired-hold confirmation reallocation in one transaction. If an expired
-  hold's former plan is taken, confirmation returns `no-table-available` and no
-  overlapping allocation is created.
-- Allocation semantics tightened: `blocked = true` now participates in
-  `create_reservation_request` overlap checks and `listReservationBlocks()`, so
-  released/expired allocation rows no longer block availability.
-- Added `canOperateReservations` (STAFF+) for reservation queue operations while
-  keeping table inventory management on `canManageReservations` (MANAGER+).
-- Added reservation staff service/runtime/actions, state constants, German
-  status labels, admin `/admin/reservierungen` list and
-  `/admin/reservierungen/[reservationId]` detail page with transition controls
-  and event history.
+- Migration `0013_delivery_orders.sql`: enables `cash_delivery`, creates
+  RLS-protected `order_delivery_addresses`, and adds transactional
+  `insert_delivery_order(...)` with delivery capacity recheck and immutable
+  address/item snapshots. Public token projections never select the address.
+- `createDeliveryOrder`: strict delivery input/address schema, normalized exact
+  PLZ matching between quote and address, quote-token payload verification,
+  server price/zone/minimum/free-threshold recomputation, delivery slot recheck,
+  idempotency replay/conflict and cash-delivery-only method.
+- Public checkout: selected slots for both fulfilments; delivery adds street,
+  house number, read-only normalized PLZ, city and optional note.
+- `service_windows` retain `fulfilment` through the quote store; slots now filter
+  delivery/pickup windows correctly. This fixed delivery incorrectly seeing
+  pickup hours.
+- Manager admin: `/admin/lieferzonen` exact-PLZ/fee/min/free forms and
+  `/admin/lieferzeiten` delivery window/capacity form. Existing DB trigger
+  prevents active PLZ overlap. Delivery address appears only in staff order
+  detail, never list/public status.
 
 ## Test results
-- `npm run check` green: lint + typecheck + 178 unit + 79 integration.
-- New KLN-015 integration (2): valid pending→confirmed transition with status
-  event + audit; stale version conflict; invalid transition; expired hold with
-  former table plan taken returns `no-table-available`, keeps the original
-  reservation unchanged and leaves only the competing reservation blocking the
-  tables.
+- `npm run check` green: lint + typecheck + 178 unit + 82 integration.
+- New KLN-016 integration (3): server fee + address snapshot, an unlisted
+  five-digit PLZ persists no order, delivery rejects `cash_pickup`, and DB
+  rejects active PLZ overlap.
 
 ## Next steps
-- KLN-016 delivery checkout is next if continuing numeric ticket order.
-- KLN-017..028 out of scope.
+- KLN-017 Stripe checkout/webhook. This is payment/signature/idempotency work;
+  switch to `5.5 medium` if the current model starts struggling with it.
+- KLN-018..028 out of scope.
 
 ## Env
-- `npm run check` local green on `kalyna_test`; main @ fd69723.
+- `npm run check` local green on `kalyna_test`; main @ 1ae61b1.
