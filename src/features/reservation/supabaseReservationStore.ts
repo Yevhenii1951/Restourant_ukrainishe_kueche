@@ -115,6 +115,7 @@ export function createSupabaseReservationStore(db: SupabaseClient): ReservationS
       const result = await db
         .from("reservation_allocations")
         .select("table_id, starts_at, ends_at")
+        .eq("blocked", true)
         .in("reservations.status", ["pending", "confirmed"]);
       if (result.error) throw result.error;
       return ((result.data ?? []) as Array<{

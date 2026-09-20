@@ -58,6 +58,10 @@ export function canManageReservations(staff: StaffContext): boolean {
   return staff.active && ROLE_RANK[staff.role] >= ROLE_RANK.MANAGER;
 }
 
+export function canOperateReservations(staff: StaffContext): boolean {
+  return staff.active && ROLE_RANK[staff.role] >= ROLE_RANK.STAFF;
+}
+
 function firstActiveAdminId(admins: StaffContext[]): string | undefined {
   return admins.find((admin) => admin.active && admin.role === "ADMIN")?.id;
 }

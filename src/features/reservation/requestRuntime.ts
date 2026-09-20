@@ -7,7 +7,7 @@ import type { ReservationRequestServiceDeps } from "./requestService";
 
 let pool: Pool | null | undefined;
 
-function getPool(): Pool | null {
+export function getReservationPool(): Pool | null {
   if (pool !== undefined) return pool;
   if (!serverEnv.DATABASE_URL) {
     pool = null;
@@ -20,7 +20,7 @@ function getPool(): Pool | null {
 }
 
 export function createReservationRequestRuntime(): ReservationRequestServiceDeps | null {
-  const dbPool = getPool();
+  const dbPool = getReservationPool();
   if (!dbPool || !serverEnv.QUOTE_SIGNING_SECRET) return null;
   return {
     pool: dbPool,

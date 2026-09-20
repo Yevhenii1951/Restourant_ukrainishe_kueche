@@ -255,6 +255,7 @@ BEGIN
         SELECT 1 FROM reservation_allocations a
         JOIN reservations r ON r.id = a.reservation_id
         WHERE r.status IN ('pending', 'confirmed')
+          AND a.blocked
           AND a.table_id = ANY(v_plan.tables)
           AND a.starts_at < p_ends_at AND p_starts_at < a.ends_at
       );
@@ -283,6 +284,7 @@ BEGIN
           SELECT 1 FROM reservation_allocations a
           JOIN reservations r ON r.id = a.reservation_id
           WHERE r.status IN ('pending', 'confirmed')
+            AND a.blocked
             AND a.table_id = ANY(v_plan.tables)
             AND a.starts_at < p_ends_at AND p_starts_at < a.ends_at
         );
