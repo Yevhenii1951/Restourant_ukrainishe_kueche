@@ -1,6 +1,7 @@
 import type { OrderState } from "../transitions";
 
 export const ORDER_STATUS_LABELS: Record<OrderState, string> = {
+  awaiting_payment: "Wartet auf Zahlung",
   pending_confirmation: "Wartet auf Bestätigung",
   accepted: "Bestätigt",
   preparing: "In Zubereitung",
@@ -8,6 +9,7 @@ export const ORDER_STATUS_LABELS: Record<OrderState, string> = {
   completed: "Abgeschlossen",
   cancelled: "Storniert",
   rejected: "Abgelehnt",
+  payment_failed: "Zahlung fehlgeschlagen",
 };
 
 export function formatEuros(cents: number): string {

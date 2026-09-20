@@ -11,6 +11,7 @@ import CancelOrderForm from "@/features/order/components/CancelOrderForm";
 export const dynamic = "force-dynamic";
 
 const STATUS_KEYS: Record<OrderState, string> = {
+  awaiting_payment: "statusAwaitingPayment",
   pending_confirmation: "statusPending",
   accepted: "statusAccepted",
   preparing: "statusPreparing",
@@ -18,6 +19,7 @@ const STATUS_KEYS: Record<OrderState, string> = {
   completed: "statusCompleted",
   cancelled: "statusCancelled",
   rejected: "statusRejected",
+  payment_failed: "statusPaymentFailed",
 };
 
 export async function generateMetadata({
@@ -67,7 +69,7 @@ export default async function OrderStatusPage({
       </header>
 
       <p className="text-ink/80">
-        {order.state === "pending_confirmation" ? t("orderPendingHint") : t("tokenHint")}
+        {order.state === "awaiting_payment" ? t("orderAwaitingPaymentHint") : order.state === "pending_confirmation" ? t("orderPendingHint") : t("tokenHint")}
       </p>
       <p className="text-sm text-ink/70">{t("orderScheduledLabel", { time: scheduled })}</p>
 

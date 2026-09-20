@@ -217,7 +217,20 @@
     "serviceUnavailable": "The quote is not available right now. Please try again later.",
     "needsAttention": "Your selection no longer matches the current menu. Please review your cart.",
     "toCart": "Go to cart",
-    "countedLines": "{count, plural, =0 {no items} one {1 item} other {# items}}"
+    "countedLines": "{count, plural, =0 {no items} one {1 item} other {# items}}",
+    "paymentMethodLabel": "Payment method",
+    "paymentCashDelivery": "Cash on delivery",
+    "paymentCard": "Card with Stripe Checkout",
+    "paymentPaypal": "PayPal with Stripe Checkout",
+    "continueToPayment": "Continue to payment",
+    "paypalUnavailable": "PayPal is not enabled for this Stripe configuration.",
+    "streetLabel": "Street",
+    "houseNumberLabel": "House number",
+    "cityLabel": "City",
+    "deliveryNoteLabel": "Delivery note (optional)",
+    "statusAwaitingPayment": "Awaiting payment",
+    "statusPaymentFailed": "Payment failed",
+    "orderAwaitingPaymentHint": "The order is sent to the restaurant only after Stripe confirms payment."
   },
   "reservierung": {
     "title": "Reserve a table",

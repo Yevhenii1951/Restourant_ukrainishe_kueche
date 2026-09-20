@@ -2,8 +2,11 @@
 
 import { parseSupportedLocale } from "@/features/seo/site";
 import { createOrderRuntime } from "./runtime";
+import { createStripeCheckoutRuntime } from "@/features/payments/runtime";
+import { createStripeCheckoutOrder } from "@/features/payments/checkout";
 import { createPickupOrder, createDeliveryOrder, getPublicOrder, cancelPublicOrder } from "./service";
 import type { OrderResult } from "./service";
+import type { StripeCheckoutResult } from "@/features/payments/checkout";
 import type { CancelProjection, OrderProjection } from "./domain";
 
 type ActionContext = { locale: string };
@@ -47,4 +50,13 @@ export async function cancelPublicOrderAction(
   const runtime = createOrderRuntime();
   if (!runtime) return { status: "neutral" };
   return cancelPublicOrder(token, reason, runtime);
+}
+
+export async function createStripeCheckoutAction(
+  raw: unknown,
+  context: ActionContext,
+): Promise<StripeCheckoutResult> {
+  const runtime = createStripeCheckoutRuntime();
+  if (!runtime) return { status: "error", reason: "service-unavailable" };
+  return createStripeCheckoutOrder(raw, parseSupportedLocale(context.locale), runtime);
 }
