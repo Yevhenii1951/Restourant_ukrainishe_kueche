@@ -46,7 +46,7 @@ function berlinOffsetMs(utcMs: number): number {
   return wall - utcMs;
 }
 
-function berlinLocalToUtcMs(year: number, monthIndex: number, day: number, minutes: number): number {
+export function berlinLocalToUtcMs(year: number, monthIndex: number, day: number, minutes: number): number {
   const guess = Date.UTC(year, monthIndex, day) + minutes * 60_000;
   const offset = berlinOffsetMs(guess);
   const adjusted = guess - offset;
