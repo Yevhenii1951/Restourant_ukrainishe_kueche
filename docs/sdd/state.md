@@ -1,24 +1,24 @@
-# SDD Session State (KLN-017)
+# SDD Session State (KLN-018)
 
 ## Done
-- **KLN-017 — Stripe Checkout and Payment Truth** implemented on
-  `feature/kln-017-stripe-checkout-webhook`; ready for PR merge after green checks.
-- Previous baseline: KLN-016 merged via PR #21 (`main` @ 1ae61b1).
+- **KLN-018 — Full Refund Workflow** implemented on feature/kln-018-full-refunds; ready for PR merge after green checks.
+- KLN-017 merged via PR #22 (main @ 6e53ba0).
 
 ## Finished this session
-- Added Stripe test-mode checkout path for pickup/delivery online payment: card by default, PayPal only behind `STRIPE_PAYPAL_ENABLED=true`.
-- Added `awaiting_payment` and `payment_failed` order states, local `payments` and `payment_events`, Stripe checkout binding, and verified webhook payment truth.
-- Public return/status page only displays/polls stored state; it never marks an order paid.
-- Checkout UI now supports cash, card, and configured PayPal while keeping server-side quote/order recalculation authoritative.
+- Added full Stripe refund records and payment states: refund_pending, refund_failed, and refunded.
+- Only an active ADMIN can start a refund; the reason is mandatory and the amount is read from the captured payment.
+- Stripe requests use a stable per-payment idempotency key. Provider failures remain retryable and receive an append-only audit event.
+- Verified refund.updated webhooks are idempotent and are the only path that marks a payment/refund as refunded/succeeded.
+- Added an ADMIN-only order-detail control for a full refund request.
 
 ## Test results
-- `npm run check` green: lint (1 pre-existing warning in `src/features/delivery/adminActions.ts`), typecheck, 178 unit tests, 84 integration tests.
-- New KLN-017 integration (2): signed successful Stripe event replay is idempotent; amount mismatch and invalid signature fail safely.
+- npm run check green: lint (1 pre-existing warning in src/features/delivery/adminActions.ts), typecheck, 178 unit tests, 87 integration tests.
+- npm run build green. Next.js emits existing metadataBase localhost warnings.
+- KLN-018 integration verifies double refund initiation, provider failure/retry audit, and replayed success webhook.
 
 ## Next steps
-- Merge KLN-017 PR after branch push/PR checks.
-- Continue with KLN-018 full refund workflow.
+- Merge KLN-018 PR after branch push/PR checks.
+- Continue with KLN-019 email outbox.
 
 ## Env
-- Required for real checkout: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `URL`, `QUOTE_SIGNING_SECRET`, database/Supabase service env.
-- Optional: `STRIPE_PAYPAL_ENABLED=true` only when the connected Stripe account supports PayPal.
+- Required for real refunds/webhooks: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, database/Supabase service env.

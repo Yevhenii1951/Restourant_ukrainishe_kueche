@@ -30,3 +30,10 @@ export const createStripeCheckoutSchema = z
 
 export type CreateStripeCheckoutInput = z.infer<typeof createStripeCheckoutSchema>;
 export type StripePaymentMethod = z.infer<typeof stripePaymentMethodSchema>;
+
+export const requestRefundSchema = z.object({
+  orderId: z.string().uuid(),
+  reason: z.string().trim().min(1).max(200),
+}).strict();
+
+export type RequestRefundInput = z.infer<typeof requestRefundSchema>;

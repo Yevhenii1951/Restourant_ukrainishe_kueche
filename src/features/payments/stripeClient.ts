@@ -23,7 +23,22 @@ export interface StripeCheckoutClient {
   createCheckoutSession(input: CheckoutSessionInput): Promise<CheckoutSessionResult>;
 }
 
-export function createStripeCheckoutClient(): StripeCheckoutClient | null {
+export interface StripeRefundInput {
+  amountCents: number;
+  idempotencyKey: string;
+  paymentIntentId: string;
+}
+
+export interface StripeRefundResult {
+  id: string;
+  succeeded: boolean;
+}
+
+export interface StripeRefundClient {
+  createFullRefund(input: StripeRefundInput): Promise<StripeRefundResult>;
+}
+
+export function createStripeCheckoutClient(): (StripeCheckoutClient & StripeRefundClient) | null {
   if (!serverEnv.STRIPE_SECRET_KEY) return null;
   const stripe = new Stripe(serverEnv.STRIPE_SECRET_KEY);
   return {
@@ -57,6 +72,13 @@ export function createStripeCheckoutClient(): StripeCheckoutClient | null {
       });
       if (!session.url) throw new Error("Stripe Checkout returned no URL");
       return { id: session.id, url: session.url };
+    },
+    async createFullRefund(input): Promise<StripeRefundResult> {
+      const refund = await stripe.refunds.create({
+        amount: input.amountCents,
+        payment_intent: input.paymentIntentId,
+      }, { idempotencyKey: input.idempotencyKey });
+      return { id: refund.id, succeeded: refund.status === "succeeded" };
     },
   };
 }
