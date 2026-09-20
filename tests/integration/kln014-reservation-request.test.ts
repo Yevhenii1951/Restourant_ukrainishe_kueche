@@ -127,7 +127,7 @@ function poolStore(pool: Pool): Pick<
         `SELECT a.table_id, a.starts_at, a.ends_at
          FROM reservation_allocations a
          JOIN reservations r ON r.id = a.reservation_id
-         WHERE r.status IN ('pending', 'confirmed')`,
+         WHERE r.status IN ('pending', 'confirmed') AND a.blocked`,
       );
       return rows.map((row) => ({
         startsAtMs: new Date(row.starts_at).getTime(),
