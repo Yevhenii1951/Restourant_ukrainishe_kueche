@@ -1,39 +1,24 @@
-# SDD Session State (KLN-016)
+# SDD Session State (KLN-017)
 
 ## Done
-- **KLN-016 — PLZ delivery and scheduled orders** implemented on
-  `feature/kln-016-delivery-checkout`, merged via PR #21
-  (`main` @ 1ae61b1).
+- **KLN-017 — Stripe Checkout and Payment Truth** implemented on
+  `feature/kln-017-stripe-checkout-webhook`; ready for PR merge after green checks.
+- Previous baseline: KLN-016 merged via PR #21 (`main` @ 1ae61b1).
 
 ## Finished this session
-- Migration `0013_delivery_orders.sql`: enables `cash_delivery`, creates
-  RLS-protected `order_delivery_addresses`, and adds transactional
-  `insert_delivery_order(...)` with delivery capacity recheck and immutable
-  address/item snapshots. Public token projections never select the address.
-- `createDeliveryOrder`: strict delivery input/address schema, normalized exact
-  PLZ matching between quote and address, quote-token payload verification,
-  server price/zone/minimum/free-threshold recomputation, delivery slot recheck,
-  idempotency replay/conflict and cash-delivery-only method.
-- Public checkout: selected slots for both fulfilments; delivery adds street,
-  house number, read-only normalized PLZ, city and optional note.
-- `service_windows` retain `fulfilment` through the quote store; slots now filter
-  delivery/pickup windows correctly. This fixed delivery incorrectly seeing
-  pickup hours.
-- Manager admin: `/admin/lieferzonen` exact-PLZ/fee/min/free forms and
-  `/admin/lieferzeiten` delivery window/capacity form. Existing DB trigger
-  prevents active PLZ overlap. Delivery address appears only in staff order
-  detail, never list/public status.
+- Added Stripe test-mode checkout path for pickup/delivery online payment: card by default, PayPal only behind `STRIPE_PAYPAL_ENABLED=true`.
+- Added `awaiting_payment` and `payment_failed` order states, local `payments` and `payment_events`, Stripe checkout binding, and verified webhook payment truth.
+- Public return/status page only displays/polls stored state; it never marks an order paid.
+- Checkout UI now supports cash, card, and configured PayPal while keeping server-side quote/order recalculation authoritative.
 
 ## Test results
-- `npm run check` green: lint + typecheck + 178 unit + 82 integration.
-- New KLN-016 integration (3): server fee + address snapshot, an unlisted
-  five-digit PLZ persists no order, delivery rejects `cash_pickup`, and DB
-  rejects active PLZ overlap.
+- `npm run check` green: lint (1 pre-existing warning in `src/features/delivery/adminActions.ts`), typecheck, 178 unit tests, 84 integration tests.
+- New KLN-017 integration (2): signed successful Stripe event replay is idempotent; amount mismatch and invalid signature fail safely.
 
 ## Next steps
-- KLN-017 Stripe checkout/webhook. This is payment/signature/idempotency work;
-  switch to `5.5 medium` if the current model starts struggling with it.
-- KLN-018..028 out of scope.
+- Merge KLN-017 PR after branch push/PR checks.
+- Continue with KLN-018 full refund workflow.
 
 ## Env
-- `npm run check` local green on `kalyna_test`; main @ 1ae61b1.
+- Required for real checkout: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `URL`, `QUOTE_SIGNING_SECRET`, database/Supabase service env.
+- Optional: `STRIPE_PAYPAL_ENABLED=true` only when the connected Stripe account supports PayPal.

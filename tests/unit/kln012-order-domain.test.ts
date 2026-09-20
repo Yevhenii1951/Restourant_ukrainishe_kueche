@@ -12,6 +12,7 @@ import {
 describe("KLN-012 order state machine (state-machines.md)", () => {
   it("exposes the exact legal edge set from the spec", () => {
     expect(ORDER_TRANSITIONS).toEqual({
+      awaiting_payment: ["pending_confirmation", "payment_failed", "cancelled"],
       pending_confirmation: ["accepted", "rejected", "cancelled"],
       accepted: ["preparing", "cancelled"],
       preparing: ["ready", "cancelled"],
@@ -19,6 +20,7 @@ describe("KLN-012 order state machine (state-machines.md)", () => {
       completed: [],
       cancelled: [],
       rejected: [],
+      payment_failed: [],
     });
   });
 
@@ -27,7 +29,7 @@ describe("KLN-012 order state machine (state-machines.md)", () => {
     expect(isLegalOrderTransition("cancelled", "accepted")).toBe(false);
     expect(isLegalOrderTransition("ready", "accepted")).toBe(false);
     expect(isLegalOrderTransition("pending_confirmation", "accepted")).toBe(true);
-    for (const terminal of ["completed", "cancelled", "rejected"] as const) {
+    for (const terminal of ["completed", "cancelled", "rejected", "payment_failed"] as const) {
       expect(isTerminalOrderState(terminal)).toBe(true);
       expect(isLegalOrderTransition(terminal, "pending_confirmation")).toBe(false);
     }

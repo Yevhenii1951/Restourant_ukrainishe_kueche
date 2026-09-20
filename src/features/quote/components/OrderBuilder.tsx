@@ -14,11 +14,12 @@ import QuoteSummary from "./QuoteSummary";
 interface OrderBuilderProps {
   items: PublicMenuItem[];
   locale: string;
+  paypalEnabled: boolean;
 }
 
 type Fulfilment = "pickup" | "delivery";
 
-export default function OrderBuilder({ items, locale }: OrderBuilderProps) {
+export default function OrderBuilder({ items, locale, paypalEnabled }: OrderBuilderProps) {
   const t = useTranslations("bestellen");
   const { cart, hydrated } = useCart();
   const [fulfilment, setFulfilment] = useState<Fulfilment>("pickup");
@@ -229,6 +230,7 @@ export default function OrderBuilder({ items, locale }: OrderBuilderProps) {
             promoCode={promoCode || null}
             tipCents={quotedTip}
             locale={locale}
+            paypalEnabled={paypalEnabled}
           />
         ) : null}
       </aside>

@@ -217,7 +217,20 @@
     "serviceUnavailable": "Наразі пропозиція недоступна. Спробуйте знову пізніше.",
     "needsAttention": "Ваш вибір більше не відповідає меню. Перегляньте кошик.",
     "toCart": "До кошика",
-    "countedLines": "{count, plural, =0 {немає позицій} one {1 позиція} few {# позиції} other {# позицій}}"
+    "countedLines": "{count, plural, =0 {немає позицій} one {1 позиція} few {# позиції} other {# позицій}}",
+    "paymentMethodLabel": "Спосіб оплати",
+    "paymentCashDelivery": "Готівка при доставці",
+    "paymentCard": "Картка через Stripe Checkout",
+    "paymentPaypal": "PayPal через Stripe Checkout",
+    "continueToPayment": "Перейти до оплати",
+    "paypalUnavailable": "PayPal не ввімкнено для цієї конфігурації Stripe.",
+    "streetLabel": "Вулиця",
+    "houseNumberLabel": "Номер будинку",
+    "cityLabel": "Місто",
+    "deliveryNoteLabel": "Коментар до доставки (необовʼязково)",
+    "statusAwaitingPayment": "Очікує оплати",
+    "statusPaymentFailed": "Оплата не вдалася",
+    "orderAwaitingPaymentHint": "Замовлення передається ресторану лише після підтвердження оплати Stripe."
   },
   "reservierung": {
     "title": "Забронювати стіл",

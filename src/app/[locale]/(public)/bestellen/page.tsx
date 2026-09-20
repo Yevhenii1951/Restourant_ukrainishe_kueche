@@ -4,6 +4,7 @@ import { getPublicMenu } from "@/features/menu/service";
 import { buildPublicMetadata } from "@/features/seo/publicMetadata";
 import { parseSupportedLocale } from "@/features/seo/site";
 import OrderBuilder from "@/features/quote/components/OrderBuilder";
+import { serverEnv } from "@/lib/env/server";
 
 export const dynamic = "force-dynamic";
 
@@ -36,7 +37,7 @@ export default async function BestellenPage({
         </h1>
         <p className="text-lg text-ink/75">{translations("description")}</p>
       </header>
-      <OrderBuilder items={menu.items} locale={locale} />
+      <OrderBuilder items={menu.items} locale={locale} paypalEnabled={serverEnv.STRIPE_PAYPAL_ENABLED === "true"} />
     </section>
   );
 }
