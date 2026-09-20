@@ -1,42 +1,49 @@
-# State — session handover
-
-Written: 2026-09-19 (KLN-011 pickup checkout)
+# SDD Session State (KLN-012)
 
 ## Done
+- **KLN-012 — Admin Order Operations** implemented on
+  `feature/kln-012-order-operations` (base = main@66e4ba4 with KLN-011 merged).
 
-- KLN-001..010 shipped and merged (PR #1, #10, #11, #12, #13, #14, #15).
-- KLN-011 (guest pickup + public order) implemented on
-  `feature/kln-011-pickup-checkout`: `npm run check` green (141 unit + 55
-  integration incl. 11 new `kln011-orders`), lint + tsc + build ok.
-  Delivers: migration `0008_orders.sql` (`order_state` enum, `orders`/
-  `order_items`/`order_item_modifiers`/`order_status_events`, RLS + grants,
-  capacity-checked `insert_pickup_order`, `cancel_pending_order` transition
-  guard); pure `src/features/order/domain.ts` + `quote/slotsService.ts`
-  (capacity counting via injected pool); server-authoritative
-  `createPickupOrder`/`getPublicOrder`/`cancelPublicOrder`; checkout form +
-  public status/cancel page at `/[locale]/bestellung/[token]`.
-  Token/contact safety: raw public token returned once, stored as sha256;
-  safe projection never selects guest name/phone; cancel nulls contact.
-  Idempotency: `idempotency_hash` + `request_hash` (same key+payload → replay
-  with same deterministic token; same key+different payload → conflict).
+## Finished this session
+- Migration `0009_order_operations.sql`: full legal state guard
+  (pending→accepted|rejected|cancelled; accepted→preparing|cancelled;
+  preparing→ready|cancelled; ready→completed|cancelled; terminal states
+  immutable), `accepted_estimate_minutes` (1..240), `apply_order_transition()`
+  with optimistic versioning (stale → `conflict`, illegal → `invalid`; every
+  attempt written to append-only audit_events), `set_pickup_accepting_enabled()`
+  (settings `pickup_accepting_enabled`, audited toggle), pick-up intake guard
+  (`pickup orders are paused`, fail closed), append-only trigger for
+  `order_status_events`.
+- Pure `src/features/order/transitions.ts` (ORDER_STATES/ORDER_TRANSITIONS,
+  client-safe, no node:crypto) re-exported from `domain.ts`; added
+  `transitionOrderSchema`/`transitionValidation` (reason required for
+  cancel/reject, estimate 1..240 for accept) + staff projections.
+- `staffService.ts` (pure, DatabaseRunner) — queue, detail, transition, toggle,
+  CSV export (MANAGER+ gate; formula-injection escaping); `staffRuntime.ts`
+  (server-only pool + session), `staffActions.ts` (OrderActionResult);
+  `runtime.ts` now exports `getPool()`. `identity/domain.ts` gained
+  `canExportCustomerData` (MANAGER+).
+- `createPickupOrder` returns `pickup-paused` when intake guard fires;
+  CheckoutForm + `bestellen.pickupPaused` in de/en/uk.
+- Admin UI (German literals, mobile-first): `/admin/bestellungen` queue +
+  `/admin/bestellungen/[orderId]` detail with `AvailabilityToggle`,
+  `ExportCsvButton`, `OrderTransitionControls` (legal targets from map), nav
+  link in admin layout.
+- Tests: `kln012-order-domain.test.ts`, `kln012-staff-service.test.ts` (unit),
+  `kln012-orders-operations.test.ts` (integration: optimistic-versioning
+  verification scenario — stale cancel → conflict, both attempts audited,
+  contact masked on cancel, append-only, paused intake, anon denied).
+  KLN-011 guard test updated: pending→accepted is now legal (full map),
+  illegal edge `completed` still blocked.
+- `npm run check` green (lint/typecheck/unit/integration).
 
-## Current
+## Decision recorded
+- Availability toggle is STAFF+ (authorization-matrix.md, not the manager-only
+  state.md draft); CSV export stays MANAGER+ via `canExportCustomerData`.
 
-- Branch `feature/kln-011-pickup-checkout` @ `b1db722`, pushed? (see PR).
-- Browser checkout scenario not runnable locally (no `.env.local` → runtime
-  fail-closed, same as KLN-008/009).
+## Next steps
+- KLN-012 PR: merge after `npm run check` green (already done → open + merge PR).
+- KLN-013..015 reservations (out of scope for this session).
 
-## Next
-
-- KLN-012 (admin order queue), then KLN-013..015 (reservations) per
-  `implementation-plan.md`.
-  Branch: `feature/kln-012-…`.
-
-## Branch / env
-
-- Branch: `feature/kln-011-pickup-checkout` → PR to `main`. Next:
-  `feature/kln-012-…`.
-- Env: no `.env.local` → runtime fail-closed; admin redirects locally
-  (expected). `.env.test.local` exists for tests. Server env keys:
-  `QUOTE_SIGNING_SECRET` (≥32 chars), `DATABASE_URL` (order runtime pool).
-- `gh` v2.101.0 installed at `~/.local/bin/gh`; agent opens and merges PRs.
+## Env
+- `npm run check` local green on `kalyna_test`.

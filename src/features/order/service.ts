@@ -34,7 +34,8 @@ export type OrderResult =
         | "promo-minimum-not-met"
         | "promo-invalid"
         | "zone-not-eligible"
-        | "slot-unavailable";
+        | "slot-unavailable"
+        | "pickup-paused";
       minimumCents?: number;
       subtotalCents?: number;
     }
@@ -292,6 +293,9 @@ export async function createPickupOrder(
     const pgError = error as { code?: unknown; message?: unknown };
     if (typeof pgError.message === "string" && pgError.message.includes("slot is full")) {
       return { status: "rejected", reason: "slot-unavailable" };
+    }
+    if (typeof pgError.message === "string" && pgError.message.includes("pickup orders are paused")) {
+      return { status: "rejected", reason: "pickup-paused" };
     }
     if (pgError.code !== "23505") throw error;
     const existing = await pool.query<{ id: string; request_hash: string }>(

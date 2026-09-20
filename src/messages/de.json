@@ -211,6 +211,7 @@
     "promoMinNotMet": "Der Aktionscode gilt ab einem Warenkorbwert von {minimum}.",
     "zoneNotEligible": "An diese Postleitzahl liefern wir leider nicht.",
     "slotUnavailable": "Der gewählte Termin ist nicht mehr verfügbar.",
+    "pickupPaused": "Vorbestellungen sind gerade pausiert. Bitte versuche es später erneut.",
     "horizonExceeded": "Diesen Tag kannst du noch nicht bestellen.",
     "dateInPast": "Bitte wähle einen künftigen Tag.",
     "serviceUnavailable": "Das Angebot ist momentan nicht verfügbar. Bitte versuche es später erneut.",
