@@ -4,6 +4,7 @@ import { getPublicContentEntries } from "@/features/content/service";
 import { resolveCatering } from "@/features/content/public";
 import { parseSupportedLocale } from "@/features/seo/site";
 import { buildPublicMetadata } from "@/features/seo/publicMetadata";
+import { CateringInquiryForm } from "@/features/catering/components/CateringInquiryForm";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +47,11 @@ export default async function CateringPage({
       ) : (
         <p className="text-ink/60">{t("empty")}</p>
       )}
+      <div className="space-y-2">
+        <h2 className="font-display text-2xl font-semibold text-ink">Catering anfragen</h2>
+        <p className="text-sm text-ink/75">Diese Anfrage ist kein Angebot und kein Vertrag.</p>
+        <CateringInquiryForm locale={parseSupportedLocale(locale)} />
+      </div>
     </section>
   );
 }

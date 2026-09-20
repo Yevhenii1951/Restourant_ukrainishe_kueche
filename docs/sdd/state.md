@@ -1,15 +1,15 @@
-# SDD Session State (KLN-020)
+# SDD Session State (KLN-021)
 
 ## Done
-- KLN-020 voucher purchase and redemption implemented on `feature/kln-020-vouchers`.
-- Added active voucher products, Stripe-bound voucher purchases, hashed post-webhook code generation, email outbox delivery and concurrency-safe redemption.
-- Public `/gutscheine` route starts Stripe test checkout for fixed demo denominations.
+- KLN-021 catering inquiry workflow implemented on `feature/kln-021-catering-inquiries`.
+- Public `/catering` form validates requests, uses a honeypot and source-hash rate limit, and clearly states that it is not an offer or contract.
+- A transactional database function stores valid requests, writes the staff email outbox event without PII payloads, and protects concurrent rate-limit checks.
+- Staff queue at `/admin/catering` supports audited `new -> contacted -> quoted -> confirmed` and cancellation transitions.
 
 ## Verification
-- `npx vitest run tests/integration/kln020-vouchers.test.ts` green.
-- `npm run check` green: 178 unit tests and 88 integration tests; pre-existing delivery lint warning remains.
-- `npm run build` green; existing `metadataBase` warnings remain non-blocking.
+- `npx vitest run tests/integration/kln021-catering-inquiries.test.ts --no-file-parallelism` green.
+- `npm run check` green: 178 unit and 90 integration tests; pre-existing delivery lint warning remains.
 
 ## Next
-- Push branch, open KLN-020 PR, merge after CI and Vercel are green.
-- Continue with KLN-021 after merge.
+- Push branch, open KLN-021 PR, merge after CI and Vercel are green.
+- Continue with KLN-022 after merge.

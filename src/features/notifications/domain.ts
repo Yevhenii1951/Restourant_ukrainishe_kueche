@@ -1,11 +1,15 @@
 import { z } from "zod";
 export const emailLocaleSchema = z.enum(["de", "en", "uk"]);
-export const emailTemplateSchema = z.enum(["reservation_requested", "reservation_confirmed", "payment_refunded", "voucher_purchased"]);
+export const emailTemplateSchema = z.enum(["reservation_requested", "reservation_confirmed", "payment_refunded", "voucher_purchased", "catering_inquiry"]);
 export const emailOutboxRowSchema = z.object({ id: z.string().uuid(), recipient: z.string().email(), locale: emailLocaleSchema, template_key: emailTemplateSchema, payload: z.record(z.string(), z.string()) });
 export type EmailOutboxRow = z.infer<typeof emailOutboxRowSchema>;
 export interface EmailMessage { to: string; subject: string; html: string; text: string; }
 export interface EmailAdapter { send(message: EmailMessage, idempotencyKey: string): Promise<{ providerMessageId: string }>; }
 export function emailMessage(row: EmailOutboxRow, baseUrl: string): EmailMessage {
+  if (row.template_key === "catering_inquiry") {
+    const subject = row.locale === "en" ? "New catering inquiry" : row.locale === "uk" ? "Нова catering-заявка" : "Neue Catering-Anfrage";
+    return { to: row.recipient, subject, text: subject + ". Bitte die Catering-Warteschlange pruefen.", html: "<p>" + subject + ". Bitte die Catering-Warteschlange pruefen.</p>" };
+  }
   if (row.template_key === "voucher_purchased") {
     const subjects = row.locale === "en" ? ["Kalyna voucher", "Your voucher code"]
       : row.locale === "uk" ? ["Сертифікат Kalyna", "Ваш код сертифіката"]

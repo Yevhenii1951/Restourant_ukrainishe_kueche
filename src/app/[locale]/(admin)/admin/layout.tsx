@@ -35,6 +35,9 @@ export default async function AdminLayout({
             <Link href={`/${locale}/admin/reservierungen`} className="underline-offset-4 hover:underline">
               Reservierungen
             </Link>
+            <Link href={`/${locale}/admin/catering`} className="underline-offset-4 hover:underline">
+              Catering
+            </Link>
             <Link href={`/${locale}/admin/lieferzonen`} className="underline-offset-4 hover:underline">
               Lieferzonen
             </Link>
