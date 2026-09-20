@@ -1,54 +1,63 @@
-# SDD Session State (KLN-013)
+# SDD Session State (KLN-014)
 
 ## Done
-- **KLN-013 — Table inventory and availability** implemented on
-  `feature/kln-013-reservation-availability`, merged via PR #18
-  (`main` @ c8b6c37).
+- **KLN-014 — Pending reservation request** implemented on
+  `feature/kln-014-reservation-request`, merged via PR #19
+  (`main` @ cbabb78).
 
 ## Finished this session
-- Migration `0010_reservation_availability.sql`: `commercial_service_type`
-  gains `reservation` (enum value must not be used inside the migration
-  transaction — ALTER TYPE ADD VALUE limitation; demo rows live in seed 0006);
-  `restaurant_tables`, `table_combinations` (capacity NULL until members exist),
-  `table_combination_members`; DB triggers recompute combination capacity from
-  the **active** member tables (never 0, NULL when none); RLS + revoke for
-  anon/authenticated, full grants to `service_role`.
-- Seed `0006_reservation_demo.sql`: rules (duration 120, horizon 90 d, notice
-  120 min, 15-min grid, max party 12), reservation windows daily 12:00–23:00,
-  summer-pause closure (also affects reservation), 4 demo tables, 2 combos.
-- `src/features/reservation/*`: `domain.ts` (Zod schemas,
-  `validateCombination` ≥2 distinct active tables, `buildAllocationOptions`,
-  `selectSmallestPlan` — combinations win capacity ties), `slots.ts`
-  (DST-safe half-open builder, per-table blocks, notice filter),
-  `store.ts`/`supabaseReservationStore.ts` (read + save, server-only),
-  `availability.ts` (pure `getReservationSlotsFromStore`,
-  `ReservationReadStore`, `blocks` reserved for KLN-014),
-  `service.ts`/`actions.ts` (env-guarded), `staffActions.ts` (manager-only
-  CRUD + audit events; NOT_FOUND removed — not in ActionResult union).
-- `quote/slots.ts` now exports `berlinLocalToUtcMs`; `identity/domain.ts` gained
-  `canManageReservations` (MANAGER+).
-- Admin UI (German literals): `/admin/tische`, `/admin/kombinationen` + edit
-  pages; client components `TableForm`/`TableRowToggle`/`CombinationForm`/
-  `CombinationRowToggle` (raw server-action forms fail TS — handlers must
-  return `Promise<void>`); nav links in admin layout.
-- Public `/reservierung` + `ReservationAvailability.tsx`: slots expose only
-  `startUtc` + `labelLocal`, no table identities; `min` date memoized
-  (react-hooks/purity). i18n `reservierung` namespace (de/en/uk).
+- Migration `0011_reservations.sql`: `reservation_state` enum;
+  `reservations` (token/idempotency hashes unique, guest contact **nullable**
+  so cancellation masks it, schedule index, `version`), `reservation_allocations`
+  (partial GiST exclusion constraint on blocking ranges = the AC-3 real guard,
+  needs `btree_gist`), `reservation_status_events` (append-only audit);
+  `guard_reservation_status()` trigger with the full legal map
+  (pending→confirmed|declined|cancelled|expired; confirmed→cancelled|
+  completed|no_show) bumping `version`; transactional
+  `create_reservation_request` (idempotent replay first, conflict on changed
+  payload, rules re-checked inside the txn: notice/party cap/duration/window/
+  closure, then smallest-fit allocation — combos before singles, exception on
+  `exclusion_violation` tries the next plan), `cancel_reservation` (NULL for
+  unknown/terminal, cutoff-passed outcome, contact mask), `expire_reservations`
+  (idempotent). RLS + revoke for anon/authenticated, execute grants only to
+  `service_role` (also revoked from PUBLIC).
+- Seed `0007_reservation_requests_demo.sql`: hold 30 min, cutoff 240 min
+  (plain INSERT style, matching 0005/0006).
+- `src/features/reservation/`: `request.ts` (strict Zod schema, deterministic
+  HMAC public token — raw token never stored, stable fingerprint),
+  `requestRuntime.ts` (raw-`pg` Pool ≤5 + `QUOTE_SIGNING_SECRET`, mirrors
+  order/runtime), `requestService.ts` (created/rejected/conflict mapping;
+  availability re-validated per request including real pending/confirmed
+  `blocks`; a recoverable no-slot shows from the previous hold still reaches
+  the DB so replay resolves), `requestActions.ts` (raw-union returns, not
+  ActionResult — matches order/actions).
+- `store.ts`/`supabaseReservationStore.ts`: `listReservationBlocks()`
+  (pending/confirmed allocations as `BlockingIntervalInput`) feeds the
+  `ReservationReadStore` Pick and `getReservationSlotsFromStore`.
+- Public UI: `/reservierung` booking flow (slot → contact/privacy form with
+  `crypto.randomUUID` idempotency key, server-action form handler) + new
+  status/cancel page `/reservierung/[token]` (noindex, force-dynamic) with
+  client `CancelReservationButton`. i18n `reservierung` extended (de/en/uk).
+- **Bug the tests caught**: the allocation `SELECT (v_id, unnest(...), ...)`
+  row constructor produced ONE composite column → `INSERT hat mehr Zielspalten
+  als Ausdrücke`; removed the parens in both loops.
 
 ## Test results
-- `npm run check` green: lint + typecheck + 170 unit + 66 integration.
-  New unit (8) + integration (5): half-open closure removes the overlap window
-  (12:15–14:45 blocked, 12:00 stays), DST spring/autumn, anon/authenticated RLS
-  denial, DB-computed combo capacity on table deactivate/restore, party cap,
-  slot privacy. Tests use a pool-backed `ReservationReadStore`.
-- Gotcha: test DB error messages are German — assert
-  `/keine Berechtigung|permission denied/i`; RLS rules reject `service_role`
-  sessions without JWT claims → interactive writes go through the owner pool.
+- `npm run check` green: lint + typecheck + 178 unit + 77 integration.
+- New unit (8): schema rules, deterministic token/hash, key-order-independent
+  fingerprint. New integration (11): AC-3 concurrency (two real transactions on
+  a single-plan party-10 slot; exactly one created, the other
+  `no-table-available`, exactly 2 allocation rows), idempotent replay + conflict,
+  notice/party-cap/duration-mismatch, outside-hours, closure, cancel+mask+version
+  bump+replay-neutral, cutoff-passed, idempotent expiry, illegal-transition
+  guard, anon SELECT + function denial, full service-layer flow
+  (created/replayed/privacy/slot). Each creating test uses its own future slot
+  to avoid interference.
 
 ## Next steps
-- KLN-014..015 reservations (persistence, allocation, cutoff/hold, booking);
-  the `blocks` parameter of `getReservationSlotsFromStore` is the seam.
+- KLN-015 reservations (staff confirmation queue/calendar and transition
+  workflow); migration 0011 already carries the full state map + audit rows.
 - KLN-016..028 out of scope.
 
 ## Env
-- `npm run check` local green on `kalyna_test`; main @ c8b6c37.
+- `npm run check` local green on `kalyna_test`; main @ cbabb78.
