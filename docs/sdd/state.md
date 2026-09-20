@@ -1,42 +1,28 @@
-# State — session handover
+# SDD Session State (KLN-012)
 
-Written: 2026-09-19 (KLN-011 pickup checkout)
+## In Progress
+- **KLN-012 — Admin Order Operations** on `feature/kln-012-order-operations`
+  (branch created, clean; base = main@66e4ba4 with KLN-011 merged).
 
-## Done
+## Finished this session
+- Researched KLN-012 ticket, FR-ORD-11/FR-ADM-6/FR-ADM-7 + state machine from
+  `docs/sdd/state-machines.md` orders block, KLN-011 assets (0008 orders +
+  guard, order service/runtime/actions), identity session/audit wiring.
+- Verified canonical repo path + branch present for KLN-012.
 
-- KLN-001..010 shipped and merged (PR #1, #10, #11, #12, #13, #14, #15).
-- KLN-011 (guest pickup + public order) implemented on
-  `feature/kln-011-pickup-checkout`: `npm run check` green (141 unit + 55
-  integration incl. 11 new `kln011-orders`), lint + tsc + build ok.
-  Delivers: migration `0008_orders.sql` (`order_state` enum, `orders`/
-  `order_items`/`order_item_modifiers`/`order_status_events`, RLS + grants,
-  capacity-checked `insert_pickup_order`, `cancel_pending_order` transition
-  guard); pure `src/features/order/domain.ts` + `quote/slotsService.ts`
-  (capacity counting via injected pool); server-authoritative
-  `createPickupOrder`/`getPublicOrder`/`cancelPublicOrder`; checkout form +
-  public status/cancel page at `/[locale]/bestellung/[token]`.
-  Token/contact safety: raw public token returned once, stored as sha256;
-  safe projection never selects guest name/phone; cancel nulls contact.
-  Idempotency: `idempotency_hash` + `request_hash` (same key+payload → replay
-  with same deterministic token; same key+different payload → conflict).
+## KLN-012 deliverable plan (short-form)
+Mobile staff order queue/detail; legal staff transitions (FR-ORD-11) with full
+map: pending→accepted|rejected|cancelled; accepted→preparing|cancelled;
+preparing→ready|cancelled; ready→completed|cancelled; optimistic versioning
+(stale version → conflict, both attempts auditable); availability toggle
+(manager-only audited); CSV export manager-only + audited (FR-ADM-6/7);
+append-only order_status_events + audit_events (already append-only).
 
-## Current
-
-- Branch `feature/kln-011-pickup-checkout` @ `b1db722`, pushed? (see PR).
-- Browser checkout scenario not runnable locally (no `.env.local` → runtime
-  fail-closed, same as KLN-008/009).
-
-## Next
-
-- KLN-012 (admin order queue), then KLN-013..015 (reservations) per
-  `implementation-plan.md`.
-  Branch: `feature/kln-012-…`.
-
-## Branch / env
-
-- Branch: `feature/kln-011-pickup-checkout` → PR to `main`. Next:
-  `feature/kln-012-…`.
-- Env: no `.env.local` → runtime fail-closed; admin redirects locally
-  (expected). `.env.test.local` exists for tests. Server env keys:
-  `QUOTE_SIGNING_SECRET` (≥32 chars), `DATABASE_URL` (order runtime pool).
-- `gh` v2.101.0 installed at `~/.local/bin/gh`; agent opens and merges PRs.
+## Next steps
+- `db/migrations/0009_order_operations.sql`: full legal transition guard,
+  optimistic version conflict, availability toggle, append-only protections.
+- `src/features/order/domain.ts`: legal transition map + optimistic versioning.
+- `src/features/order/staffService.ts` (+ runtime/actions): staff queue/detail,
+  transitions, availability toggle, CSV export.
+- Admin mobile pages + tests (domain + optimistic conflict scenario KLN-012 final).
+- `npm run check` green → commit → push → PR → merge (per handover).
