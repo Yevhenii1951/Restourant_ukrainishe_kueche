@@ -1,0 +1,5 @@
+import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { ClosureForm } from "@/features/admin/components/ClosureForm";
+export const dynamic = "force-dynamic"; export const metadata = { robots: { index: false, follow: false } };
+export default async function ClosuresPage(): Promise<React.ReactNode> { const result = await getSupabaseServerClient().from("closures").select("id, starts_at, ends_at, affected_services").order("starts_at"); const closures = result.data ?? [];
+  return <section className="space-y-6"><header><h1 className="font-display text-3xl font-semibold">Schliesszeiten</h1><p className="text-ink/75">Zeitlich begrenzte Ausnahmen fuer einzelne Dienste.</p></header><ClosureForm /><ul className="divide-y divide-ink/10 rounded-md border border-ink/10 bg-linen">{closures.map((closure) => <li key={closure.id} className="px-4 py-3 text-sm">{new Date(closure.starts_at).toLocaleString("de-DE")} bis {new Date(closure.ends_at).toLocaleString("de-DE")} · {closure.affected_services.join(", ")}</li>)}</ul></section>; }
