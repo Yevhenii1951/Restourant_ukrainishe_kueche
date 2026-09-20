@@ -62,6 +62,7 @@ export async function processStripeWebhookEvent(
   );
   const status = result.rows[0]?.mark_stripe_checkout_paid?.status;
   if (status === "paid" || status === "duplicate") return status;
+  if (status === "already-paid") return "duplicate";
   if (status === "amount-currency-mismatch") return "mismatch";
   if (status === "not-bound") return "not-bound";
   return "invalid";

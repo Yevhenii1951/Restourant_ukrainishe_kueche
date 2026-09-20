@@ -1,18 +1,15 @@
-# SDD Session State (KLN-019)
+# SDD Session State (KLN-020)
 
 ## Done
-- KLN-019 transactional email outbox implemented on feature/kln-019-email-outbox; ready for PR merge after green checks.
-- KLN-018 merged via PR #23 (main @ 107b76a).
+- KLN-020 voucher purchase and redemption implemented on `feature/kln-020-vouchers`.
+- Added active voucher products, Stripe-bound voucher purchases, hashed post-webhook code generation, email outbox delivery and concurrency-safe redemption.
+- Public `/gutscheine` route starts Stripe test checkout for fixed demo denominations.
 
-## Finished this session
-- Added a protected, retrying outbox with provider idempotency, dead-letter state, Brevo adapter and fake adapter test coverage.
-- Cron endpoint requires CRON_SECRET bearer authentication. No recipient or content is logged.
-- Reservation templates produce locale-correct token URLs without analytics parameters.
-- SPF/DKIM/DMARC setup is documented as an external verified-sender prerequisite, not represented as configured.
+## Verification
+- `npx vitest run tests/integration/kln020-vouchers.test.ts` green.
+- `npm run check` green: 178 unit tests and 88 integration tests; pre-existing delivery lint warning remains.
+- `npm run build` green; existing `metadataBase` warnings remain non-blocking.
 
-## Test results
-- npm run check green: 178 unit tests and 88 integration tests; one pre-existing lint warning remains in delivery admin actions.
-
-## Next steps
-- Merge KLN-019 PR after branch push/PR checks.
-- Continue with KLN-020 vouchers.
+## Next
+- Push branch, open KLN-020 PR, merge after CI and Vercel are green.
+- Continue with KLN-021 after merge.
