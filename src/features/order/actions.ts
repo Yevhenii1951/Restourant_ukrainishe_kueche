@@ -2,7 +2,7 @@
 
 import { parseSupportedLocale } from "@/features/seo/site";
 import { createOrderRuntime } from "./runtime";
-import { createPickupOrder, getPublicOrder, cancelPublicOrder } from "./service";
+import { createPickupOrder, createDeliveryOrder, getPublicOrder, cancelPublicOrder } from "./service";
 import type { OrderResult } from "./service";
 import type { CancelProjection, OrderProjection } from "./domain";
 
@@ -23,6 +23,15 @@ export async function createPickupOrderAction(
   const runtime = createOrderRuntime();
   if (!runtime) return { status: "error", reason: "service-unavailable" };
   return createPickupOrder(raw, parseSupportedLocale(context.locale), runtime);
+}
+
+export async function createDeliveryOrderAction(
+  raw: unknown,
+  context: ActionContext,
+): Promise<OrderResult> {
+  const runtime = createOrderRuntime();
+  if (!runtime) return { status: "error", reason: "service-unavailable" };
+  return createDeliveryOrder(raw, parseSupportedLocale(context.locale), runtime);
 }
 
 export async function getPublicOrderAction(token: string): Promise<PublicOrderResult> {

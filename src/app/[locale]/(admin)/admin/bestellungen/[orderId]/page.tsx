@@ -63,6 +63,12 @@ export default async function BestellungDetailPage({
         </Row>
         <Row label="Name">{order.guestName ?? "—"}</Row>
         <Row label="Telefon">{order.guestPhone ?? "—"}</Row>
+        {order.deliveryAddress ? (
+          <Row label="Lieferadresse">
+            {order.deliveryAddress.street} {order.deliveryAddress.houseNumber}, {order.deliveryAddress.postalCode} {order.deliveryAddress.city}
+            {order.deliveryAddress.deliveryNote ? ` · ${order.deliveryAddress.deliveryNote}` : ""}
+          </Row>
+        ) : null}
       </dl>
 
       <div>

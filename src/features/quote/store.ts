@@ -15,6 +15,7 @@ export interface PromoRow {
 
 export interface ServiceWindowRow {
   id: string;
+  fulfilment?: "pickup" | "delivery";
   weekday: number | null;
   dateOverride: string | null;
   opensAt: string;

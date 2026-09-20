@@ -17,6 +17,16 @@ export const ORDER_CONTACT_SCHEMA = z
   })
   .strict();
 
+export const DELIVERY_ADDRESS_SCHEMA = z
+  .object({
+    street: z.string().trim().min(1).max(120),
+    houseNumber: z.string().trim().min(1).max(20),
+    postalCode: z.string().trim().regex(/^\d{5}$/),
+    city: z.string().trim().min(1).max(80),
+    deliveryNote: z.string().trim().max(300).nullish(),
+  })
+  .strict();
+
 export const createOrderSchema = z
   .object({
     quoteToken: z.string().min(1).max(1000),
@@ -32,7 +42,24 @@ export const createOrderSchema = z
   })
   .strict();
 
+export const createDeliveryOrderSchema = z
+  .object({
+    quoteToken: z.string().min(1).max(1000),
+    cart: CART_SCHEMA,
+    fulfilment: z.literal("delivery"),
+    plz: z.string().trim().max(10),
+    promoCode: z.string().trim().max(40).nullish(),
+    tipCents: z.number().int().min(0).max(1_000_000).nullish(),
+    slotStartUtc: z.string().datetime(),
+    paymentMethod: z.literal("cash_delivery"),
+    contact: ORDER_CONTACT_SCHEMA,
+    deliveryAddress: DELIVERY_ADDRESS_SCHEMA,
+    idempotencyKey: z.string().uuid(),
+  })
+  .strict();
+
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
+export type CreateDeliveryOrderInput = z.infer<typeof createDeliveryOrderSchema>;
 
 export const ORDER_CONTACT_SNAPSHOT_SCHEMA = z
   .object({
@@ -128,6 +155,7 @@ export interface StaffOrderLineProjection {
 export interface StaffOrderListItem {
   orderId: string;
   orderNumber: number;
+  fulfilment: "pickup" | "delivery";
   state: OrderState;
   scheduledFor: string;
   totalCents: number;
@@ -153,6 +181,13 @@ export interface StaffOrderDetail extends StaffOrderListItem {
   acceptedEstimateMinutes: number | null;
   lines: StaffOrderLineProjection[];
   events: StaffOrderStatusEvent[];
+  deliveryAddress: {
+    street: string;
+    houseNumber: string;
+    postalCode: string;
+    city: string;
+    deliveryNote: string | null;
+  } | null;
 }
 
 export interface AppliedTransitionProjection {
