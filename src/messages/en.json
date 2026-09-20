@@ -218,5 +218,19 @@
     "needsAttention": "Your selection no longer matches the current menu. Please review your cart.",
     "toCart": "Go to cart",
     "countedLines": "{count, plural, =0 {no items} one {1 item} other {# items}}"
+  },
+  "reservierung": {
+    "title": "Reserve a table",
+    "description": "Check live which times are free on your preferred day. We will assign a suitable table afterwards (Demo).",
+    "dateLabel": "Day",
+    "partyLabel": "Guests",
+    "showSlots": "Show availability",
+    "loading": "Loading…",
+    "slotCount": "{count, plural, =0 {no free times} one {1 free time} other {# free times}}",
+    "noSlots": "No free times are available for this request.",
+    "date-in-past": "Please choose a future day.",
+    "horizon-exceeded": "This date is outside the booking period.",
+    "party-too-large": "We have no seating arrangement for that many guests.",
+    "serviceUnavailable": "Availability is currently unavailable. Please try again later."
   }
 }
