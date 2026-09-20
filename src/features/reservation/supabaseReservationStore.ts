@@ -1,6 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
+  BlockingIntervalInput,
   ReservationAccessConfig,
   ReservationClosureInput,
   ReservationWindowInput,
@@ -108,6 +109,23 @@ export function createSupabaseReservationStore(db: SupabaseClient): ReservationS
           endsAt: row.ends_at,
           affectedServices: row.affected_services,
         }));
+    },
+
+    async listReservationBlocks(): Promise<BlockingIntervalInput[]> {
+      const result = await db
+        .from("reservation_allocations")
+        .select("table_id, starts_at, ends_at")
+        .in("reservations.status", ["pending", "confirmed"]);
+      if (result.error) throw result.error;
+      return ((result.data ?? []) as Array<{
+        table_id: string;
+        starts_at: string;
+        ends_at: string;
+      }>).map((row) => ({
+        startsAtMs: Date.parse(row.starts_at),
+        endsAtMs: Date.parse(row.ends_at),
+        tableIds: [row.table_id],
+      }));
     },
 
     async listTables(): Promise<ReservationTableRow[]> {

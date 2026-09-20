@@ -43,6 +43,7 @@ const store = (overrides: Partial<ReservationStore>): ReservationReadStore => ({
     { weekday: 3, dateOverride: null, opensAt: "12:00", closesAt: "23:00", active: true },
   ],
   listReservationClosures: async () => [],
+  listReservationBlocks: async () => [],
   ...overrides,
 });
 

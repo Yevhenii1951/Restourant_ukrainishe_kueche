@@ -1,4 +1,5 @@
 import type {
+  BlockingIntervalInput,
   ReservationAccessConfig,
   ReservationClosureInput,
   ReservationCombinationInput,
@@ -45,6 +46,7 @@ export interface ReservationStore {
   saveCombination(input: ReservationCombinationWrite): Promise<ReservationCombinationRow>;
   listReservationWindows(): Promise<ReservationWindowInput[]>;
   listReservationClosures(): Promise<ReservationClosureInput[]>;
+  listReservationBlocks(): Promise<BlockingIntervalInput[]>;
 }
 
 export type ReservationInventory = {

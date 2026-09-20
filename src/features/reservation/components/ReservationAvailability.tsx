@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { requestReservationSlotsAction } from "../actions";
 import type { ReservationSlotsResult } from "../availability";
 import { berlinDateKey } from "@/features/quote/slots";
+import { RequestReservationForm } from "./RequestReservationForm";
 
 const PARTY_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
@@ -15,13 +16,30 @@ export default function ReservationAvailability() {
   const [partySize, setPartySize] = useState(2);
   const [result, setResult] = useState<ReservationSlotsResult | null>(null);
   const [busy, setBusy] = useState(false);
+  const [selectedStartUtc, setSelectedStartUtc] = useState<string | null>(null);
 
   async function loadSlots(): Promise<void> {
     setBusy(true);
     setResult(null);
+    setSelectedStartUtc(null);
     const outcome = await requestReservationSlotsAction({ date, partySize });
     setResult(outcome);
     setBusy(false);
+  }
+
+  if (selectedStartUtc) {
+    return (
+      <div className="space-y-4">
+        <button
+          type="button"
+          onClick={() => setSelectedStartUtc(null)}
+          className="text-sm underline-offset-4 hover:underline"
+        >
+          &larr; {t("backToSlots")}
+        </button>
+        <RequestReservationForm slotStartUtc={selectedStartUtc} durationMinutes={120} />
+      </div>
+    );
   }
 
   return (
@@ -79,11 +97,14 @@ export default function ReservationAvailability() {
           {result.slots.length > 0 ? (
             <ul className="mt-2 flex flex-wrap gap-2">
               {result.slots.map((slot) => (
-                <li
-                  key={slot.startUtc}
-                  className="rounded-md border border-kalyna/30 bg-paper px-3 py-1.5 text-sm"
-                >
-                  {slot.labelLocal}
+                <li key={slot.startUtc}>
+                  <button
+                    type="button"
+                    className="rounded-md border border-kalyna/30 bg-paper px-3 py-1.5 text-sm hover:bg-kalyna/10"
+                    onClick={() => setSelectedStartUtc(slot.startUtc)}
+                  >
+                    {slot.labelLocal}
+                  </button>
                 </li>
               ))}
             </ul>

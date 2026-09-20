@@ -37,6 +37,7 @@ function poolStore(pool: Pool): Pick<
   | "listCombinations"
   | "listReservationWindows"
   | "listReservationClosures"
+  | "listReservationBlocks"
 > {
   return {
     async getReservationConfig(): Promise<ReservationAccessConfig | null> {
@@ -109,6 +110,20 @@ function poolStore(pool: Pool): Pick<
           endsAt: row.ends_at,
           affectedServices: row.affected_services,
         }));
+    },
+
+    async listReservationBlocks() {
+      const { rows } = await pool.query(
+        `SELECT a.table_id, a.starts_at, a.ends_at
+         FROM reservation_allocations a
+         JOIN reservations r ON r.id = a.reservation_id
+         WHERE r.status IN ('pending', 'confirmed')`,
+      );
+      return rows.map((row) => ({
+        startsAtMs: new Date(row.starts_at).getTime(),
+        endsAtMs: new Date(row.ends_at).getTime(),
+        tableIds: [row.table_id],
+      }));
     },
   };
 }

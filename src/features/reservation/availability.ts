@@ -14,6 +14,7 @@ export type ReservationReadStore = Pick<
   | "listCombinations"
   | "listReservationWindows"
   | "listReservationClosures"
+  | "listReservationBlocks"
 >;
 
 export type ReservationSlotsResult =
@@ -24,7 +25,7 @@ export type ReservationSlotsResult =
 export interface ReservationSlotOptions {
   /** Fully allocatable plans; smallest-fit selection happens inside. */
   options?: AllocationOption[];
-  /** Overlapping allocations from pending/confirmed reservations; empty in KLN-013. */
+  /** Extra overlapping allocations beyond what the store reports (tests). */
   blocks?: import("./domain").BlockingIntervalInput[];
 }
 
@@ -49,10 +50,11 @@ export async function getReservationSlotsFromStore(
     return { status: "rejected", reason: "horizon-exceeded" };
   }
 
-  const [inventory, windows, closures] = await Promise.all([
+  const [inventory, windows, closures, blocks] = await Promise.all([
     Promise.all([deps.store.listTables(), deps.store.listCombinations()]),
     deps.store.listReservationWindows(),
     deps.store.listReservationClosures(),
+    deps.store.listReservationBlocks(),
   ]);
   const options =
     deps.options?.options ?? buildAllocationOptions(inventory[0], inventory[1]);
@@ -67,7 +69,7 @@ export async function getReservationSlotsFromStore(
       windows,
       closures,
       options,
-      blocks: deps.options?.blocks,
+      blocks: [...(deps.options?.blocks ?? []), ...blocks],
     }),
   };
 }
