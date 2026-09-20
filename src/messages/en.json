@@ -211,6 +211,7 @@
     "promoMinNotMet": "This code applies to cart values from {minimum}.",
     "zoneNotEligible": "We do not deliver to this postal code.",
     "slotUnavailable": "The selected slot is no longer available.",
+    "pickupPaused": "Pickup ordering is paused right now. Please try again later.",
     "horizonExceeded": "Orders for this day are not possible yet.",
     "dateInPast": "Please choose a future day.",
     "serviceUnavailable": "The quote is not available right now. Please try again later.",

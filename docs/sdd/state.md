@@ -1,28 +1,49 @@
 # SDD Session State (KLN-012)
 
-## In Progress
-- **KLN-012 — Admin Order Operations** on `feature/kln-012-order-operations`
-  (branch created, clean; base = main@66e4ba4 with KLN-011 merged).
+## Done
+- **KLN-012 — Admin Order Operations** implemented on
+  `feature/kln-012-order-operations` (base = main@66e4ba4 with KLN-011 merged).
 
 ## Finished this session
-- Researched KLN-012 ticket, FR-ORD-11/FR-ADM-6/FR-ADM-7 + state machine from
-  `docs/sdd/state-machines.md` orders block, KLN-011 assets (0008 orders +
-  guard, order service/runtime/actions), identity session/audit wiring.
-- Verified canonical repo path + branch present for KLN-012.
+- Migration `0009_order_operations.sql`: full legal state guard
+  (pending→accepted|rejected|cancelled; accepted→preparing|cancelled;
+  preparing→ready|cancelled; ready→completed|cancelled; terminal states
+  immutable), `accepted_estimate_minutes` (1..240), `apply_order_transition()`
+  with optimistic versioning (stale → `conflict`, illegal → `invalid`; every
+  attempt written to append-only audit_events), `set_pickup_accepting_enabled()`
+  (settings `pickup_accepting_enabled`, audited toggle), pick-up intake guard
+  (`pickup orders are paused`, fail closed), append-only trigger for
+  `order_status_events`.
+- Pure `src/features/order/transitions.ts` (ORDER_STATES/ORDER_TRANSITIONS,
+  client-safe, no node:crypto) re-exported from `domain.ts`; added
+  `transitionOrderSchema`/`transitionValidation` (reason required for
+  cancel/reject, estimate 1..240 for accept) + staff projections.
+- `staffService.ts` (pure, DatabaseRunner) — queue, detail, transition, toggle,
+  CSV export (MANAGER+ gate; formula-injection escaping); `staffRuntime.ts`
+  (server-only pool + session), `staffActions.ts` (OrderActionResult);
+  `runtime.ts` now exports `getPool()`. `identity/domain.ts` gained
+  `canExportCustomerData` (MANAGER+).
+- `createPickupOrder` returns `pickup-paused` when intake guard fires;
+  CheckoutForm + `bestellen.pickupPaused` in de/en/uk.
+- Admin UI (German literals, mobile-first): `/admin/bestellungen` queue +
+  `/admin/bestellungen/[orderId]` detail with `AvailabilityToggle`,
+  `ExportCsvButton`, `OrderTransitionControls` (legal targets from map), nav
+  link in admin layout.
+- Tests: `kln012-order-domain.test.ts`, `kln012-staff-service.test.ts` (unit),
+  `kln012-orders-operations.test.ts` (integration: optimistic-versioning
+  verification scenario — stale cancel → conflict, both attempts audited,
+  contact masked on cancel, append-only, paused intake, anon denied).
+  KLN-011 guard test updated: pending→accepted is now legal (full map),
+  illegal edge `completed` still blocked.
+- `npm run check` green (lint/typecheck/unit/integration).
 
-## KLN-012 deliverable plan (short-form)
-Mobile staff order queue/detail; legal staff transitions (FR-ORD-11) with full
-map: pending→accepted|rejected|cancelled; accepted→preparing|cancelled;
-preparing→ready|cancelled; ready→completed|cancelled; optimistic versioning
-(stale version → conflict, both attempts auditable); availability toggle
-(manager-only audited); CSV export manager-only + audited (FR-ADM-6/7);
-append-only order_status_events + audit_events (already append-only).
+## Decision recorded
+- Availability toggle is STAFF+ (authorization-matrix.md, not the manager-only
+  state.md draft); CSV export stays MANAGER+ via `canExportCustomerData`.
 
 ## Next steps
-- `db/migrations/0009_order_operations.sql`: full legal transition guard,
-  optimistic version conflict, availability toggle, append-only protections.
-- `src/features/order/domain.ts`: legal transition map + optimistic versioning.
-- `src/features/order/staffService.ts` (+ runtime/actions): staff queue/detail,
-  transitions, availability toggle, CSV export.
-- Admin mobile pages + tests (domain + optimistic conflict scenario KLN-012 final).
-- `npm run check` green → commit → push → PR → merge (per handover).
+- KLN-012 PR: merge after `npm run check` green (already done → open + merge PR).
+- KLN-013..015 reservations (out of scope for this session).
+
+## Env
+- `npm run check` local green on `kalyna_test`.

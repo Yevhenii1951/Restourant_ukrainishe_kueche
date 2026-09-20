@@ -57,6 +57,8 @@ export default function CheckoutForm({
           return t("zoneNotEligible");
         case "slot-unavailable":
           return t("slotUnavailable");
+        case "pickup-paused":
+          return t("pickupPaused");
         default:
           return t("orderInput");
       }

@@ -29,6 +29,9 @@ export default async function AdminLayout({
             Kalyna Admin
           </Link>
           <nav className="flex items-center gap-4 text-sm font-medium">
+            <Link href={`/${locale}/admin/bestellungen`} className="underline-offset-4 hover:underline">
+              Bestellungen
+            </Link>
             <Link href={`/${locale}/admin/inhalte`} className="underline-offset-4 hover:underline">
               Inhalte
             </Link>

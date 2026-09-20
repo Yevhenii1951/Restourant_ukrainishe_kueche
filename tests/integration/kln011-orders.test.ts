@@ -329,7 +329,9 @@ describe("KLN-011 guest pickup order with cash on pickup", () => {
     const created = await createPickupOrder(request(slot, randomUUID()), LOCALE, deps);
     expect(created.status).toBe("created");
     if (created.status !== "created") return;
-    const illegal = pool.query("UPDATE orders SET state = 'accepted' WHERE id = (SELECT id FROM orders WHERE order_number = $1)", [created.order.orderNumber]);
+    // pending_confirmation -> accepted is legal since KLN-012 staff queue;
+    // completed is not reachable from the guest state and stays guarded.
+    const illegal = pool.query("UPDATE orders SET state = 'completed' WHERE id = (SELECT id FROM orders WHERE order_number = $1)", [created.order.orderNumber]);
     await expect(illegal).rejects.toThrow(/invalid order state transition/);
 
     const events = await pool.query<{ to_state: string }>("SELECT to_state FROM order_status_events ORDER BY created_at");

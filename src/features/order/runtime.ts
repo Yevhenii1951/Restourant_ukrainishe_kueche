@@ -20,6 +20,8 @@ function getPool(): Pool | null {
   return pool;
 }
 
+export { getPool };
+
 export function createOrderRuntime(): OrderServiceDeps | null {
   const dbPool = getPool();
   if (!dbPool || !serverEnv.QUOTE_SIGNING_SECRET) return null;

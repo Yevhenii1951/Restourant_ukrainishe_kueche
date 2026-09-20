@@ -1,18 +1,10 @@
 import { createHash, createHmac } from "node:crypto";
 import { z } from "zod";
 import { CART_SCHEMA } from "@/features/cart/domain";
+import type { OrderState } from "./transitions";
 
-export const ORDER_STATES = [
-  "pending_confirmation",
-  "accepted",
-  "preparing",
-  "ready",
-  "completed",
-  "cancelled",
-  "rejected",
-] as const;
-
-export type OrderState = (typeof ORDER_STATES)[number];
+export { ORDER_STATES, ORDER_TRANSITIONS, isLegalOrderTransition } from "./transitions";
+export type { OrderState } from "./transitions";
 
 export const PRIVACY_VERSION = "1";
 
@@ -94,4 +86,83 @@ export function sha256Hex(value: string): string {
 // server ever storing the raw token.
 export function derivePublicOrderToken(secret: string, idempotencyKey: string): string {
   return createHmac("sha256", secret).update(`order-token:${idempotencyKey}`).digest("base64url");
+}
+
+export const MAX_ESTIMATE_MINUTES = 240;
+
+export const transitionOrderSchema = z
+  .object({
+    orderId: z.string().uuid(),
+    expectedVersion: z.number().int().positive(),
+    targetState: z.enum(["accepted", "rejected", "preparing", "ready", "completed", "cancelled"]),
+    reason: z.string().trim().max(200).nullish(),
+    estimateMinutes: z
+      .number()
+      .int()
+      .min(1)
+      .max(MAX_ESTIMATE_MINUTES)
+      .nullish(),
+  })
+  .strict();
+
+export type TransitionOrderInput = z.infer<typeof transitionOrderSchema>;
+
+export function transitionValidation(input: TransitionOrderInput): Record<string, string[]> {
+  const fields: Record<string, string[]> = {};
+  if (input.targetState === "cancelled" || input.targetState === "rejected") {
+    if (!input.reason) fields.reason = ["Für Stornierung/Ablehnung ist ein Grund erforderlich."];
+  }
+  if (input.targetState === "accepted" && !input.estimateMinutes) {
+    fields.estimateMinutes = ["Für die Annahme ist eine Fertigstellungszeit erforderlich."];
+  }
+  return fields;
+}
+
+export interface StaffOrderLineProjection {
+  name: string;
+  quantity: number;
+  lineTotalCents: number;
+  modifiers: OrderModifierProjection[];
+}
+
+export interface StaffOrderListItem {
+  orderId: string;
+  orderNumber: number;
+  state: OrderState;
+  scheduledFor: string;
+  totalCents: number;
+  version: number;
+  guestName: string | null;
+  guestPhone: string | null;
+  itemCount: number;
+  lineSummary: string;
+}
+
+export interface StaffOrderStatusEvent {
+  fromState: OrderState | null;
+  toState: OrderState;
+  reason: string | null;
+  actorName: string | null;
+  createdAt: string;
+}
+
+export interface StaffOrderDetail extends StaffOrderListItem {
+  subtotalCents: number;
+  discountCents: number;
+  tipCents: number;
+  acceptedEstimateMinutes: number | null;
+  lines: StaffOrderLineProjection[];
+  events: StaffOrderStatusEvent[];
+}
+
+export interface AppliedTransitionProjection {
+  orderNumber: number;
+  state: OrderState;
+  version: number;
+  scheduledFor: string;
+  estimateMinutes: number | null;
+}
+
+export interface PickupAcceptingState {
+  enabled: boolean;
 }
