@@ -29,6 +29,9 @@ export default async function AdminLayout({
             Kalyna Admin
           </Link>
           <nav className="flex items-center gap-4 text-sm font-medium">
+            <Link href={`/${locale}/admin/uebersicht`} className="underline-offset-4 hover:underline">
+              Uebersicht
+            </Link>
             <Link href={`/${locale}/admin/bestellungen`} className="underline-offset-4 hover:underline">
               Bestellungen
             </Link>
@@ -44,6 +47,9 @@ export default async function AdminLayout({
             <Link href={`/${locale}/admin/lieferzeiten`} className="underline-offset-4 hover:underline">
               Lieferzeiten
             </Link>
+            <Link href={`/${locale}/admin/schliesszeiten`} className="underline-offset-4 hover:underline">
+              Schliesszeiten
+            </Link>
             <Link href={`/${locale}/admin/tische`} className="underline-offset-4 hover:underline">
               Tische
             </Link>
@@ -53,6 +59,7 @@ export default async function AdminLayout({
             <Link href={`/${locale}/admin/inhalte`} className="underline-offset-4 hover:underline">
               Inhalte
             </Link>
+            {staff.role === "ADMIN" && <Link href={`/${locale}/admin/audit`} className="underline-offset-4 hover:underline">Audit</Link>}
             <span>{staff.role}</span>
           </nav>
         </div>
