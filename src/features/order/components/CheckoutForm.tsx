@@ -5,12 +5,14 @@ import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import type { Cart } from "@/features/cart/domain";
 import { useCart } from "@/features/cart/cart-provider";
-import { createPickupOrderAction } from "@/features/order/actions";
+import { createDeliveryOrderAction, createPickupOrderAction } from "@/features/order/actions";
 import type { OrderResult } from "@/features/order/service";
 
 interface CheckoutFormProps {
   quoteToken: string;
   cart: Cart;
+  fulfilment: "pickup" | "delivery";
+  plz: string | null;
   slotStartUtc: string;
   promoCode: string | null;
   tipCents: number;
@@ -20,6 +22,8 @@ interface CheckoutFormProps {
 export default function CheckoutForm({
   quoteToken,
   cart,
+  fulfilment,
+  plz,
   slotStartUtc,
   promoCode,
   tipCents,
@@ -30,6 +34,10 @@ export default function CheckoutForm({
   const { clearCart } = useCart();
   const [guestName, setGuestName] = useState("");
   const [guestPhone, setGuestPhone] = useState("");
+  const [street, setStreet] = useState("");
+  const [houseNumber, setHouseNumber] = useState("");
+  const [city, setCity] = useState("Kassel");
+  const [deliveryNote, setDeliveryNote] = useState("");
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,19 +78,23 @@ export default function CheckoutForm({
     event.preventDefault();
     setBusy(true);
     setError(null);
-    const result = await createPickupOrderAction(
-      {
+    const payload = {
         quoteToken,
         cart,
-        fulfilment: "pickup",
-        plz: null,
+        fulfilment,
+        plz,
         promoCode,
         tipCents,
         slotStartUtc,
-        paymentMethod: "cash_pickup",
+        paymentMethod: fulfilment === "delivery" ? "cash_delivery" : "cash_pickup",
         contact: { guestName, guestPhone, privacyVersion: "1", privacyAccepted },
         idempotencyKey,
-      },
+        ...(fulfilment === "delivery"
+          ? { deliveryAddress: { street, houseNumber, postalCode: plz ?? "", city, deliveryNote: deliveryNote || null } }
+          : {}),
+      };
+    const result = await (fulfilment === "delivery" ? createDeliveryOrderAction : createPickupOrderAction)(
+      payload,
       { locale },
     );
     setBusy(false);
@@ -127,6 +139,30 @@ export default function CheckoutForm({
             className="w-full rounded-lg border border-ink/20 bg-paper px-3 py-2"
           />
         </div>
+        {fulfilment === "delivery" ? (
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="text-sm">
+              Straße
+              <input required value={street} onChange={(event) => setStreet(event.target.value)} className="mt-1 w-full rounded-lg border border-ink/20 bg-paper px-3 py-2" />
+            </label>
+            <label className="text-sm">
+              Hausnummer
+              <input required value={houseNumber} onChange={(event) => setHouseNumber(event.target.value)} className="mt-1 w-full rounded-lg border border-ink/20 bg-paper px-3 py-2" />
+            </label>
+            <label className="text-sm">
+              PLZ
+              <input required readOnly value={plz ?? ""} className="mt-1 w-full rounded-lg border border-ink/20 bg-paper px-3 py-2" />
+            </label>
+            <label className="text-sm">
+              Stadt
+              <input required value={city} onChange={(event) => setCity(event.target.value)} className="mt-1 w-full rounded-lg border border-ink/20 bg-paper px-3 py-2" />
+            </label>
+            <label className="text-sm sm:col-span-2">
+              Lieferhinweis (optional)
+              <input value={deliveryNote} onChange={(event) => setDeliveryNote(event.target.value)} className="mt-1 w-full rounded-lg border border-ink/20 bg-paper px-3 py-2" />
+            </label>
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-4 flex items-start gap-2">

@@ -49,6 +49,7 @@ export interface OrderStaffServiceDeps {
 export interface OrderListRow {
   id: string;
   order_number: string;
+  fulfilment: "pickup" | "delivery";
   state: OrderState;
   scheduled_for: Date | string;
   total_cents: number;
@@ -88,6 +89,14 @@ interface StatusEventRow {
   created_at: Date | string;
 }
 
+interface DeliveryAddressRow {
+  street: string;
+  house_number: string;
+  postal_code: string;
+  city: string;
+  delivery_note: string | null;
+}
+
 interface TransitionRow {
   orderNumber: number;
   state: string;
@@ -116,7 +125,7 @@ export class OrderStaffService {
       return { status: "error", reason: "service-unavailable" };
     }
     const result = await pool.query<OrderListRow>(
-      `SELECT o.id, o.order_number, o.state, o.scheduled_for, o.total_cents, o.version,
+      `SELECT o.id, o.order_number, o.fulfilment, o.state, o.scheduled_for, o.total_cents, o.version,
               o.guest_name, o.guest_phone, o.updated_at AS decided_at,
               (SELECT count(*) FROM order_items oi WHERE oi.order_id = o.id) AS item_count
        FROM orders o
@@ -134,6 +143,7 @@ export class OrderStaffService {
         return {
           orderId: row.id,
           orderNumber: Number(row.order_number),
+          fulfilment: row.fulfilment,
           state: row.state,
           scheduledFor: iso(row.scheduled_for),
           totalCents: row.total_cents,
@@ -157,7 +167,7 @@ export class OrderStaffService {
       return { status: "error", reason: "service-unavailable" };
     }
     const result = await pool.query<OrderDetailRow>(
-      `SELECT o.id, o.order_number, o.state, o.scheduled_for, o.total_cents, o.version,
+      `SELECT o.id, o.order_number, o.fulfilment, o.state, o.scheduled_for, o.total_cents, o.version,
               o.guest_name, o.guest_phone, o.updated_at AS decided_at,
               o.subtotal_cents, o.discount_cents, o.tip_cents, o.accepted_estimate_minutes,
               (SELECT count(*) FROM order_items oi WHERE oi.order_id = o.id) AS item_count
@@ -167,7 +177,7 @@ export class OrderStaffService {
     if (result.rows.length === 0) return { status: "not-found" };
     const row = result.rows[0];
 
-    const [itemsRes, modifiersRes, eventsRes] = await Promise.all([
+    const [itemsRes, modifiersRes, eventsRes, addressRes] = await Promise.all([
       pool.query<DetailItemRow>(
         "SELECT id, name_snapshot, line_total_cents, quantity FROM order_items WHERE order_id = $1 ORDER BY id",
         [orderId],
@@ -186,6 +196,12 @@ export class OrderStaffService {
          WHERE se.order_id = $1 ORDER BY se.created_at`,
         [orderId],
       ),
+      row.fulfilment === "delivery"
+        ? pool.query<DeliveryAddressRow>(
+            "SELECT street, house_number, postal_code, city, delivery_note FROM order_delivery_addresses WHERE order_id = $1",
+            [orderId],
+          )
+        : Promise.resolve({ rows: [] as DeliveryAddressRow[] }),
     ]);
 
     const modifiersByItem = new Map<string, StaffOrderLineProjection["modifiers"]>();
@@ -214,6 +230,7 @@ export class OrderStaffService {
       order: {
         orderId: row.id,
         orderNumber: Number(row.order_number),
+        fulfilment: row.fulfilment,
         state: row.state,
         scheduledFor: iso(row.scheduled_for),
         totalCents: row.total_cents,
@@ -228,6 +245,15 @@ export class OrderStaffService {
         acceptedEstimateMinutes: row.accepted_estimate_minutes,
         lines,
         events,
+        deliveryAddress: addressRes.rows[0]
+          ? {
+              street: addressRes.rows[0].street,
+              houseNumber: addressRes.rows[0].house_number,
+              postalCode: addressRes.rows[0].postal_code,
+              city: addressRes.rows[0].city,
+              deliveryNote: addressRes.rows[0].delivery_note,
+            }
+          : null,
       },
     };
   }

@@ -67,7 +67,7 @@ export async function getSlotsFromStore(
     fulfilment: input.fulfilment,
     date: input.date,
     settings: { asapLeadMinutes: settings.asapLeadMinutes, slotIntervalMinutes: settings.slotIntervalMinutes },
-    windows: windows.map((window) => ({
+    windows: windows.filter((window) => !window.fulfilment || window.fulfilment === input.fulfilment).map((window) => ({
       id: window.id,
       weekday: window.weekday,
       dateOverride: window.dateOverride,

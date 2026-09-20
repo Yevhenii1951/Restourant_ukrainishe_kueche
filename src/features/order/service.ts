@@ -1,8 +1,10 @@
 import {
   createOrderSchema,
+  createDeliveryOrderSchema,
   derivePublicOrderToken,
   PRIVACY_VERSION,
   sha256Hex,
+  type CreateDeliveryOrderInput,
   type CancelProjection,
   type OrderProjection,
   type OrderState,
@@ -12,6 +14,7 @@ import type { Cart } from "@/features/cart/domain";
 import {
   calculateQuote,
   hashQuotePayload,
+  normalizeGermanPlz,
   verifyQuote,
   type Promo,
   type QuoteBreakdown,
@@ -319,6 +322,106 @@ export async function createPickupOrder(
     token: publicToken,
     replayed: false,
   };
+}
+
+export async function createDeliveryOrder(
+  input: unknown,
+  locale: SupportedLocale,
+  deps: OrderServiceDeps,
+): Promise<OrderResult> {
+  const { pool, secret, store, loadMenu } = deps;
+  if (!pool || !secret || !store || !loadMenu) return { status: "error", reason: "service-unavailable" };
+  const parsed = createDeliveryOrderSchema.safeParse(input);
+  if (!parsed.success) return { status: "rejected", reason: "input" };
+  const order: CreateDeliveryOrderInput = parsed.data;
+  const now = deps.now ?? new Date();
+  if (!order.contact.privacyAccepted) return { status: "rejected", reason: "privacy-not-accepted" };
+
+  const plz = normalizeGermanPlz(order.plz);
+  if (!plz || plz !== order.deliveryAddress.postalCode) {
+    return { status: "rejected", reason: "zone-not-eligible" };
+  }
+  const promoCode = order.promoCode?.trim().toUpperCase() || null;
+  const claim = verifyQuote(order.quoteToken, secret, now.getTime());
+  if (!claim) return { status: "rejected", reason: "quote-invalid" };
+  const payloadHash = hashQuotePayload({
+    cart: order.cart,
+    fulfilment: "delivery",
+    plz,
+    promoCode,
+    tipCents: order.tipCents ?? 0,
+    slotStartUtc: order.slotStartUtc,
+  });
+  if (claim.payloadHash !== payloadHash) return { status: "rejected", reason: "quote-stale" };
+
+  const settings = await store.getCommerceSettings();
+  if (!settings) return { status: "error", reason: "service-unavailable" };
+  const menu = await loadMenu(locale);
+  const itemsById = new Map(menu.items.map((item) => [item.id, item]));
+  const cartIssues = validateCart(order.cart, itemsById);
+  for (const line of order.cart.lines) {
+    if (line.quantity > settings.maxLineQuantity) cartIssues.push({ lineIndex: order.cart.lines.indexOf(line), kind: "invalid-quantity", actual: line.quantity });
+  }
+  if (cartIssues.length > 0) return { status: "needs-attention", cartIssues };
+
+  const subtotalCents = order.cart.lines.reduce((sum, line) => sum + estimateLineTotalCents(itemsById.get(line.menuItemId)!, line), 0);
+  const zone = await store.getDeliveryZoneByPlz(plz);
+  let promo: Promo | null = null;
+  if (promoCode) {
+    const promoRow = await store.getPromoByCodeLookup(promoCode);
+    if (promoRow && promoWindowOpen(promoRow, now.getTime())) promo = { mode: promoRow.mode, value: promoRow.value, minimumSubtotalCents: promoRow.minimumSubtotalCents };
+  }
+  const quote = calculateQuote({ fulfilment: "delivery", plz, zone, promoCode, promo, subtotalCents, tipCents: order.tipCents ?? 0, settings });
+  if (!quote.ok) return { status: "rejected", reason: quote.reason, minimumCents: quote.minimumCents, subtotalCents: quote.subtotalCents };
+  const breakdown: QuoteBreakdown = quote.breakdown;
+
+  const [slotDate] = order.slotStartUtc.split("T");
+  const slotsResult = await getSlotsFromStore({ fulfilment: "delivery", plz, date: slotDate }, now, { store, pool });
+  if (slotsResult.status !== "slots") return { status: "rejected", reason: "slot-unavailable" };
+  const chosen = slotsResult.slots.find((slot) => slot.startUtc === order.slotStartUtc);
+  if (!chosen || chosen.remainingCapacity < 1) return { status: "rejected", reason: "slot-unavailable" };
+
+  const requestHash = hashQuotePayload({
+    cart: order.cart,
+    fulfilment: "delivery",
+    plz,
+    promoCode,
+    tipCents: order.tipCents ?? 0,
+    slotStartUtc: order.slotStartUtc,
+    paymentMethod: "cash_delivery",
+    contact: { guestName: order.contact.guestName, guestPhone: order.contact.guestPhone, privacyVersion: PRIVACY_VERSION },
+    deliveryAddress: order.deliveryAddress,
+  });
+
+  const idempotencyHash = sha256Hex(order.idempotencyKey);
+  const publicToken = derivePublicOrderToken(secret, order.idempotencyKey);
+  const publicTokenHash = sha256Hex(publicToken);
+  const itemRows = buildItemRows(order.cart, menu);
+  let orderId: string;
+  try {
+    const inserted = await pool.query<{ insert_delivery_order: string }>(
+      `SELECT insert_delivery_order($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)`,
+      [
+        publicTokenHash, idempotencyHash, requestHash, order.slotStartUtc,
+        order.contact.guestName, order.contact.guestPhone, PRIVACY_VERSION,
+        breakdown.subtotalCents, promoCode, breakdown.promoDiscountCents,
+        breakdown.deliveryFeeCents, breakdown.tipCents, breakdown.totalCents,
+        JSON.stringify(itemRows), order.deliveryAddress.street, order.deliveryAddress.houseNumber,
+        plz, order.deliveryAddress.city, order.deliveryAddress.deliveryNote ?? null,
+      ],
+    );
+    orderId = inserted.rows[0].insert_delivery_order;
+  } catch (error) {
+    const pgError = error as { code?: unknown; message?: unknown };
+    if (typeof pgError.message === "string" && pgError.message.includes("slot is full")) return { status: "rejected", reason: "slot-unavailable" };
+    if (pgError.code !== "23505") throw error;
+    const existing = await pool.query<{ id: string; request_hash: string }>("SELECT id, request_hash FROM orders WHERE idempotency_hash = $1", [idempotencyHash]);
+    if (existing.rows.length > 0 && existing.rows[0].request_hash === requestHash) {
+      return { status: "created", order: await fetchOrderProjection(pool, existing.rows[0].id), token: publicToken, replayed: true };
+    }
+    return { status: "conflict" };
+  }
+  return { status: "created", order: await fetchOrderProjection(pool, orderId), token: publicToken, replayed: false };
 }
 
 export async function getPublicOrder(

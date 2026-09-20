@@ -104,8 +104,8 @@ export default function OrderBuilder({ items, locale }: OrderBuilderProps) {
           ))}
         </fieldset>
 
-        {fulfilment === "delivery" ? (
-          <div className="grid gap-4">
+        <div className="grid gap-4">
+          {fulfilment === "delivery" ? (
             <div>
               <label htmlFor="plz" className="mb-1 block text-sm font-medium">
                 {t("plzLabel")}
@@ -119,6 +119,7 @@ export default function OrderBuilder({ items, locale }: OrderBuilderProps) {
                 className="w-full rounded-lg border border-ink/20 bg-paper px-3 py-2"
               />
             </div>
+          ) : null}
             <div>
               <label htmlFor="date" className="mb-1 block text-sm font-medium">
                 {t("dateLabel")}
@@ -139,8 +140,7 @@ export default function OrderBuilder({ items, locale }: OrderBuilderProps) {
             >
               {busy ? "…" : t("showSlots")}
             </button>
-          </div>
-        ) : null}
+        </div>
 
         {slots?.status === "slots" ? (
           <fieldset className="space-y-2">
@@ -219,10 +219,12 @@ export default function OrderBuilder({ items, locale }: OrderBuilderProps) {
             paymentPending={fulfilment !== "pickup"}
           />
         ) : null}
-        {quote?.status === "quote" && slotStartUtc && fulfilment === "pickup" ? (
+        {quote?.status === "quote" && slotStartUtc ? (
           <CheckoutForm
             quoteToken={quote.quoteToken}
             cart={cart}
+            fulfilment={fulfilment}
+            plz={fulfilment === "delivery" ? plz : null}
             slotStartUtc={slotStartUtc}
             promoCode={promoCode || null}
             tipCents={quotedTip}

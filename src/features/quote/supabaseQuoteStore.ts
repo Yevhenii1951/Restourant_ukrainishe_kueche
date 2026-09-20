@@ -119,6 +119,7 @@ export function createSupabaseQuoteStore(db: SupabaseClient): QuoteStore {
       if (result.error) throw result.error;
       return ((result.data ?? []) as WindowApiRow[]).map((row) => ({
         id: row.id,
+        fulfilment: row.fulfilment as "pickup" | "delivery",
         weekday: row.weekday,
         dateOverride: row.date_override,
         opensAt: row.opens_at.slice(0, 5),
