@@ -80,3 +80,7 @@ later apply. Add an accessibility statement only if its claims match measured re
 - Image/video licenses.
 - Live-payment operational process, refund owner and customer support contact.
 
+
+## Transactional Email
+
+Brevo is an optional transactional-email processor. SPF, DKIM and DMARC require DNS records controlled by the sender-domain owner; they are not configured or claimed by this repository. The demo sender remains non-deliverable until a verified sender domain is configured in Brevo.
