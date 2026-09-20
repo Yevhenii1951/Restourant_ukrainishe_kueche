@@ -1,49 +1,54 @@
-# SDD Session State (KLN-012)
+# SDD Session State (KLN-013)
 
 ## Done
-- **KLN-012 — Admin Order Operations** implemented on
-  `feature/kln-012-order-operations` (base = main@66e4ba4 with KLN-011 merged).
+- **KLN-013 — Table inventory and availability** implemented on
+  `feature/kln-013-reservation-availability`, merged via PR #18
+  (`main` @ c8b6c37).
 
 ## Finished this session
-- Migration `0009_order_operations.sql`: full legal state guard
-  (pending→accepted|rejected|cancelled; accepted→preparing|cancelled;
-  preparing→ready|cancelled; ready→completed|cancelled; terminal states
-  immutable), `accepted_estimate_minutes` (1..240), `apply_order_transition()`
-  with optimistic versioning (stale → `conflict`, illegal → `invalid`; every
-  attempt written to append-only audit_events), `set_pickup_accepting_enabled()`
-  (settings `pickup_accepting_enabled`, audited toggle), pick-up intake guard
-  (`pickup orders are paused`, fail closed), append-only trigger for
-  `order_status_events`.
-- Pure `src/features/order/transitions.ts` (ORDER_STATES/ORDER_TRANSITIONS,
-  client-safe, no node:crypto) re-exported from `domain.ts`; added
-  `transitionOrderSchema`/`transitionValidation` (reason required for
-  cancel/reject, estimate 1..240 for accept) + staff projections.
-- `staffService.ts` (pure, DatabaseRunner) — queue, detail, transition, toggle,
-  CSV export (MANAGER+ gate; formula-injection escaping); `staffRuntime.ts`
-  (server-only pool + session), `staffActions.ts` (OrderActionResult);
-  `runtime.ts` now exports `getPool()`. `identity/domain.ts` gained
-  `canExportCustomerData` (MANAGER+).
-- `createPickupOrder` returns `pickup-paused` when intake guard fires;
-  CheckoutForm + `bestellen.pickupPaused` in de/en/uk.
-- Admin UI (German literals, mobile-first): `/admin/bestellungen` queue +
-  `/admin/bestellungen/[orderId]` detail with `AvailabilityToggle`,
-  `ExportCsvButton`, `OrderTransitionControls` (legal targets from map), nav
-  link in admin layout.
-- Tests: `kln012-order-domain.test.ts`, `kln012-staff-service.test.ts` (unit),
-  `kln012-orders-operations.test.ts` (integration: optimistic-versioning
-  verification scenario — stale cancel → conflict, both attempts audited,
-  contact masked on cancel, append-only, paused intake, anon denied).
-  KLN-011 guard test updated: pending→accepted is now legal (full map),
-  illegal edge `completed` still blocked.
-- `npm run check` green (lint/typecheck/unit/integration).
+- Migration `0010_reservation_availability.sql`: `commercial_service_type`
+  gains `reservation` (enum value must not be used inside the migration
+  transaction — ALTER TYPE ADD VALUE limitation; demo rows live in seed 0006);
+  `restaurant_tables`, `table_combinations` (capacity NULL until members exist),
+  `table_combination_members`; DB triggers recompute combination capacity from
+  the **active** member tables (never 0, NULL when none); RLS + revoke for
+  anon/authenticated, full grants to `service_role`.
+- Seed `0006_reservation_demo.sql`: rules (duration 120, horizon 90 d, notice
+  120 min, 15-min grid, max party 12), reservation windows daily 12:00–23:00,
+  summer-pause closure (also affects reservation), 4 demo tables, 2 combos.
+- `src/features/reservation/*`: `domain.ts` (Zod schemas,
+  `validateCombination` ≥2 distinct active tables, `buildAllocationOptions`,
+  `selectSmallestPlan` — combinations win capacity ties), `slots.ts`
+  (DST-safe half-open builder, per-table blocks, notice filter),
+  `store.ts`/`supabaseReservationStore.ts` (read + save, server-only),
+  `availability.ts` (pure `getReservationSlotsFromStore`,
+  `ReservationReadStore`, `blocks` reserved for KLN-014),
+  `service.ts`/`actions.ts` (env-guarded), `staffActions.ts` (manager-only
+  CRUD + audit events; NOT_FOUND removed — not in ActionResult union).
+- `quote/slots.ts` now exports `berlinLocalToUtcMs`; `identity/domain.ts` gained
+  `canManageReservations` (MANAGER+).
+- Admin UI (German literals): `/admin/tische`, `/admin/kombinationen` + edit
+  pages; client components `TableForm`/`TableRowToggle`/`CombinationForm`/
+  `CombinationRowToggle` (raw server-action forms fail TS — handlers must
+  return `Promise<void>`); nav links in admin layout.
+- Public `/reservierung` + `ReservationAvailability.tsx`: slots expose only
+  `startUtc` + `labelLocal`, no table identities; `min` date memoized
+  (react-hooks/purity). i18n `reservierung` namespace (de/en/uk).
 
-## Decision recorded
-- Availability toggle is STAFF+ (authorization-matrix.md, not the manager-only
-  state.md draft); CSV export stays MANAGER+ via `canExportCustomerData`.
+## Test results
+- `npm run check` green: lint + typecheck + 170 unit + 66 integration.
+  New unit (8) + integration (5): half-open closure removes the overlap window
+  (12:15–14:45 blocked, 12:00 stays), DST spring/autumn, anon/authenticated RLS
+  denial, DB-computed combo capacity on table deactivate/restore, party cap,
+  slot privacy. Tests use a pool-backed `ReservationReadStore`.
+- Gotcha: test DB error messages are German — assert
+  `/keine Berechtigung|permission denied/i`; RLS rules reject `service_role`
+  sessions without JWT claims → interactive writes go through the owner pool.
 
 ## Next steps
-- KLN-012 PR: merge after `npm run check` green (already done → open + merge PR).
-- KLN-013..015 reservations (out of scope for this session).
+- KLN-014..015 reservations (persistence, allocation, cutoff/hold, booking);
+  the `blocks` parameter of `getReservationSlotsFromStore` is the seam.
+- KLN-016..028 out of scope.
 
 ## Env
-- `npm run check` local green on `kalyna_test`.
+- `npm run check` local green on `kalyna_test`; main @ c8b6c37.
