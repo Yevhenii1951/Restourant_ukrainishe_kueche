@@ -14,6 +14,16 @@ export interface CheckoutSessionInput {
   successUrl: string;
 }
 
+export interface VoucherCheckoutSessionInput {
+  amountCents: number;
+  cancelUrl: string;
+  currency: "EUR";
+  locale: string;
+  paymentMethod: StripePaymentMethod;
+  purchaseId: string;
+  successUrl: string;
+}
+
 export interface CheckoutSessionResult {
   id: string;
   url: string;
@@ -21,6 +31,7 @@ export interface CheckoutSessionResult {
 
 export interface StripeCheckoutClient {
   createCheckoutSession(input: CheckoutSessionInput): Promise<CheckoutSessionResult>;
+  createVoucherCheckoutSession(input: VoucherCheckoutSessionInput): Promise<CheckoutSessionResult>;
 }
 
 export interface StripeRefundInput {
@@ -69,6 +80,35 @@ export function createStripeCheckoutClient(): (StripeCheckoutClient & StripeRefu
         payment_intent_data: {
           metadata: { orderId: input.orderId, orderNumber: String(input.orderNumber) },
         },
+      });
+      if (!session.url) throw new Error("Stripe Checkout returned no URL");
+      return { id: session.id, url: session.url };
+    },
+    async createVoucherCheckoutSession(input): Promise<CheckoutSessionResult> {
+      const paymentMethods: Stripe.Checkout.SessionCreateParams.PaymentMethodType[] =
+        input.paymentMethod === "stripe_paypal" ? ["card", "paypal"] : ["card"];
+      const session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        payment_method_types: paymentMethods,
+        locale: input.locale === "de" || input.locale === "en" ? input.locale : "de",
+        success_url: input.successUrl,
+        cancel_url: input.cancelUrl,
+        client_reference_id: input.purchaseId,
+        line_items: [{
+          quantity: 1,
+          price_data: {
+            currency: input.currency.toLowerCase(),
+            unit_amount: input.amountCents,
+            product_data: { name: `Kalyna Gutschein ${input.amountCents / 100} EUR` },
+          },
+        }],
+        metadata: {
+          purchaseType: "voucher",
+          voucherPurchaseId: input.purchaseId,
+          amountCents: String(input.amountCents),
+          currency: input.currency,
+        },
+        payment_intent_data: { metadata: { purchaseType: "voucher", voucherPurchaseId: input.purchaseId } },
       });
       if (!session.url) throw new Error("Stripe Checkout returned no URL");
       return { id: session.id, url: session.url };
