@@ -10,7 +10,7 @@ Update only after evidence exists. `Planned` is not `Shipped`.
 | 3 Reservations | tables, holds, guest/admin flow | Shipped | KLN-013–015; local reservation runtime | Admin authentication requires Supabase |
 | 4 Commerce | delivery, Stripe, refund, email | Shipped | KLN-016–019; test-mode integrations | No live payment enablement |
 | 5 Extended | vouchers, catering, audit/dashboard | Shipped | KLN-020–022 | Supabase staff auth for mutable admin flows |
-| 6 AI | read-only assistant | Shipped | KLN-023–025 local fail-closed shell | No paid provider/history persistence |
+| 6 AI | read-only assistant | Shipped | KLN-023–025 local fail-closed shell; `npm run check` green with 188 unit / 92 integration | Paid provider remains disabled unless `AI_PROVIDER_KEY` and `AI_MONTHLY_BUDGET_EUR` are explicitly configured |
 | 7 Hardening | consent, accessibility, CI, review | Shipped | KLN-026–028; CI and local checks | Manual preview Web Vitals/axe remain release checks |
 
 ## Stage 0 Delivery
@@ -31,7 +31,7 @@ Shipped through KLN-001–004:
 - Merge commit: `6670a7f`.
 - Local and CI `npm run check`: lint and typecheck passed; 47 unit tests and 14 integration tests passed.
 - `npm run build`: passed with Next.js 16.3.5; `/[locale]/admin` is dynamic and Proxy is active.
-- `npm audit --omit=dev`: 0 vulnerabilities at handover time.
+- `npm audit --omit=dev`: 0 vulnerabilities at handover time. Latest local check on 2026-09-21 also reported 0 vulnerabilities.
 - Independent standards/security review: PASS.
 - Independent KLN-004 specification review: PASS.
 

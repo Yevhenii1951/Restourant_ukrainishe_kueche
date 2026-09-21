@@ -1,7 +1,9 @@
 import { z } from "zod";
 
 const serverEnvSchema = z.object({
-  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  NODE_ENV: z
+    .enum(["development", "test", "production"])
+    .default("development"),
   URL: z.string().url().optional(),
   DATABASE_URL: z.string().min(1).optional(),
   SUPABASE_URL: z.string().url().optional(),
@@ -12,6 +14,10 @@ const serverEnvSchema = z.object({
   BREVO_API_KEY: z.string().min(1).optional(),
   QUOTE_SIGNING_SECRET: z.string().min(32).optional(),
   AI_PROVIDER_KEY: z.string().min(1).optional(),
+  AI_MONTHLY_BUDGET_EUR: z
+    .string()
+    .regex(/^\d+(\.\d{1,2})?$/)
+    .optional(),
   CRON_SECRET: z.string().min(1).optional(),
 });
 
@@ -27,7 +33,9 @@ function optionalEnv(value: string | undefined): string | undefined {
   return value && value.trim().length > 0 ? value : undefined;
 }
 
-export function parseServerEnv(source: EnvSource): z.infer<typeof serverEnvSchema> {
+export function parseServerEnv(
+  source: EnvSource,
+): z.infer<typeof serverEnvSchema> {
   return serverEnvSchema.parse({
     NODE_ENV: source.NODE_ENV,
     URL: optionalEnv(source.URL),
@@ -40,14 +48,19 @@ export function parseServerEnv(source: EnvSource): z.infer<typeof serverEnvSchem
     BREVO_API_KEY: optionalEnv(source.BREVO_API_KEY),
     QUOTE_SIGNING_SECRET: optionalEnv(source.QUOTE_SIGNING_SECRET),
     AI_PROVIDER_KEY: optionalEnv(source.AI_PROVIDER_KEY),
+    AI_MONTHLY_BUDGET_EUR: optionalEnv(source.AI_MONTHLY_BUDGET_EUR),
     CRON_SECRET: optionalEnv(source.CRON_SECRET),
   });
 }
 
-export function parseClientEnv(source: EnvSource): z.infer<typeof clientEnvSchema> {
+export function parseClientEnv(
+  source: EnvSource,
+): z.infer<typeof clientEnvSchema> {
   return clientEnvSchema.parse({
     NEXT_PUBLIC_SUPABASE_URL: optionalEnv(source.NEXT_PUBLIC_SUPABASE_URL),
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: optionalEnv(source.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: optionalEnv(
+      source.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    ),
     NEXT_PUBLIC_DEMO: optionalEnv(source.NEXT_PUBLIC_DEMO),
   });
 }

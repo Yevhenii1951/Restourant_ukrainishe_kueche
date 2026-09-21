@@ -1,23 +1,19 @@
 # SDD Session State (local-first completion)
 
 ## Done
-- KLN-022 admin operations implemented on `feature/kln-022-admin-settings-audit`.
-- Manager customer CSV boundary uses spreadsheet-formula guarding and writes an audit summary; STAFF receives neither export nor audit data.
-- Added admin-only redacted audit viewer, Europe/Berlin daily aggregates excluding cancelled/rejected orders, and typed closure management.
-- Existing typed delivery, table, reservation and availability settings are linked from the admin overview.
-- Public menu and typed CMS content now read from local PostgreSQL when Supabase is not configured.
-- Quotes, order creation and Stripe checkout use a PostgreSQL quote store in local-first mode.
-- Reservation availability and public reservation requests now use a PostgreSQL read store in local-first mode.
-- Added CSP, no-sniff, referrer and permissions headers; local HTTP verification confirms they are emitted.
-- Added guarded `db:local:migrate` and `db:local:seed` commands for `localhost/kalyna_dev`; Supabase remains optional.
-- Added a fail-closed AI launcher and a bounded read-only public-menu answer; allergy questions refuse safety guarantees and unknown prompts fail closed.
+- KLN-025 AI retention implemented on `feature/kln-025-ai-retention-limits`.
+- Added local PostgreSQL `ai_conversations` and `ai_messages` retention tables with RLS/grants, opaque session hash, locale, five-day expiry and message token counts.
+- `/api/ai/chat` now issues an HttpOnly opaque session cookie, caps input at 2,000 chars, rejects obvious PII, rate-limits by IP/session and stores successful local exchanges when `DATABASE_URL` is available.
+- Missing `AI_MONTHLY_BUDGET_EUR` fails closed for configured paid AI provider calls; no EUR amount is invented.
+- Added `/api/cron/ai-retention` cleanup guarded by `CRON_SECRET` and documented `AI_MONTHLY_BUDGET_EUR` in `.env.example`.
 
 ## Verification
-- `npm run check` was green before the local-first changes: 180 unit and 92 integration tests.
-- After the local-first changes, `npm run check` is green (180 unit, 92 integration) and `npm run build` completes successfully.
-- Browser checks on `.env.local` / `kalyna_dev`: `/de/speisekarte` renders 10 seeded dishes, `/de/bestellen` renders the seeded menu, and `/de/reservierung` reads the seeded table inventory without Supabase variables.
-- `kalyna_dev` has all 20 migrations and 9 seeds; a second `db:local:migrate`/`db:local:seed` run reports all current.
+- `npm run db:local:migrate` applied `0021_ai_retention.sql` to `kalyna_dev`.
+- `npx vitest run tests/unit/kln024-ai-tools.test.ts tests/unit/kln025-ai-retention.test.ts`: 8 tests passed.
+- `npm run check`: lint, typecheck, 188 unit tests and 92 integration tests passed.
+- `npm run build`: passed on Next.js 16.3.5; build still prints the existing metadataBase warning for social image resolution.
+- `npm audit --omit=dev`: 0 vulnerabilities.
 
 ## Next
+- Finish KLN-026 through KLN-028 if continuing ticket-by-ticket: consent/security evidence, accessibility/performance audit evidence, final verification/handover ledger.
 - Admin authentication and mutable admin forms deliberately remain Supabase-auth based; connect Supabase before using staff/admin operations.
-- KLN-025 through KLN-028 remain planned SDD scope (AI retention, consent expansion, final accessibility and handover).

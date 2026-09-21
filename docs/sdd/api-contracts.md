@@ -110,9 +110,9 @@ All tools are read-only, bounded and return public DTOs. No generic SQL/tool exe
 Requires Vercel Cron authorization. Claims bounded batch, records attempts, schedules
 retry and never sends the same logical notification twice.
 
-### `POST /api/jobs/retention`
+### `POST /api/cron/ai-retention`
 
-Expires pending reservation holds and deletes AI conversations with `expires_at < now()`.
+Requires `CRON_SECRET`. Deletes AI conversations with `expires_at <= now()` and returns the deleted count.
 
 ## Rate-Limit Categories
 
