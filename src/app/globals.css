@@ -23,3 +23,8 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
