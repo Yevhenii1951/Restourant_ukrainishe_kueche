@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { signOutAction } from "@/features/identity/authActions";
+import {
+  getAdminLoginPath,
+  parseAuthLocale,
+} from "@/features/identity/authPaths";
 import { getCurrentStaff } from "@/features/identity/session";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
-
 
 export default async function AdminLayout({
   children,
@@ -15,8 +19,13 @@ export default async function AdminLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }>) {
-  const [{ locale }, staff] = await Promise.all([params, getCurrentStaff()]);
-  if (!staff) redirect(`/${locale}`);
+  const [{ locale: rawLocale }, staff] = await Promise.all([
+    params,
+    getCurrentStaff(),
+  ]);
+  const locale = parseAuthLocale(rawLocale);
+  if (!staff) redirect(getAdminLoginPath(locale));
+  const signOutForLocale = signOutAction.bind(null, locale);
 
   return (
     <div className="min-h-screen bg-paper text-ink">
@@ -29,38 +38,83 @@ export default async function AdminLayout({
             Kalyna Admin
           </Link>
           <nav className="flex items-center gap-4 text-sm font-medium">
-            <Link href={`/${locale}/admin/uebersicht`} className="underline-offset-4 hover:underline">
+            <Link
+              href={`/${locale}/admin/uebersicht`}
+              className="underline-offset-4 hover:underline"
+            >
               Uebersicht
             </Link>
-            <Link href={`/${locale}/admin/bestellungen`} className="underline-offset-4 hover:underline">
+            <Link
+              href={`/${locale}/admin/bestellungen`}
+              className="underline-offset-4 hover:underline"
+            >
               Bestellungen
             </Link>
-            <Link href={`/${locale}/admin/reservierungen`} className="underline-offset-4 hover:underline">
+            <Link
+              href={`/${locale}/admin/reservierungen`}
+              className="underline-offset-4 hover:underline"
+            >
               Reservierungen
             </Link>
-            <Link href={`/${locale}/admin/catering`} className="underline-offset-4 hover:underline">
+            <Link
+              href={`/${locale}/admin/catering`}
+              className="underline-offset-4 hover:underline"
+            >
               Catering
             </Link>
-            <Link href={`/${locale}/admin/lieferzonen`} className="underline-offset-4 hover:underline">
+            <Link
+              href={`/${locale}/admin/lieferzonen`}
+              className="underline-offset-4 hover:underline"
+            >
               Lieferzonen
             </Link>
-            <Link href={`/${locale}/admin/lieferzeiten`} className="underline-offset-4 hover:underline">
+            <Link
+              href={`/${locale}/admin/lieferzeiten`}
+              className="underline-offset-4 hover:underline"
+            >
               Lieferzeiten
             </Link>
-            <Link href={`/${locale}/admin/schliesszeiten`} className="underline-offset-4 hover:underline">
+            <Link
+              href={`/${locale}/admin/schliesszeiten`}
+              className="underline-offset-4 hover:underline"
+            >
               Schliesszeiten
             </Link>
-            <Link href={`/${locale}/admin/tische`} className="underline-offset-4 hover:underline">
+            <Link
+              href={`/${locale}/admin/tische`}
+              className="underline-offset-4 hover:underline"
+            >
               Tische
             </Link>
-            <Link href={`/${locale}/admin/kombinationen`} className="underline-offset-4 hover:underline">
+            <Link
+              href={`/${locale}/admin/kombinationen`}
+              className="underline-offset-4 hover:underline"
+            >
               Kombinationen
             </Link>
-            <Link href={`/${locale}/admin/inhalte`} className="underline-offset-4 hover:underline">
+            <Link
+              href={`/${locale}/admin/inhalte`}
+              className="underline-offset-4 hover:underline"
+            >
               Inhalte
             </Link>
-            {staff.role === "ADMIN" && <Link href={`/${locale}/admin/audit`} className="underline-offset-4 hover:underline">Audit</Link>}
+            {staff.role === "ADMIN" && (
+              <Link
+                href={`/${locale}/admin/audit`}
+                className="underline-offset-4 hover:underline"
+              >
+                Audit
+              </Link>
+            )}
             <span>{staff.role}</span>
+            <form action={signOutForLocale}>
+              <button
+                type="submit"
+                className="underline-offset-4 hover:underline"
+              >
+                Sign out
+              </button>
+            </form>
           </nav>
         </div>
       </header>

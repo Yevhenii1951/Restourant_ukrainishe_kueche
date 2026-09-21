@@ -9,6 +9,9 @@
 - Map tiles are consent-gated. Security headers are sent by Next.js. The AI
   assistant is read-only and stores only short-lived local session history when
   `DATABASE_URL` is configured.
+- Supabase staff login routes are prepared at `/de/admin/login`,
+  `/de/admin/password` and `/auth/callback`; they activate when Supabase env is
+  configured.
 
 ## Start
 
@@ -35,8 +38,8 @@ The local scripts accept only `kalyna_dev` on localhost or the documented
 ## Deliberate boundaries
 
 - Staff authentication and mutable admin forms remain Supabase-auth dependent.
-- Supabase setup, staff invite-email acceptance and mutable admin forms remain
-  outside this local public-demo completion pass.
+- Supabase project setup and live staff invite-email acceptance remain outside
+  this local public-demo completion pass; see `supabase-admin-setup.md`.
 - Manual production-preview axe and p75 Web Vitals evidence must be recorded
   before a real launch; the repository does not claim automated axe coverage.
 - This remains a fictional portfolio demo; no live payment or legal launch is
