@@ -7,7 +7,10 @@
   },
   "home": {
     "title": "Kalyna — Ukrainian cuisine in Kassel",
-    "intro": "Borscht, varenyky, pampushky and more — our Ukrainian kitchen in Kassel."
+    "intro": "Borscht, varenyky, pampushky and more — our Ukrainian kitchen in Kassel.",
+    "featuredTitle": "Popular dishes",
+    "featuredLead": "A first look at the demo menu with images from the local project.",
+    "menuCta": "Open menu"
   },
   "menu": {
     "title": "Menu – Ukrainian cuisine in Kassel",

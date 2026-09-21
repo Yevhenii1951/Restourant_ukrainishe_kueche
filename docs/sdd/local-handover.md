@@ -12,6 +12,9 @@
 - Supabase staff login routes are prepared at `/de/admin/login`,
   `/de/admin/password` and `/auth/callback`; they activate when Supabase env is
   configured.
+- Homepage, menu and gallery show demo fallback cards/photos when
+  `DATABASE_URL` or Supabase are missing or still empty; connected data stores
+  still take precedence once seeded.
 
 ## Start
 
@@ -29,7 +32,7 @@ The local scripts accept only `kalyna_dev` on localhost or the documented
 
 ## Verified
 
-- `npm run check`: 188 unit and 92 integration tests pass.
+- `npm run check`: 195 unit and 92 integration tests pass.
 - `npm run build` passes.
 - `/de/speisekarte`, `/de/bestellen` and `/de/reservierung` render from the
   seeded local database without Supabase environment variables.

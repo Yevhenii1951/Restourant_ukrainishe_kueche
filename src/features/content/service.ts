@@ -5,6 +5,10 @@ import { createSupabaseContentStore } from "./supabaseContentStore";
 import { type PublicContentEntryRow } from "./store";
 import { type PublicContentEntry } from "./public";
 import { createPostgresContentStore } from "./postgresContentStore";
+import {
+  getDemoPublicContentEntries,
+  withDemoContentFallback,
+} from "./demoContent";
 import { getServerPool } from "@/lib/db/serverPool";
 
 export async function getPublicContentEntries(): Promise<PublicContentEntry[]> {
@@ -12,11 +16,16 @@ export async function getPublicContentEntries(): Promise<PublicContentEntry[]> {
     const rows = await createSupabaseContentStore(
       getSupabaseServerClient(),
     ).listPublished();
-    return rows.map(toPublicEntry);
+    return withDemoContentFallback(rows.map(toPublicEntry));
   }
   const pool = getServerPool();
-  if (pool) return (await createPostgresContentStore(pool).listPublished()).map(toPublicEntry);
-  return [];
+  if (pool) {
+    const entries = (
+      await createPostgresContentStore(pool).listPublished()
+    ).map(toPublicEntry);
+    return withDemoContentFallback(entries);
+  }
+  return getDemoPublicContentEntries();
 }
 
 function toPublicEntry(row: PublicContentEntryRow): PublicContentEntry {

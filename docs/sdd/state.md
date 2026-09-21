@@ -14,7 +14,7 @@
 
 - `npm run db:local:migrate` applied `0021_ai_retention.sql` to `kalyna_dev`.
 - `npx vitest run tests/unit/kln024-ai-tools.test.ts tests/unit/kln025-ai-retention.test.ts`: 8 tests passed.
-- `npm run check`: lint, typecheck, 188 unit tests and 92 integration tests passed.
+- `npm run check`: lint, typecheck, 195 unit tests and 92 integration tests passed.
 - `npm run build`: passed on Next.js 16.3.5; build still prints the existing metadataBase warning for social image resolution.
 - `npm audit --omit=dev`: 0 vulnerabilities.
 
@@ -23,6 +23,7 @@
 - `/[locale]/admin/login` now provides staff email/password login, magic link email and password reset email when Supabase env is configured.
 - `/auth/callback` exchanges Supabase invite, magic and reset `code` values for HttpOnly session cookies.
 - `/[locale]/admin/password` lets invited/reset staff set a password after callback, and admin navigation includes sign out.
+- Public homepage, menu and gallery now have built-in demo fallback cards and images when no local DB/Supabase content is available.
 - See `docs/sdd/supabase-admin-setup.md` for the exact env and redirect URL checklist.
 
 ## Launch Boundaries
