@@ -1,4 +1,3 @@
-import type { Client } from "pg";
 import { isContentKey, type ContentKey } from "./domain";
 import {
   CONTENT_ENTRY_SCHEMA,
@@ -31,7 +30,9 @@ function parseEntryRow(row: ContentEntryDbRow): ContentEntry {
   return toContentEntry(CONTENT_ENTRY_SCHEMA.parse(row));
 }
 
-async function existsEntry(db: Client, typedKey: ContentKey): Promise<boolean> {
+type Queryable = { query<T>(query: string, values?: unknown[]): Promise<{ rows: T[] }> };
+
+async function existsEntry(db: Queryable, typedKey: ContentKey): Promise<boolean> {
   const result = await db.query<{ exists: boolean }>(
     "SELECT EXISTS (SELECT 1 FROM content_entries WHERE typed_key = $1) AS exists",
     [typedKey],
@@ -39,7 +40,7 @@ async function existsEntry(db: Client, typedKey: ContentKey): Promise<boolean> {
   return result.rows[0].exists;
 }
 
-export function createPostgresContentStore(db: Client): ContentStore {
+export function createPostgresContentStore(db: Queryable): ContentStore {
   return {
     async listEntries(): Promise<ContentEntry[]> {
       const result = await db.query<ContentEntryDbRow>(

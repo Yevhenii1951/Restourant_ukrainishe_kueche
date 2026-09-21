@@ -10,7 +10,7 @@ Portfolio-Demo einer Restaurant-Plattform. Kein realer Restaurantbetrieb.
 ## Einrichtung
 
 1. `npm install`
-2. `cp .env.example .env.local` und Werte eintragen (siehe Abschnitt Umgebung)
+2. `cp .env.example .env.local` und lokale Werte eintragen (siehe Abschnitt Umgebung)
 3. `npm run check` — lint, typecheck, unit-/integrationstests
 4. `npm run dev` — lokale Entwicklung
 
@@ -20,6 +20,25 @@ Portfolio-Demo einer Restaurant-Plattform. Kein realer Restaurantbetrieb.
 (`SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, …) sind nur im Server-Kontext
 verfügbar (`src/lib/env/server.ts`, Guard via `server-only`). Der Client erhält
 nur `NEXT_PUBLIC_*`-Werte über `src/lib/env/schemas.ts`.
+
+Die Portfolio-Demo funktioniert local-first ohne Supabase. Für die Entwicklung
+in `.env.local` mindestens diese Werte setzen:
+
+```dotenv
+DATABASE_URL=postgresql://<user>@localhost:5432/kalyna_dev
+QUOTE_SIGNING_SECRET=<lokales-geheimnis-mit-mindestens-32-zeichen>
+```
+
+Bei einer lokalen PostgreSQL-Installation über Unix-Socket funktioniert auch:
+
+```dotenv
+DATABASE_URL=postgresql://<user>@/kalyna_dev?host=/var/run/postgresql
+```
+
+Dann einmalig `createdb kalyna_dev`, `npm run db:local:migrate` und
+`npm run db:local:seed` ausführen. Die Local-Skripte akzeptieren ausschließlich
+eine Datenbank namens `kalyna_dev` auf localhost. Supabase bleibt eine optionale
+spätere Adapter-Konfiguration.
 
 ## Lokale Testdatenbank
 
@@ -72,3 +91,5 @@ eine postgres-Service-Container mit derselben `kalyna_test`-Datenbank.
 | `npm run db:reset` | Test-Schemas entfernen |
 | `npm run db:migrate` | Migrationen anwenden (+ Rollen-Bootstrap) |
 | `npm run db:seed` | Seed-Daten einspielen |
+| `npm run db:local:migrate` | Lokales Entwicklungsschema anlegen |
+| `npm run db:local:seed` | Lokale Demo-Daten einspielen |

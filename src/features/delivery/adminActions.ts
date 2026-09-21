@@ -23,7 +23,7 @@ const windowSchema = z.object({
   capacity: z.coerce.number().int().min(1).max(200),
 });
 
-async function manager(correlationId: string): Promise<string | null> {
+async function manager(): Promise<string | null> {
   const actor = await getCurrentStaff();
   if (!actor || !canManageReservations(actor)) return null;
   return actor.id;
@@ -39,7 +39,7 @@ function fieldErrors(error: z.ZodError): Record<string, string[]> {
 
 export async function saveDeliveryZoneAction(formData: FormData): Promise<ActionResult<{ id: string }>> {
   const correlationId = createCorrelationId();
-  const actorId = await manager(correlationId);
+  const actorId = await manager();
   if (!actorId) return { ok: false, code: "FORBIDDEN", correlationId };
   const parsed = zoneSchema.safeParse({
     name: formData.get("name"), postalCodes: formData.get("postalCodes"),
@@ -64,7 +64,7 @@ export async function saveDeliveryZoneAction(formData: FormData): Promise<Action
 
 export async function saveDeliveryWindowAction(formData: FormData): Promise<ActionResult<{ id: string }>> {
   const correlationId = createCorrelationId();
-  const actorId = await manager(correlationId);
+  const actorId = await manager();
   if (!actorId) return { ok: false, code: "FORBIDDEN", correlationId };
   const parsed = windowSchema.safeParse({ weekday: formData.get("weekday"), opensAt: formData.get("opensAt"), closesAt: formData.get("closesAt"), capacity: formData.get("capacity") });
   if (!parsed.success || (parsed.success && parsed.data.closesAt <= parsed.data.opensAt)) {

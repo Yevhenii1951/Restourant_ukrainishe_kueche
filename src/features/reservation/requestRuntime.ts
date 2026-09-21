@@ -1,22 +1,14 @@
 import "server-only";
-import { Pool } from "pg";
+import type { Pool } from "pg";
 import { serverEnv } from "@/lib/env/server";
 import { createSupabaseReservationStore } from "./supabaseReservationStore";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerPool } from "@/lib/db/serverPool";
+import { createPostgresReservationStore } from "./postgresReservationStore";
 import type { ReservationRequestServiceDeps } from "./requestService";
 
-let pool: Pool | null | undefined;
-
 export function getReservationPool(): Pool | null {
-  if (pool !== undefined) return pool;
-  if (!serverEnv.DATABASE_URL) {
-    pool = null;
-    return pool;
-  }
-  const created = new Pool({ connectionString: serverEnv.DATABASE_URL, max: 5 });
-  created.on("error", () => {});
-  pool = created;
-  return pool;
+  return getServerPool();
 }
 
 export function createReservationRequestRuntime(): ReservationRequestServiceDeps | null {
@@ -25,6 +17,8 @@ export function createReservationRequestRuntime(): ReservationRequestServiceDeps
   return {
     pool: dbPool,
     secret: serverEnv.QUOTE_SIGNING_SECRET,
-    store: createSupabaseReservationStore(getSupabaseServerClient()),
+    store: serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY
+      ? createSupabaseReservationStore(getSupabaseServerClient())
+      : createPostgresReservationStore(dbPool),
   };
 }

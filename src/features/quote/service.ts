@@ -21,6 +21,8 @@ import {
 } from "./domain";
 import { promoWindowOpen, type QuoteStore } from "./store";
 import { createSupabaseQuoteStore } from "./supabaseQuoteStore";
+import { createPostgresQuoteStore } from "./postgresQuoteStore";
+import { getServerPool } from "@/lib/db/serverPool";
 import { getSlotsFromStore, type CoreSlotsResult } from "./slotsService";
 
 export const SUPPORTED_SETTING_KEYS = [
@@ -79,10 +81,10 @@ interface QuoteServiceDeps {
   signingSecret?: string;
 }
 
-function storeAvailable(): boolean {
-  return Boolean(
-    serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY && serverEnv.QUOTE_SIGNING_SECRET,
-  );
+function getStore(): QuoteStore | null {
+  if (serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY) return createSupabaseQuoteStore(getSupabaseServerClient());
+  const pool = getServerPool();
+  return pool ? createPostgresQuoteStore(pool) : null;
 }
 
 export async function createQuote(
@@ -90,13 +92,13 @@ export async function createQuote(
   locale: SupportedLocale,
   deps: QuoteServiceDeps = {},
 ): Promise<QuoteEngineResult> {
-  if (!storeAvailable()) {
+  const store = getStore();
+  if (!store || (!serverEnv.QUOTE_SIGNING_SECRET && !deps.signingSecret)) {
     return { status: "error", reason: "service-unavailable" };
   }
   const now = deps.now ?? new Date();
   const nowMs = now.getTime();
   const secret = deps.signingSecret ?? (serverEnv.QUOTE_SIGNING_SECRET as string);
-  const store: QuoteStore = createSupabaseQuoteStore(getSupabaseServerClient());
 
   const settings = await store.getCommerceSettings();
   if (!settings) return { status: "error", reason: "service-unavailable" };
@@ -202,10 +204,10 @@ export async function getOrderSlots(
   input: SlotsRequest,
   now?: Date,
 ): Promise<SlotsResult> {
-  if (!storeAvailable()) {
+  const store = getStore();
+  if (!store) {
     return { status: "error", reason: "service-unavailable" };
   }
-  const store: QuoteStore = createSupabaseQuoteStore(getSupabaseServerClient());
   return getSlotsFromStore(
     { fulfilment: input.fulfilment, plz: input.plz, date: input.date },
     now ?? new Date(),

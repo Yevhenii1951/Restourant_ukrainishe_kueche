@@ -1,4 +1,3 @@
-import type { Client } from "pg";
 import {
   MENU_ITEM_ROW_SCHEMA,
   pickLocalized,
@@ -38,7 +37,9 @@ function rowToItemRow(row: MenuItemDbRow): MenuItemRow {
   return MENU_ITEM_ROW_SCHEMA.parse(row);
 }
 
-export function createPostgresMenuStore(db: Client): MenuStore {
+type Queryable = { query<T>(query: string): Promise<{ rows: T[] }> };
+
+export function createPostgresMenuStore(db: Queryable): MenuStore {
   return {
     async listPublicMenu(locale: SupportedLocale): Promise<PublicMenu> {
       const itemsResult = await db.query<MenuItemDbRow>(
