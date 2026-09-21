@@ -2,16 +2,16 @@
 
 Update only after evidence exists. `Planned` is not `Shipped`.
 
-| Stage | Promised | Status | Evidence | Known delta |
-| --- | --- | --- | --- | --- |
-| 0 Foundation | scaffold, locale, DB/test fuse, auth/RBAC | Shipped | KLN-001–004; PR #9; merge `6670a7f` | Supabase configuration and live invite-email browser check require deployment credentials |
-| 1 Catalog/content | menu, CMS, contact/legal/SEO | Shipped | KLN-005–008; local PostgreSQL demo | Supabase-backed mutable CMS remains optional |
-| 2 Core ordering | cart, quote, pickup, order admin | Shipped | KLN-009–012; `npm run check` | Admin authentication requires Supabase |
-| 3 Reservations | tables, holds, guest/admin flow | Shipped | KLN-013–015; local reservation runtime | Admin authentication requires Supabase |
-| 4 Commerce | delivery, Stripe, refund, email | Shipped | KLN-016–019; test-mode integrations | No live payment enablement |
-| 5 Extended | vouchers, catering, audit/dashboard | Shipped | KLN-020–022 | Supabase staff auth for mutable admin flows |
-| 6 AI | read-only assistant | Shipped | KLN-023–025 local fail-closed shell; `npm run check` green with 188 unit / 92 integration | Paid provider remains disabled unless `AI_PROVIDER_KEY` and `AI_MONTHLY_BUDGET_EUR` are explicitly configured |
-| 7 Hardening | consent, accessibility, CI, review | Shipped | KLN-026–028; CI and local checks | Manual preview Web Vitals/axe remain release checks |
+| Stage             | Promised                                  | Status  | Evidence                                                                                  | Known delta                                                                                                   |
+| ----------------- | ----------------------------------------- | ------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| 0 Foundation      | scaffold, locale, DB/test fuse, auth/RBAC | Shipped | KLN-001–004; PR #9; merge `6670a7f`                                                       | Supabase env/redirect setup and live invite-email browser check require deployment credentials                |
+| 1 Catalog/content | menu, CMS, contact/legal/SEO              | Shipped | KLN-005–008; local PostgreSQL demo                                                        | Supabase-backed mutable CMS remains optional                                                                  |
+| 2 Core ordering   | cart, quote, pickup, order admin          | Shipped | KLN-009–012; `npm run check`                                                              | Admin authentication requires Supabase                                                                        |
+| 3 Reservations    | tables, holds, guest/admin flow           | Shipped | KLN-013–015; local reservation runtime                                                    | Admin authentication requires Supabase                                                                        |
+| 4 Commerce        | delivery, Stripe, refund, email           | Shipped | KLN-016–019; test-mode integrations                                                       | No live payment enablement                                                                                    |
+| 5 Extended        | vouchers, catering, audit/dashboard       | Shipped | KLN-020–022                                                                               | Supabase staff auth for mutable admin flows                                                                   |
+| 6 AI              | read-only assistant                       | Shipped | KLN-023–025 local fail-closed shell; `npm run check` green with 188 unit / 92 integration | Paid provider remains disabled unless `AI_PROVIDER_KEY` and `AI_MONTHLY_BUDGET_EUR` are explicitly configured |
+| 7 Hardening       | consent, accessibility, CI, review        | Shipped | KLN-026–028; CI and local checks                                                          | Manual preview Web Vitals/axe remain release checks                                                           |
 
 ## Stage 0 Delivery
 
@@ -60,7 +60,7 @@ npm run build
 ### Known Stage 0 Delta
 
 - No provider credentials or test staff credentials are stored in Git.
-- A live Supabase invite-email acceptance journey still requires a configured Supabase project and must be browser-tested in the deployment environment.
+- Staff login, callback, password setup and sign-out routes are prepared; a live Supabase invite-email acceptance journey still requires a configured Supabase project and must be browser-tested in the deployment environment.
 - No production deployment or demo URL is recorded yet.
 
 ## Final Handover Must Include
