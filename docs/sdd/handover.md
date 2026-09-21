@@ -5,13 +5,13 @@ Update only after evidence exists. `Planned` is not `Shipped`.
 | Stage | Promised | Status | Evidence | Known delta |
 | --- | --- | --- | --- | --- |
 | 0 Foundation | scaffold, locale, DB/test fuse, auth/RBAC | Shipped | KLN-001–004; PR #9; merge `6670a7f` | Supabase configuration and live invite-email browser check require deployment credentials |
-| 1 Catalog/content | menu, CMS, contact/legal/SEO | Planned | - | - |
-| 2 Core ordering | cart, quote, pickup, order admin | Planned | - | - |
-| 3 Reservations | tables, holds, guest/admin flow | Planned | - | - |
-| 4 Commerce | delivery, Stripe, refund, email | Planned | - | - |
-| 5 Extended | vouchers, catering, audit/dashboard | Planned | - | - |
-| 6 AI | streaming read-only assistant, retention | Planned | - | - |
-| 7 Hardening | consent, accessibility, CI, review | Planned | - | - |
+| 1 Catalog/content | menu, CMS, contact/legal/SEO | Shipped | KLN-005–008; local PostgreSQL demo | Supabase-backed mutable CMS remains optional |
+| 2 Core ordering | cart, quote, pickup, order admin | Shipped | KLN-009–012; `npm run check` | Admin authentication requires Supabase |
+| 3 Reservations | tables, holds, guest/admin flow | Shipped | KLN-013–015; local reservation runtime | Admin authentication requires Supabase |
+| 4 Commerce | delivery, Stripe, refund, email | Shipped | KLN-016–019; test-mode integrations | No live payment enablement |
+| 5 Extended | vouchers, catering, audit/dashboard | Shipped | KLN-020–022 | Supabase staff auth for mutable admin flows |
+| 6 AI | read-only assistant | Shipped | KLN-023–025 local fail-closed shell | No paid provider/history persistence |
+| 7 Hardening | consent, accessibility, CI, review | Shipped | KLN-026–028; CI and local checks | Manual preview Web Vitals/axe remain release checks |
 
 ## Stage 0 Delivery
 
