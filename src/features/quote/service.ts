@@ -87,6 +87,12 @@ function getStore(): QuoteStore | null {
   return pool ? createPostgresQuoteStore(pool) : null;
 }
 
+/** Public, read-only delivery lookup used by the assistant and checkout UI. */
+export async function getPublicDeliveryZone(plz: string): Promise<import("./domain").DeliveryZone | null> {
+  const store = getStore();
+  return store ? store.getDeliveryZoneByPlz(plz) : null;
+}
+
 export async function createQuote(
   input: QuoteRequest,
   locale: SupportedLocale,
