@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getPublicMenu } from "@/features/menu/service";
+import { AI_LOCALE_SCHEMA, classifyAiQuestion, executeAiTool } from "@/features/ai/tools";
 
 const requestSchema = z.object({
   message: z.string().trim().min(1).max(800),
-  locale: z.enum(["de", "en", "uk"]),
+  locale: AI_LOCALE_SCHEMA,
 }).strict();
 
 const requests = new Map<string, { count: number; resetAt: number }>();
@@ -22,6 +22,18 @@ function allowed(request: Request): boolean {
   return true;
 }
 
+function toAnswer(tool: string, data: unknown): string {
+  if (tool === "searchMenu" && Array.isArray(data)) {
+    const names = data.flatMap((item) => typeof item === "object" && item !== null && "name" in item && typeof item.name === "string" ? [item.name] : []);
+    return names.length > 0 ? `Aktuell auf der Speisekarte: ${names.join(", ")}.` : "Keine passenden Gerichte gefunden.";
+  }
+  if (tool === "getOpeningHours" && Array.isArray(data)) return "Die aktuellen Öffnungszeiten findest du im Bereich Kontakt.";
+  if (tool === "getDeliveryInfo" && typeof data === "object" && data !== null && "available" in data) return data.available ? "Lieferung ist für diese PLZ verfügbar." : "Für diese PLZ ist aktuell keine Lieferung verfügbar.";
+  if (tool === "checkReservationAvailability") return "Die verfügbaren Reservierungszeiten wurden geprüft.";
+  if (tool === "searchFaq") return "Passende Antworten findest du im FAQ-Bereich.";
+  return "Der Assistent ist gerade nicht verfügbar.";
+}
+
 export async function POST(request: Request): Promise<NextResponse> {
   if (!allowed(request)) return NextResponse.json({ error: "rate-limited" }, { status: 429 });
   const body: unknown = await request.json().catch(() => null);
@@ -36,10 +48,9 @@ export async function POST(request: Request): Promise<NextResponse> {
   if (/allerg|allergy|allergie/.test(message)) {
     return NextResponse.json({ answer: "Bitte prüfe die deklarierten Allergene in der Speisekarte. Für schwere Allergien können wir keine Sicherheit garantieren — wende dich bitte direkt an das Restaurant." });
   }
-  if (/menu|karte|gericht|dish|страв/.test(message)) {
-    const menu = await getPublicMenu(parsed.data.locale);
-    const names = menu.items.slice(0, 5).map((item) => item.name).join(", ");
-    return NextResponse.json({ answer: names ? `Aktuell auf der Speisekarte: ${names}.` : "Die Speisekarte ist gerade nicht verfügbar." });
-  }
-  return NextResponse.json({ error: "assistant-unavailable" }, { status: 503 });
+  const call = classifyAiQuestion(message);
+  if (!call) return NextResponse.json({ error: "assistant-unavailable" }, { status: 503 });
+  const data = await executeAiTool(call.tool, call.input, parsed.data.locale).catch(() => null);
+  if (data === null) return NextResponse.json({ error: "assistant-unavailable" }, { status: 503 });
+  return NextResponse.json({ answer: toAnswer(call.tool, data), tool: call.tool, data });
 }
