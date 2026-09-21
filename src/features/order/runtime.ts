@@ -1,34 +1,21 @@
 import "server-only";
-import { Pool } from "pg";
 import { serverEnv } from "@/lib/env/server";
 import { getPublicMenu } from "@/features/menu/service";
 import { createSupabaseQuoteStore } from "@/features/quote/supabaseQuoteStore";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerPool } from "@/lib/db/serverPool";
+import { createPostgresQuoteStore } from "@/features/quote/postgresQuoteStore";
 import type { OrderServiceDeps } from "./service";
 
-let pool: Pool | null | undefined;
-
-function getPool(): Pool | null {
-  if (pool !== undefined) return pool;
-  if (!serverEnv.DATABASE_URL) {
-    pool = null;
-    return pool;
-  }
-  const created = new Pool({ connectionString: serverEnv.DATABASE_URL, max: 5 });
-  created.on("error", () => {});
-  pool = created;
-  return pool;
-}
-
-export { getPool };
+export { getServerPool as getPool } from "@/lib/db/serverPool";
 
 export function createOrderRuntime(): OrderServiceDeps | null {
-  const dbPool = getPool();
+  const dbPool = getServerPool();
   if (!dbPool || !serverEnv.QUOTE_SIGNING_SECRET) return null;
   return {
     pool: dbPool,
     secret: serverEnv.QUOTE_SIGNING_SECRET,
-    store: createSupabaseQuoteStore(getSupabaseServerClient()),
+    store: serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY ? createSupabaseQuoteStore(getSupabaseServerClient()) : createPostgresQuoteStore(dbPool),
     loadMenu: getPublicMenu,
   };
 }

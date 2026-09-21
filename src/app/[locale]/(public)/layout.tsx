@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import SiteHeader from "@/features/content/components/SiteHeader";
 import SiteFooter from "@/features/content/components/SiteFooter";
+import AssistantLauncher from "@/features/ai/components/AssistantLauncher";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -31,6 +32,7 @@ export default async function PublicLayout({
         {children}
       </main>
       <SiteFooter />
+      <AssistantLauncher locale={locale} />
     </div>
   );
 }

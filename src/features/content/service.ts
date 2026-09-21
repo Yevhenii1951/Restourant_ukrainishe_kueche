@@ -4,6 +4,8 @@ import { serverEnv } from "@/lib/env/server";
 import { createSupabaseContentStore } from "./supabaseContentStore";
 import { type PublicContentEntryRow } from "./store";
 import { type PublicContentEntry } from "./public";
+import { createPostgresContentStore } from "./postgresContentStore";
+import { getServerPool } from "@/lib/db/serverPool";
 
 export async function getPublicContentEntries(): Promise<PublicContentEntry[]> {
   if (serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY) {
@@ -12,6 +14,8 @@ export async function getPublicContentEntries(): Promise<PublicContentEntry[]> {
     ).listPublished();
     return rows.map(toPublicEntry);
   }
+  const pool = getServerPool();
+  if (pool) return (await createPostgresContentStore(pool).listPublished()).map(toPublicEntry);
   return [];
 }
 

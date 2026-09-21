@@ -16,6 +16,8 @@
     "db:reset": "node --experimental-strip-types scripts/db-reset.mts",
     "db:migrate": "node --experimental-strip-types scripts/db-migrate.mts",
     "db:seed": "node --experimental-strip-types scripts/db-seed.mts",
+    "db:local:migrate": "node --experimental-strip-types scripts/db-local-migrate.mts",
+    "db:local:seed": "node --experimental-strip-types scripts/db-local-seed.mts",
     "db:bootstrap-admin": "node --experimental-strip-types scripts/bootstrap-admin.mts"
   },
   "dependencies": {
