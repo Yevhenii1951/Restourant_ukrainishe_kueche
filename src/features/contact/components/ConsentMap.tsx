@@ -74,6 +74,8 @@ export default function ConsentMap({
   );
   const [loadFailed, setLoadFailed] = useState(false);
   const [storageFailed, setStorageFailed] = useState(false);
+  const [customizing, setCustomizing] = useState(false);
+  const [customMapGranted, setCustomMapGranted] = useState(false);
 
   function chooseConsent(choice: "granted" | "denied"): void {
     try {
@@ -83,9 +85,8 @@ export default function ConsentMap({
       );
       setStorageFailed(false);
       window.dispatchEvent(new Event(MAP_CONSENT_CHANGE_EVENT));
-    } catch (error: unknown) {
+    } catch {
       setStorageFailed(true);
-      console.error("Map consent could not be stored", error);
     }
   }
 
@@ -108,9 +109,8 @@ export default function ConsentMap({
           .bindPopup(mapLabel);
         mapRef.current = map;
       })
-      .catch((error: unknown) => {
+      .catch(() => {
         if (active) setLoadFailed(true);
-        console.error("Map failed to load", error);
       });
 
     return () => {
@@ -142,7 +142,22 @@ export default function ConsentMap({
           >
             {declineLabel}
           </button>
+          <button
+            type="button"
+            className="min-h-11 rounded-lg border border-ink/20 px-4 py-2 font-medium"
+            onClick={() => setCustomizing(true)}
+          >
+            Einstellungen
+          </button>
         </div>
+        {customizing ? (
+          <fieldset className="space-y-3 rounded-lg border border-ink/10 p-3">
+            <legend className="px-1 text-sm font-medium">Optionale Dienste</legend>
+            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={false} disabled /> Analyse ist nicht aktiviert</label>
+            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={customMapGranted} onChange={(event) => setCustomMapGranted(event.target.checked)} /> Karte laden</label>
+            <button type="button" className="min-h-11 rounded-lg bg-kalyna px-4 py-2 font-medium text-white" onClick={() => { chooseConsent(customMapGranted ? "granted" : "denied"); setCustomizing(false); }}>Auswahl speichern</button>
+          </fieldset>
+        ) : null}
       </div>
     );
   }
