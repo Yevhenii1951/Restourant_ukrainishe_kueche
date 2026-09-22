@@ -21,11 +21,11 @@ export default async function HomeCta(): Promise<React.ReactElement> {
           {t("ctaLead")}
         </p>
         <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-          <Link href="/reservierung" className="btn-lime label-slide" data-label={t("ctaReserve")}>
-            <span>{t("ctaReserve")}</span>
+          <Link href="/reservierung" className="btn-lime">
+            {t("ctaReserve")}
           </Link>
-          <a href="tel:+495610000000" className="btn-ghost-dark label-slide" data-label={t("ctaCallLabel")}>
-            <span>{t("ctaCallLabel")}</span>
+          <a href="tel:+495610000000" className="btn-ghost-dark">
+            {t("ctaCallLabel")}
           </a>
         </div>
       </div>

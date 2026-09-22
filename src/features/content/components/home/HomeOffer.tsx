@@ -40,9 +40,9 @@ export default async function HomeOffer({
               </h2>
               <p className="text-lg leading-relaxed text-cream/85">{lead}</p>
               <div className="pt-2">
-                <Link href="/mittagstisch" className="btn-lime label-slide" data-label={t("offerCta")}>
-                  <span>{t("offerCta")}</span>
-                </Link>
+                <Link href="/mittagstisch" className="btn-lime">
+            {t("offerCta")}
+          </Link>
               </div>
             </div>
           </SplitParallax>

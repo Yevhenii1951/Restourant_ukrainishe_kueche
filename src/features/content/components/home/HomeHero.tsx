@@ -43,11 +43,11 @@ export default async function HomeHero({
         </h1>
         <p className="max-w-xl text-lg leading-relaxed text-cream/95">{lead}</p>
         <div className="flex flex-wrap items-center gap-3 pt-1">
-          <Link href="/speisekarte" className="btn-lime label-slide" data-label={t("menuCta")}>
-            <span>{t("menuCta")}</span>
+          <Link href="/speisekarte" className="btn-lime">
+            {t("menuCta")}
           </Link>
-          <Link href="/reservierung" className="btn-ghost-dark label-slide" data-label={t("ctaReserve")}>
-            <span>{t("ctaReserve")}</span>
+          <Link href="/reservierung" className="btn-ghost-dark">
+            {t("ctaReserve")}
           </Link>
         </div>
         <a href="#home-steps" className="scroll-indicator group absolute bottom-6 right-4 hidden items-end gap-3 text-xs font-bold tracking-[0.16em] text-cream/80 sm:flex">

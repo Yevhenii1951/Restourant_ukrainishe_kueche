@@ -135,9 +135,9 @@ export default function DishOrderForm({
             type="button"
             onClick={addToCart}
             disabled={invalidGroups.length > 0}
-            className="btn-primary label-slide !min-h-10 px-4 py-2 disabled:cursor-not-allowed disabled:opacity-40" data-label={orderTranslations("addToCart")}
+            className="btn-primary !min-h-10 px-4 py-2 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <span>{orderTranslations("addToCart")}</span>
+            {orderTranslations("addToCart")}
           </button>
         </div>
       </div>
