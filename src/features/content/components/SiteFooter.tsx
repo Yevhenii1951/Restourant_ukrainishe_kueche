@@ -58,7 +58,7 @@ export default async function SiteFooter(): Promise<React.ReactElement> {
 
   return (
     <footer className="border-t border-lime/40 bg-brand-deep pb-28 text-white sm:pb-0">
-      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-8 sm:py-20">
+      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-8 sm:py-[4.5rem]">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div className="space-y-5">
             <Link href="/" className="inline-flex items-center gap-2.5 text-lime">
