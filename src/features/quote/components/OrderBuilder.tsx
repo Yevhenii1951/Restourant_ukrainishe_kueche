@@ -37,7 +37,7 @@ export default function OrderBuilder({ items, locale, paypalEnabled }: OrderBuil
 
   if (cart.lines.length === 0) {
     return (
-      <div className="rounded-2xl border border-ink/10 bg-paper p-6 text-center">
+      <div className="premium-panel rounded-2xl p-6 text-center">
         <h2 className="font-display text-2xl font-semibold">{t("emptyTitle")}</h2>
         <p className="mt-2 text-ink/70">{t("emptyHint")}</p>
         <Link
@@ -85,8 +85,8 @@ export default function OrderBuilder({ items, locale, paypalEnabled }: OrderBuil
   };
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
-      <form onSubmit={loadQuote} className="space-y-6">
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <form onSubmit={loadQuote} className="premium-panel space-y-6 rounded-2xl p-5 sm:p-6">
         <fieldset className="flex gap-2">
           {(["pickup", "delivery"] as const).map((kind) => (
             <button
@@ -137,7 +137,7 @@ export default function OrderBuilder({ items, locale, paypalEnabled }: OrderBuil
               type="button"
               onClick={() => void loadSlots()}
               disabled={busy}
-              className="rounded-lg border border-kalyna px-4 py-2 font-medium text-kalyna hover:opacity-80 disabled:opacity-50"
+              className="rounded-lg border border-brand px-4 py-2 font-semibold text-brand transition-colors hover:bg-brand hover:text-cream disabled:opacity-50"
             >
               {busy ? "…" : t("showSlots")}
             </button>
@@ -205,7 +205,7 @@ export default function OrderBuilder({ items, locale, paypalEnabled }: OrderBuil
         <button
           type="submit"
           disabled={busy}
-          className="w-full rounded-lg bg-kalyna px-4 py-2.5 font-medium text-white hover:opacity-90 disabled:opacity-60"
+          className="btn-primary w-full disabled:opacity-60"
         >
           {busy ? "…" : t("showQuote")}
         </button>

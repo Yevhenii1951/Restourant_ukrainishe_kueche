@@ -25,14 +25,14 @@ export default async function HomeServices(): Promise<React.ReactElement> {
   ];
 
   return (
-    <section className="bleed bg-mint/40">
+    <section className="bleed bg-mint/70">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-8 sm:py-24">
         <ScrollReveal>
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand/70">
+            <p className="premium-eyebrow">
               {t("servicesEyebrow")}
             </p>
-            <h2 className="mt-3 font-display text-4xl font-semibold text-ink sm:text-5xl">
+            <h2 className="mt-3 font-display text-4xl font-medium leading-tight text-ink sm:text-5xl">
               {content("eventsTitle")}{" "}<span className="text-brand">&amp;</span>{" "}
               {content("cateringTitle").toLocaleLowerCase()}
             </h2>
@@ -43,7 +43,7 @@ export default async function HomeServices(): Promise<React.ReactElement> {
             <ScrollReveal key={service.href} delayMs={index * 100}>
               <Link
                 href={service.href}
-                className="group block h-full overflow-hidden rounded-2xl border border-brand/10 bg-white transition-all duration-500 hover:border-brand/25 hover:shadow-xl hover:shadow-brand/10"
+                className="group premium-surface block h-full overflow-hidden rounded-2xl transition-all duration-500 hover:-translate-y-1 hover:border-brand/25 hover:shadow-xl hover:shadow-brand-deep/15"
               >
                 <div className="flex h-full flex-col sm:flex-row">
                   <div className="relative aspect-[16/9] overflow-hidden bg-mint sm:aspect-auto sm:w-[45%] sm:shrink-0">

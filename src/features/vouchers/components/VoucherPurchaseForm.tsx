@@ -50,7 +50,7 @@ export default function VoucherPurchaseForm({ locale, paypalEnabled, products }:
   }
 
   return (
-    <form onSubmit={(event) => void submit(event)} className="mt-8 max-w-xl rounded-lg border border-ink/10 bg-paper p-5">
+    <form onSubmit={(event) => void submit(event)} className="premium-panel mt-8 max-w-xl rounded-lg p-5">
       <fieldset className="grid gap-3">
         <legend className="mb-1 text-sm font-medium">Betrag</legend>
         {products.map((product) => (
@@ -80,7 +80,7 @@ export default function VoucherPurchaseForm({ locale, paypalEnabled, products }:
       </fieldset>
       <p className="mt-4 text-sm text-ink/70">Der Code wird erst nach bestätigter Stripe-Testzahlung erzeugt und per E-Mail zugestellt.</p>
       {error ? <p role="alert" className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">{error}</p> : null}
-      <button type="submit" disabled={busy || !selected} className="mt-4 w-full rounded-lg bg-kalyna px-4 py-2.5 font-medium text-white hover:opacity-90 disabled:opacity-60">
+      <button type="submit" disabled={busy || !selected} className="btn-primary mt-4 w-full disabled:opacity-60">
         {busy ? "Weiterleitung ..." : "Gutschein kaufen"}
       </button>
     </form>

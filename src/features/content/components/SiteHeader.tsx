@@ -19,14 +19,15 @@ export default async function SiteHeader(): Promise<React.ReactElement> {
 
   return (
     <header>
-      <div className="sticky top-0 z-40 border-b border-ink/10 bg-paper/90 backdrop-blur">
+      <div className="sticky top-0 z-40 border-b border-brand-deep/10 bg-paper/88 shadow-sm shadow-brand-deep/5 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-8">
           <Link
             href="/"
             aria-label={brandTranslations("name")}
-            className="flex items-center transition-opacity hover:opacity-90"
+            className="flex items-center gap-3 transition-opacity hover:opacity-90"
           >
             <KalynaLogo />
+            <span className="hidden rounded-full border border-lime/45 bg-cream/70 px-2.5 py-1 text-[0.68rem] font-bold tracking-[0.14em] text-brand-dark sm:inline-flex">Portfolio-Demo</span>
           </Link>
           <nav
             aria-label={navigationTranslations("menu")}
@@ -42,7 +43,7 @@ export default async function SiteHeader(): Promise<React.ReactElement> {
             <CartBadge />
             <Link
               href="/reservierung"
-              className="btn-lime hidden !min-h-11 !px-5 sm:inline-flex"
+              className="btn-primary hidden !min-h-11 !px-5 sm:inline-flex"
             >
               {navigationTranslations("reserve")}
             </Link>

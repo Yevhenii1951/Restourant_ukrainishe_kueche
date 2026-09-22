@@ -17,15 +17,15 @@ export default async function HomeFeatured({
   const t = await getTranslations("home");
 
   return (
-    <section className="bg-white">
+    <section className="bg-porcelain">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-8 sm:py-24">
         <ScrollReveal>
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand/70">
+              <p className="premium-eyebrow">
                 {t("featuredEyebrow")}
               </p>
-              <h2 className="mt-3 font-display text-4xl font-semibold text-ink sm:text-5xl">
+              <h2 className="mt-3 font-display text-4xl font-medium leading-tight text-ink sm:text-5xl">
                 {t("featuredTitle")}
               </h2>
             </div>
@@ -53,9 +53,9 @@ export default async function HomeFeatured({
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => (
             <ScrollReveal key={item.id} delayMs={index * 90}>
-              <article className="group h-full overflow-hidden rounded-2xl border border-brand/10 bg-white transition-all duration-500 hover:-translate-y-1 hover:border-brand/25 hover:shadow-xl hover:shadow-brand/10">
+              <article className="group premium-surface h-full overflow-hidden rounded-2xl transition-all duration-500 hover:-translate-y-1 hover:border-brand/25 hover:shadow-xl hover:shadow-brand-deep/15">
                 <Link href={`/speisekarte#${item.slug}`} className="block h-full">
-                  <div className="relative aspect-[4/3] overflow-hidden bg-mint">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-blue-smoke">
                     <Image
                       src={item.image.storagePath ?? "/2borsch.jpg"}
                       alt={item.image.alt ?? item.name}
@@ -63,7 +63,7 @@ export default async function HomeFeatured({
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     />
-                    <span className="absolute right-3 top-3 rounded-full bg-lime px-3 py-1 text-xs font-bold uppercase tracking-wide text-brand-deep">
+                    <span className="absolute right-3 top-3 rounded-full bg-lime px-3 py-1 text-xs font-bold tracking-wide text-brand-deep">
                       {item.categoryName}
                     </span>
                   </div>

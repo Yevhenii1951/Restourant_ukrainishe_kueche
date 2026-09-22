@@ -12,7 +12,7 @@ export default function KalynaLogo({
   return (
     <span className={className}>
       <span
-        className={`font-display text-3xl font-bold leading-none tracking-tight sm:text-4xl ${
+        className={`font-display text-3xl font-semibold leading-none sm:text-4xl ${
           isDark ? "text-cream" : "text-brand"
         }`}
       >
@@ -20,7 +20,7 @@ export default function KalynaLogo({
       </span>
       <span
         aria-hidden="true"
-        className="mt-2 flex items-center justify-start gap-[5px]"
+        className="mt-2 flex items-center justify-start gap-[6px]"
       >
         <span
           className={`h-1.5 w-1.5 -rotate-45 ${
