@@ -33,8 +33,16 @@ export default function MotionRuntime(): null {
       };
       requestAnimationFrame(step);
     };
+    const updateScrollState = (): void => {
+      document.documentElement.dataset.logoBarScrolled = window.scrollY > 24 ? "true" : "false";
+    };
+    updateScrollState();
+    window.addEventListener("scroll", updateScrollState, { passive: true });
     document.addEventListener("click", onClick);
-    return () => document.removeEventListener("click", onClick);
+    return () => {
+      window.removeEventListener("scroll", updateScrollState);
+      document.removeEventListener("click", onClick);
+    };
   }, []);
   return null;
 }

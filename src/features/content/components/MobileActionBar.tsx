@@ -14,7 +14,7 @@ export default async function MobileActionBar(): Promise<React.ReactElement> {
   return (
     <nav
       aria-label={translations("menu")}
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-lime/25 bg-brand-deep/96 shadow-2xl shadow-brand-deep/30 backdrop-blur-xl sm:hidden"
+      className="mobile-shutter fixed inset-x-0 bottom-0 z-40 border-t border-lime/25 bg-brand-deep/96 shadow-2xl shadow-brand-deep/30 backdrop-blur-xl sm:hidden"
     >
       <ul className="grid grid-cols-5 px-1 py-1">
         {actions.map((action) => (
