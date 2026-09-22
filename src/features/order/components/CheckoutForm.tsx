@@ -98,7 +98,7 @@ export default function CheckoutForm(props: CheckoutFormProps) {
   }
 
   return (
-    <form onSubmit={(event) => void submit(event)} className="rounded-2xl border border-ink/10 bg-paper p-5">
+    <form onSubmit={(event) => void submit(event)} className="premium-panel rounded-2xl p-5">
       <h2 className="font-display text-xl font-semibold">{t("checkoutTitle")}</h2>
       <fieldset className="mt-4 grid gap-2">
         <legend className="mb-1 text-sm font-medium">{t("paymentMethodLabel")}</legend>
@@ -136,7 +136,7 @@ export default function CheckoutForm(props: CheckoutFormProps) {
       </label>
 
       {error ? <p role="alert" className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">{error}</p> : null}
-      <button type="submit" disabled={busy} className="mt-4 w-full rounded-lg bg-kalyna px-4 py-2.5 font-medium text-white hover:opacity-90 disabled:opacity-60">
+      <button type="submit" disabled={busy} className="btn-primary mt-4 w-full disabled:opacity-60">
         {busy ? t("ordering") : paymentChoice === "cash" ? t("submitOrder") : t("continueToPayment")}
       </button>
     </form>

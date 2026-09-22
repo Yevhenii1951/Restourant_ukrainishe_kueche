@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
 import { CartProvider } from "@/features/cart/cart-provider";
 import { routing } from "@/i18n/routing";
 import { SITE_URL } from "@/features/seo/site";
@@ -12,14 +12,16 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin", "cyrillic"],
-  variable: "--font-inter",
+  variable: "--font-manrope",
 });
 
-const playfair = Playfair_Display({
+const cormorant = Cormorant_Garamond({
   subsets: ["latin", "cyrillic"],
-  variable: "--font-playfair",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant",
 });
 
 export const metadata: Metadata = {
@@ -44,8 +46,8 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${inter.variable} ${playfair.variable}`}>
-      <body className="min-h-screen bg-linen text-ink font-sans antialiased">
+    <html lang={locale} className={`${cormorant.variable} ${manrope.variable}`}>
+      <body className="min-h-screen bg-porcelain text-ink font-sans antialiased">
         <NextIntlClientProvider messages={messages}>
           <CartProvider>{children}</CartProvider>
         </NextIntlClientProvider>

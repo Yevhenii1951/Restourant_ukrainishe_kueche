@@ -69,11 +69,11 @@ export default function QuoteSummary({
   }).format(new Date(result.expiresAtMs));
 
   return (
-    <div className="rounded-2xl border border-ink/10 bg-paper p-5">
+    <div className="premium-panel rounded-2xl p-5">
       <h2 className="font-display text-xl font-semibold">{t("quoteTitle")}</h2>
       <p className="mt-1 text-sm text-ink/55">{t("quoteExpires", { expires: expiresAt })}</p>
 
-      <p className="mt-4 text-xs font-medium uppercase tracking-wide text-ink/50">
+      <p className="mt-4 text-xs font-semibold tracking-[0.14em] text-brand-dark/70">
         {t("countedLines", { count: result.lines.length })}
       </p>
       <ul className="mt-2 space-y-1 text-sm">
@@ -90,7 +90,7 @@ export default function QuoteSummary({
         })}
       </ul>
 
-      <dl className="mt-4 space-y-2 border-t border-ink/10 pt-4 text-sm">
+      <dl className="mt-4 space-y-2 border-t border-brand-deep/10 pt-4 text-sm">
         <div className="flex justify-between">
           <dt>{t("subtotal")}</dt>
           <dd>{formatEuroCents(breakdown.subtotalCents, locale)}</dd>
@@ -119,7 +119,7 @@ export default function QuoteSummary({
           </div>
         ) : null}
       </dl>
-      <div className="mt-3 flex justify-between border-t border-ink/10 pt-3 font-semibold">
+      <div className="mt-3 flex justify-between border-t border-brand-deep/10 pt-3 font-semibold">
         <span>{t("total")}</span>
         <span>{formatEuroCents(breakdown.totalCents, locale)}</span>
       </div>
@@ -128,7 +128,7 @@ export default function QuoteSummary({
         <button
           type="button"
           disabled
-          className="mt-4 w-full rounded-lg bg-kalyna px-4 py-2 font-medium text-white opacity-60"
+          className="mt-4 w-full rounded-lg bg-brand px-4 py-2 font-semibold text-cream opacity-60"
         >
           {t("checkoutSoon")}
         </button>

@@ -20,7 +20,7 @@ export default async function PublicLayout({
   const t = await getTranslations("a11y");
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-porcelain">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-paper focus:px-4 focus:py-2 focus:font-medium"
@@ -28,7 +28,11 @@ export default async function PublicLayout({
         {t("skipToContent")}
       </a>
       <SiteHeader />
-      <main id="main" tabIndex={-1} className="mx-auto w-full max-w-5xl flex-1 px-4 py-12 sm:px-6">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-6xl flex-1 px-4 pt-10 sm:px-8 sm:pt-14"
+      >
         {children}
       </main>
       <SiteFooter />
