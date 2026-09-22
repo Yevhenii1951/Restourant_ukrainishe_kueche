@@ -1,0 +1,52 @@
+import Image from "next/image";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import ScrollReveal from "../ScrollReveal";
+
+interface HomeOfferProps {
+  title: string;
+  lead: string;
+}
+
+export default async function HomeOffer({
+  title,
+  lead,
+}: HomeOfferProps): Promise<React.ReactElement> {
+  const t = await getTranslations("home");
+
+  return (
+    <section className="bg-white">
+      <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-8 sm:pb-24">
+        <ScrollReveal>
+          <div className="grid overflow-hidden rounded-3xl bg-brand text-white md:grid-cols-2">
+            <div className="relative aspect-[16/10] md:aspect-auto">
+              <Image
+                src="/hero_ukrainian-dill-potatoes-2652561_1920.jpg"
+                alt=""
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-brand/20" />
+            </div>
+            <div className="flex flex-col justify-center gap-5 p-8 sm:p-12">
+              <p className="inline-flex w-fit items-center gap-2.5 text-sm font-semibold uppercase tracking-[0.18em] text-cream">
+                <span aria-hidden="true" className="h-2 w-2 rounded-full bg-lime" />
+                {t("offerEyebrow")}
+              </p>
+              <h2 className="font-display text-4xl font-medium leading-tight sm:text-5xl">
+                {title}
+              </h2>
+              <p className="text-lg leading-relaxed text-cream/85">{lead}</p>
+              <div className="pt-2">
+                <Link href="/mittagstisch" className="btn-lime">
+                  {t("offerCta")}
+                </Link>
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}

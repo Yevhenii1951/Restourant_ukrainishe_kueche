@@ -17,28 +17,27 @@ export default function CartBadge() {
     <Link
       href="/warenkorb"
       aria-label={cartTranslations("openCart", { count })}
-      className="relative rounded-lg bg-kalyna px-4 py-2 font-medium text-white hover:opacity-90"
+      className="relative inline-flex items-center gap-2 rounded-full bg-lime px-3.5 py-2 text-sm font-bold text-brand-deep transition-colors duration-300 hover:bg-lime-soft"
     >
-      <span className="mr-1.5" aria-hidden="true">
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="9" cy="21" r="1" />
-          <circle cx="20" cy="21" r="1" />
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-        </svg>
-      </span>
-      {navTranslations("cart")}
+      <span className="sr-only">{navTranslations("cart")}</span>
+      <svg
+        aria-hidden="true"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="9" cy="21" r="1" />
+        <circle cx="20" cy="21" r="1" />
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+      </svg>
       <span
         aria-hidden="true"
-        className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-xs font-bold text-kalyna shadow"
+        className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-deep px-1 text-xs font-bold text-lime"
       >
         {count}
       </span>

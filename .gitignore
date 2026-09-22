@@ -36,3 +36,6 @@ test-results/
 # supabase local
 supabase/.branches/
 supabase/.temp/
+.vercel
+.env*
+!.env.example

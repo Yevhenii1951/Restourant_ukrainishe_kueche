@@ -1,15 +1,116 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
+  --font-sans:
+    var(--font-manrope), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-cormorant), Georgia, "Times New Roman", serif;
 
-  --color-linen: #faf7f2;
-  --color-paper: #f3eee6;
-  --color-ink: #241f1c;
-  --color-kalyna: #8e2a2a;
-  --color-wheat: #c8a66a;
-  --color-accent: #3f5d80;
+  /* Brand palette — vyshyvanka red + black on cream with gold accents */
+  --color-brand: #a6192e;
+  --color-brand-dark: #7e1323;
+  --color-brand-deep: #141414;
+  --color-lime: #e3a62c;
+  --color-lime-soft: #f4e3c3;
+  --color-cream: #f6f1e6;
+  --color-mint: #efe2ce;
+  --color-sage: #8a6d4b;
+
+  /* Legacy aliases so existing utilities keep working */
+  --color-kalyna: #a6192e;
+  --color-linen: #f6f1e6;
+  --color-paper: #ffffff;
+  --color-ink: #141414;
+  --color-wheat: #8a6d4b;
+  --color-accent: #e3a62c;
+}
+
+@layer base {
+  body {
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-lime);
+    color: var(--color-brand-deep);
+  }
+}
+
+@layer components {
+  /* Solid CTA on red, cream label */
+  .btn-primary {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand px-6 py-2.5 font-semibold text-cream transition-colors duration-300 hover:bg-brand-dark;
+  }
+
+  /* Gold accent CTA, near-black label */
+  .btn-lime {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-lime px-6 py-2.5 font-bold text-brand-deep shadow-lg shadow-brand-deep/20 transition-all duration-300 hover:bg-lime-soft hover:shadow-brand-deep/30;
+  }
+
+  /* Quiet CTA for dark surfaces */
+  .btn-ghost-dark {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/40 px-6 py-2.5 font-semibold text-white transition-colors duration-300 hover:border-lime hover:text-lime;
+  }
+
+  /* Nav link for dark surfaces, sliding gold underline */
+  .nav-link {
+    @apply relative text-sm font-medium text-white/85 transition-colors duration-300 hover:text-lime;
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    height: 2px;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    background: var(--color-lime);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-link:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* Nav link for light surfaces, sliding red underline */
+  .nav-link-light {
+    @apply relative text-sm font-medium text-ink/75 transition-colors duration-300 hover:text-brand;
+  }
+  .nav-link-light::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    height: 2px;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    background: var(--color-brand);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-link-light:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* Scroll reveal: hidden until IntersectionObserver adds .is-visible */
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Full-bleed section breakout from a centered container */
+  .bleed {
+    width: 100vw;
+    margin-right: calc(50% - 50vw);
+    margin-left: calc(50% - 50vw);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -22,9 +123,14 @@
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-accent);
-  outline-offset: 3px;
+  outline: 2px solid var(--color-brand-deep);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--color-lime);
 }

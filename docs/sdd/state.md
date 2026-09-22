@@ -2,6 +2,7 @@
 
 ## Done
 
+- KLN-029 design rebrand on `feature/kln-029-design-rebrand` (NOT yet committed/PR'd): public-chrome redesign on a vyshyvanka-inspired palette (brand red `#A6192E`, near-black `#141414`, cream `#F6F1E6`, gold `#E3A62C`) as CSS tokens in `src/app/globals.css`; Cormorant Garamond + Manrope fonts; home page = HomeHero (full-bleed background video `/videos/hero.mp4` compressed 2.5MB + webm, poster fallback, hidden under `prefers-reduced-motion`) + HomeSteps / HomeFeatured / HomeOffer / HomeServices / HomeCta; light paper SiteHeader with text wordmark `Kalyna` (KalynaLogo: Cormorant + vyshyvanka rhombus row, red on paper / cream on dark) + `icon.svg` favicon (red tile, cream К); SiteFooter wordmark on brand-deep; marquee/bege-лента strip REMOVED (MarqueeStrip, KalynaMark deleted, ticker keys dropped); LocaleSwitcher light variant, CartBadge/AssistantLauncher/MobileActionBar in new palette; `main` = `pt-8 sm:pt-12` with home wrapper `-mt-8 sm:-mt-12` keeping hero flush. `.gitignore` ignores `.env*`/`.vercel` but re-includes `.env.example`.
 - KLN-025 AI retention shipped via PR #32 and merged to `main` at `1670d6a`.
 - Added local PostgreSQL `ai_conversations` and `ai_messages` retention tables with RLS/grants, opaque session hash, locale, five-day expiry and message token counts.
 - `/api/ai/chat` now issues an HttpOnly opaque session cookie, caps input at 2,000 chars, rejects obvious PII, rate-limits by IP/session and stores successful local exchanges when `DATABASE_URL` is available.
@@ -12,6 +13,7 @@
 
 ## Verification
 
+- KLN-029: `npm run check` green (lint, typecheck, 195 unit, 92 integration). Playwright: hero video `hero.mp4` autoplays muted/loop 1920×1080 and is `display:none` under `prefers-reduced-motion` (poster/base image shows); hero flush under header, menu h1 48px gap; no horizontal overflow at 390/1440; contrast red-on-cream 6.66 / cream-on-red 6.66 / ink-on-cream 16.36 / gold-on-black 8.56; favicon `/icon.png` + title present. Marquee gone. Dev on `:3001` (existing server, log `/tmp/kalyna-dev.log`). The single console "error" is a dev-only React `eval()` CSP notice, not a bug.
 - `npm run db:local:migrate` applied `0021_ai_retention.sql` to `kalyna_dev`.
 - `npx vitest run tests/unit/kln024-ai-tools.test.ts tests/unit/kln025-ai-retention.test.ts`: 8 tests passed.
 - `npm run check`: lint, typecheck, 195 unit tests and 92 integration tests passed.
