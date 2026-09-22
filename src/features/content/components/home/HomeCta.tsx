@@ -6,7 +6,7 @@ export default async function HomeCta(): Promise<React.ReactElement> {
   const brandTranslations = await getTranslations("brand");
 
   return (
-    <section className="bleed relative overflow-hidden bg-brand-deep text-white">
+    <section className="bleed relative overflow-hidden border-y border-lime/25 bg-brand-deep text-white">
       <span
         aria-hidden="true"
         className="pointer-events-none absolute -right-8 top-1/2 hidden -translate-y-1/2 select-none font-display text-[24vw] leading-none italic text-white/5 lg:block"

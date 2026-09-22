@@ -41,13 +41,13 @@ export default async function HomeHero({
         preload="auto"
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-black/25" />
-      <div className="relative mx-auto flex w-full max-w-6xl flex-col items-start gap-6 px-4 pb-16 pt-24 sm:px-8 sm:pb-20 sm:pt-32 lg:min-h-[40rem] lg:px-10 lg:pb-24 lg:pt-40">
-        <p className="inline-flex w-fit items-center gap-2.5 rounded-full border border-lime/50 bg-black/35 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-lime backdrop-blur-sm">
+      <div className="absolute inset-0 bg-gradient-to-r from-brand-deep/88 via-brand-deep/62 to-brand-deep/22" />
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col items-start gap-6 px-4 pb-16 pt-24 sm:px-8 sm:pb-20 sm:pt-32 lg:min-h-[42rem] lg:px-10 lg:pb-24 lg:pt-40">
+        <p className="inline-flex w-fit items-center gap-2.5 rounded-full border border-lime/45 bg-brand-deep/45 px-4 py-1.5 text-xs font-bold tracking-[0.16em] text-lime backdrop-blur-sm">
           <span aria-hidden="true" className="h-2 w-2 rounded-full bg-lime" />
           {t("eyebrow")}
         </p>
-        <h1 className="max-w-3xl font-display text-5xl font-medium leading-[1.03] text-white sm:text-6xl lg:text-7xl">
+        <h1 className="max-w-3xl font-display text-5xl font-medium leading-[0.98] text-white sm:text-6xl lg:text-7xl">
           {title}
         </h1>
         <p className="max-w-xl text-lg leading-relaxed text-cream/95">{lead}</p>
@@ -59,7 +59,7 @@ export default async function HomeHero({
             {t("ctaReserve")}
           </Link>
         </div>
-        <div className="mt-2 grid w-full max-w-xl grid-cols-3 gap-6 border-t border-white/20 pt-6">
+        <div className="mt-2 grid w-full max-w-xl grid-cols-3 gap-6 border-t border-lime/35 pt-6">
           <p className="font-display text-2xl font-semibold leading-tight text-lime">
             {t("dishesStat", { count: menuCount })}
           </p>

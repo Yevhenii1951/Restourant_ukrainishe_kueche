@@ -47,7 +47,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className={`${cormorant.variable} ${manrope.variable}`}>
-      <body className="min-h-screen bg-white text-ink font-sans antialiased">
+      <body className="min-h-screen bg-porcelain text-ink font-sans antialiased">
         <NextIntlClientProvider messages={messages}>
           <CartProvider>{children}</CartProvider>
         </NextIntlClientProvider>

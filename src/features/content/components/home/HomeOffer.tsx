@@ -15,10 +15,10 @@ export default async function HomeOffer({
   const t = await getTranslations("home");
 
   return (
-    <section className="bg-white">
+    <section className="bg-porcelain">
       <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-8 sm:pb-24">
         <ScrollReveal>
-          <div className="grid overflow-hidden rounded-3xl bg-brand text-white md:grid-cols-2">
+          <div className="premium-panel grid overflow-hidden rounded-3xl bg-brand-dark text-white md:grid-cols-2">
             <div className="relative aspect-[16/10] md:aspect-auto">
               <Image
                 src="/hero_ukrainian-dill-potatoes-2652561_1920.jpg"
@@ -30,7 +30,7 @@ export default async function HomeOffer({
               <div className="absolute inset-0 bg-brand/20" />
             </div>
             <div className="flex flex-col justify-center gap-5 p-8 sm:p-12">
-              <p className="inline-flex w-fit items-center gap-2.5 text-sm font-semibold uppercase tracking-[0.18em] text-cream">
+              <p className="inline-flex w-fit items-center gap-2.5 text-sm font-bold tracking-[0.16em] text-lime">
                 <span aria-hidden="true" className="h-2 w-2 rounded-full bg-lime" />
                 {t("offerEyebrow")}
               </p>

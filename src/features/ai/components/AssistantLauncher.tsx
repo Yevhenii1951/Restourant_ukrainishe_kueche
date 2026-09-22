@@ -21,9 +21,9 @@ export default function AssistantLauncher({ locale }: Readonly<{ locale: string 
     else setFailed(true);
   }
 
-  if (!open) return <button type="button" className="fixed bottom-20 right-4 z-30 rounded-full bg-brand px-4 py-3 font-semibold text-cream shadow-lg shadow-brand-deep/20 transition-colors duration-300 hover:bg-brand-dark sm:bottom-6" onClick={() => { setOpen(true); setTimeout(() => inputRef.current?.focus(), 0); }}>Frage zum Restaurant</button>;
+  if (!open) return <button type="button" className="fixed bottom-20 right-4 z-30 rounded-full bg-brand px-4 py-3 font-semibold text-cream shadow-dining transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-dark sm:bottom-6" onClick={() => { setOpen(true); setTimeout(() => inputRef.current?.focus(), 0); }}>Frage zum Restaurant</button>;
 
-  return <section role="dialog" aria-modal="true" aria-label="Restaurant-Assistent" className="fixed bottom-4 right-4 z-50 w-[min(24rem,calc(100vw-2rem))] space-y-4 rounded-2xl border border-brand/15 bg-white p-5 shadow-xl">
+  return <section role="dialog" aria-modal="true" aria-label="Restaurant-Assistent" className="premium-panel fixed bottom-4 right-4 z-50 w-[min(24rem,calc(100vw-2rem))] space-y-4 rounded-2xl p-5">
     <div className="flex items-start justify-between gap-3"><div><h2 className="font-display text-xl font-semibold text-ink">Restaurant-Assistent</h2><p className="text-sm text-ink/70">Nur Fragen zu Speisekarte, Öffnungszeiten und dieser Website. Keine Bestellungen oder Reservierungen.</p></div><button type="button" aria-label="Assistent schließen" className="min-h-11 min-w-11 text-ink/60 hover:text-ink" onClick={() => setOpen(false)}>×</button></div>
     {failed ? <p role="alert" className="text-sm text-ink/80">Der Assistent ist gerade nicht verfügbar. Nutze bitte Speisekarte oder Kontakt.</p> : null}
     {answer ? <p role="status" className="rounded-lg bg-brand/5 p-3 text-sm text-ink/80">{answer}</p> : null}

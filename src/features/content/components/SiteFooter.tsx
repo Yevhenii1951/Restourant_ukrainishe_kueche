@@ -57,8 +57,8 @@ export default async function SiteFooter(): Promise<React.ReactElement> {
   ];
 
   return (
-    <footer className="border-t-2 border-lime bg-brand-deep pb-28 text-white sm:pb-0">
-      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-8">
+    <footer className="border-t border-lime/40 bg-brand-deep pb-28 text-white sm:pb-0">
+      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-8 sm:py-[4.5rem]">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div className="space-y-5">
             <Link href="/" className="inline-flex items-center gap-2.5 text-lime">
@@ -87,7 +87,7 @@ export default async function SiteFooter(): Promise<React.ReactElement> {
           </div>
           {columns.map((column) => (
             <nav key={column.heading} aria-label={column.heading} className="space-y-4">
-              <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-lime">
+              <h2 className="text-xs font-bold tracking-[0.18em] text-lime">
                 {column.heading}
               </h2>
               <ul className="space-y-2.5">
@@ -95,7 +95,7 @@ export default async function SiteFooter(): Promise<React.ReactElement> {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-cream/80 transition-colors duration-300 hover:text-lime"
+                      className="text-sm text-cream/72 transition-colors duration-300 hover:text-lime"
                     >
                       {link.label}
                     </Link>

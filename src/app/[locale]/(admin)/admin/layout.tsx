@@ -28,89 +28,89 @@ export default async function AdminLayout({
   const signOutForLocale = signOutAction.bind(null, locale);
 
   return (
-    <div className="min-h-screen bg-paper text-ink">
-      <header className="border-b border-ink/10 bg-linen px-4 py-4 sm:px-6">
+    <div className="min-h-screen bg-brand-deep text-ink">
+      <header className="border-b border-lime/25 bg-brand-deep px-4 py-4 text-cream shadow-lg shadow-black/20 sm:px-6">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
           <Link
             href={`/${locale}/admin`}
-            className="font-display text-xl font-semibold"
+            className="font-display text-2xl font-semibold text-lime"
           >
             Kalyna Admin
           </Link>
-          <nav className="flex items-center gap-4 text-sm font-medium">
+          <nav className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 text-sm font-semibold">
             <Link
               href={`/${locale}/admin/uebersicht`}
-              className="underline-offset-4 hover:underline"
+              className="text-cream/78 underline-offset-4 transition-colors hover:text-lime hover:underline"
             >
               Uebersicht
             </Link>
             <Link
               href={`/${locale}/admin/bestellungen`}
-              className="underline-offset-4 hover:underline"
+              className="text-cream/78 underline-offset-4 transition-colors hover:text-lime hover:underline"
             >
               Bestellungen
             </Link>
             <Link
               href={`/${locale}/admin/reservierungen`}
-              className="underline-offset-4 hover:underline"
+              className="text-cream/78 underline-offset-4 transition-colors hover:text-lime hover:underline"
             >
               Reservierungen
             </Link>
             <Link
               href={`/${locale}/admin/catering`}
-              className="underline-offset-4 hover:underline"
+              className="text-cream/78 underline-offset-4 transition-colors hover:text-lime hover:underline"
             >
               Catering
             </Link>
             <Link
               href={`/${locale}/admin/lieferzonen`}
-              className="underline-offset-4 hover:underline"
+              className="text-cream/78 underline-offset-4 transition-colors hover:text-lime hover:underline"
             >
               Lieferzonen
             </Link>
             <Link
               href={`/${locale}/admin/lieferzeiten`}
-              className="underline-offset-4 hover:underline"
+              className="text-cream/78 underline-offset-4 transition-colors hover:text-lime hover:underline"
             >
               Lieferzeiten
             </Link>
             <Link
               href={`/${locale}/admin/schliesszeiten`}
-              className="underline-offset-4 hover:underline"
+              className="text-cream/78 underline-offset-4 transition-colors hover:text-lime hover:underline"
             >
               Schliesszeiten
             </Link>
             <Link
               href={`/${locale}/admin/tische`}
-              className="underline-offset-4 hover:underline"
+              className="text-cream/78 underline-offset-4 transition-colors hover:text-lime hover:underline"
             >
               Tische
             </Link>
             <Link
               href={`/${locale}/admin/kombinationen`}
-              className="underline-offset-4 hover:underline"
+              className="text-cream/78 underline-offset-4 transition-colors hover:text-lime hover:underline"
             >
               Kombinationen
             </Link>
             <Link
               href={`/${locale}/admin/inhalte`}
-              className="underline-offset-4 hover:underline"
+              className="text-cream/78 underline-offset-4 transition-colors hover:text-lime hover:underline"
             >
               Inhalte
             </Link>
             {staff.role === "ADMIN" && (
               <Link
                 href={`/${locale}/admin/audit`}
-                className="underline-offset-4 hover:underline"
+                className="text-cream/78 underline-offset-4 transition-colors hover:text-lime hover:underline"
               >
                 Audit
               </Link>
             )}
-            <span>{staff.role}</span>
+            <span className="rounded-full border border-lime/35 px-2.5 py-1 text-xs font-bold text-lime">{staff.role}</span>
             <form action={signOutForLocale}>
               <button
                 type="submit"
-                className="underline-offset-4 hover:underline"
+                className="text-cream/78 underline-offset-4 transition-colors hover:text-lime hover:underline"
               >
                 Sign out
               </button>
@@ -118,7 +118,7 @@ export default async function AdminLayout({
           </nav>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
+      <main className="mx-auto w-full max-w-6xl bg-porcelain px-4 py-8 shadow-2xl shadow-black/20 sm:px-6 lg:my-8 lg:rounded-lg">
         {children}
       </main>
     </div>
