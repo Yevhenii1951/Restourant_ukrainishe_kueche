@@ -19,7 +19,7 @@ export default async function HomeFeatured({
   return (
     <section className="bg-porcelain">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-8 sm:py-24">
-        <ScrollReveal variant="text">
+        <ScrollReveal>
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-xl">
               <p className="premium-eyebrow">
@@ -52,7 +52,7 @@ export default async function HomeFeatured({
         </ScrollReveal>
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => (
-            <ScrollReveal key={item.id} delayMs={index * 60} variant="card">
+            <ScrollReveal key={item.id} delayMs={index * 90}>
               <article className="group premium-surface h-full overflow-hidden rounded-2xl transition-all duration-500 hover:-translate-y-1 hover:border-brand/25 hover:shadow-xl hover:shadow-brand-deep/15">
                 <Link href={`/speisekarte#${item.slug}`} className="block h-full">
                   <div className="relative aspect-[4/3] overflow-hidden bg-blue-smoke">
