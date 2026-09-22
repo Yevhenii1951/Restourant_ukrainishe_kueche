@@ -3,6 +3,7 @@ import { routing } from "@/i18n/routing";
 import SiteHeader from "@/features/content/components/SiteHeader";
 import SiteFooter from "@/features/content/components/SiteFooter";
 import AssistantLauncher from "@/features/ai/components/AssistantLauncher";
+import MotionRuntime from "@/features/content/components/MotionRuntime";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -27,6 +28,7 @@ export default async function PublicLayout({
       >
         {t("skipToContent")}
       </a>
+      <MotionRuntime />
       <SiteHeader />
       <main
         id="main"

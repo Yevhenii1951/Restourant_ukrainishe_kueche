@@ -34,6 +34,7 @@
 @layer base {
   html {
     background: var(--color-brand-deep);
+    scroll-behavior: smooth;
   }
 
   body {
@@ -157,13 +158,148 @@
   /* Scroll reveal: hidden until IntersectionObserver adds .is-visible */
   .reveal {
     opacity: 0;
-    transform: translateY(18px);
     transition:
-      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity 0.44s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 0.44s cubic-bezier(0.22, 0.61, 0.36, 1),
+      scale 0.44s cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: opacity, transform, scale;
+  }
+  .reveal-text {
+    transform: translateY(14px);
+  }
+  .reveal-card {
+    transform: translateY(20px);
+  }
+  .reveal-media {
+    scale: 0.985;
+    transform: translateY(18px);
   }
   .reveal.is-visible {
     opacity: 1;
+    scale: 1;
+    transform: translateY(0);
+  }
+
+  .label-slide {
+    position: relative;
+    overflow: hidden;
+  }
+  .label-slide > span {
+    display: inline-block;
+    transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .label-slide::after {
+    content: attr(data-label);
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(100%);
+    transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .label-slide:hover > span,
+  .label-slide:focus-visible > span {
+    transform: translateY(-120%);
+  }
+  .label-slide:hover::after,
+  .label-slide:focus-visible::after {
+    transform: translateY(0);
+  }
+  .label-slide svg {
+    transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .label-slide:hover svg,
+  .label-slide:focus-visible svg {
+    transform: translateX(0.24rem);
+  }
+
+  .scroll-indicator > span:last-child {
+    width: 2px;
+    height: 70px;
+    background: currentColor;
+    filter: blur(0.2px);
+    transform: scaleY(0.57);
+    transform-origin: bottom;
+    transition:
+      filter 0.32s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .scroll-indicator:hover > span:last-child {
+    filter: blur(0);
+    transform: scaleY(1);
+  }
+
+  .editorial-scroll.is-visible .editorial-card {
+    clip-path: inset(0);
+  }
+  .editorial-card {
+    clip-path: inset(0 100% 0 0);
+    transition:
+      clip-path 0.75s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 0.44s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .editorial-card:hover {
+    transform: translateY(-0.35rem);
+  }
+  .editorial-caption {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 0.44s cubic-bezier(0.22, 0.61, 0.36, 1) 0.8s,
+      transform 0.44s cubic-bezier(0.22, 0.61, 0.36, 1) 0.8s;
+  }
+  .editorial-scroll.is-visible .editorial-caption {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .ticker-track {
+    animation: ticker-scroll 28s linear infinite;
+  }
+  @keyframes ticker-scroll {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
+  }
+
+  .split-media,
+  .split-copy {
+    transition: transform 0.12s linear;
+    will-change: transform;
+  }
+  .split-media {
+    transform: translateY(var(--split-media-y, 0));
+  }
+  .split-copy {
+    transform: translateY(var(--split-copy-y, 0));
+  }
+
+  .product-card {
+    cursor: default;
+  }
+  .product-card:active {
+    transform: scale(0.99);
+    transition-duration: 260ms;
+  }
+  .product-card .product-image-alt {
+    opacity: 0;
+    scale: 1.035;
+    transition:
+      opacity 0.44s cubic-bezier(0.22, 0.61, 0.36, 1),
+      scale 0.44s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .product-card:hover .product-image-alt,
+  .product-card:focus-within .product-image-alt {
+    opacity: 1;
+    scale: 1;
+  }
+  .quick-add-panel {
+    transform: translateY(0.35rem);
+    transition:
+      opacity 0.32s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .product-card:hover .quick-add-panel,
+  .product-card:focus-within .quick-add-panel {
     transform: translateY(0);
   }
 
@@ -222,15 +358,29 @@
   html {
     scroll-behavior: auto;
   }
+  .ticker-track {
+    animation: none;
+  }
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
-  .reveal {
+  .reveal,
+  .reveal-text,
+  .reveal-card,
+  .reveal-media,
+  .editorial-card,
+  .editorial-caption,
+  .split-media,
+  .split-copy,
+  .quick-add-panel {
     opacity: 1;
+    scale: 1;
+    clip-path: none;
     transform: none;
+    transition: none;
   }
 }
 
@@ -238,4 +388,26 @@
   outline: 2px solid var(--color-brand-deep);
   outline-offset: 2px;
   box-shadow: 0 0 0 4px var(--color-lime);
+}
+
+:root[data-enable-theme-animations="false"] {
+  scroll-behavior: auto;
+}
+:root[data-enable-theme-animations="false"] .reveal,
+:root[data-enable-theme-animations="false"] .reveal-text,
+:root[data-enable-theme-animations="false"] .reveal-card,
+:root[data-enable-theme-animations="false"] .reveal-media,
+:root[data-enable-theme-animations="false"] .editorial-card,
+:root[data-enable-theme-animations="false"] .editorial-caption,
+:root[data-enable-theme-animations="false"] .split-media,
+:root[data-enable-theme-animations="false"] .split-copy,
+:root[data-enable-theme-animations="false"] .quick-add-panel {
+  opacity: 1;
+  scale: 1;
+  clip-path: none;
+  transform: none;
+  transition: none;
+}
+:root[data-enable-theme-animations="false"] .ticker-track {
+  animation: none;
 }

@@ -27,7 +27,7 @@ export default async function HomeServices(): Promise<React.ReactElement> {
   return (
     <section className="bleed bg-mint/70">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-8 sm:py-24">
-        <ScrollReveal>
+        <ScrollReveal variant="text">
           <div className="max-w-2xl">
             <p className="premium-eyebrow">
               {t("servicesEyebrow")}
@@ -40,7 +40,7 @@ export default async function HomeServices(): Promise<React.ReactElement> {
         </ScrollReveal>
         <div className="mt-12 grid gap-6 sm:grid-cols-2">
           {services.map((service, index) => (
-            <ScrollReveal key={service.href} delayMs={index * 100}>
+            <ScrollReveal key={service.href} delayMs={index * 60} variant="media">
               <Link
                 href={service.href}
                 className="group premium-surface block h-full overflow-hidden rounded-2xl transition-all duration-500 hover:-translate-y-1 hover:border-brand/25 hover:shadow-xl hover:shadow-brand-deep/15"

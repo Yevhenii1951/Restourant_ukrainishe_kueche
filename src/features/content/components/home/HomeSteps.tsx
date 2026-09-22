@@ -38,9 +38,9 @@ export default async function HomeSteps(): Promise<React.ReactElement> {
   ];
 
   return (
-    <section className="bleed bg-cream">
+    <section id="home-steps" className="bleed bg-cream">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-8 sm:py-24">
-        <ScrollReveal>
+        <ScrollReveal variant="text">
           <div className="max-w-2xl">
             <h2 className="font-display text-4xl font-semibold text-ink sm:text-5xl">
               {t("stepsTitle")}
@@ -50,7 +50,7 @@ export default async function HomeSteps(): Promise<React.ReactElement> {
         </ScrollReveal>
         <ol className="mt-14 grid gap-10 sm:grid-cols-3">
           {steps.map((step, index) => (
-            <ScrollReveal key={step.number} delayMs={index * 100}>
+            <ScrollReveal key={step.number} delayMs={index * 60} variant="card">
               <li className="group h-full border-t-2 border-brand/10 pt-6 transition-colors duration-300 hover:border-lime">
                 <p className="font-display text-5xl font-semibold leading-none text-brand transition-colors duration-300 group-hover:text-brand-dark">
                   {step.number}

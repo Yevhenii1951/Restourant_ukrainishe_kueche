@@ -51,7 +51,7 @@ export default function DishOrderForm({
   }
 
   return (
-    <div className="mt-4 space-y-4">
+    <div className="quick-add-panel mt-4 space-y-4">
       {item.modifierGroups.map((group) => {
         const selectedCount = (selections[group.id] ?? []).length;
         const invalidCount = selectedCount < group.minSelections || selectedCount > group.maxSelections;
@@ -135,9 +135,9 @@ export default function DishOrderForm({
             type="button"
             onClick={addToCart}
             disabled={invalidGroups.length > 0}
-            className="rounded-lg bg-kalyna px-4 py-2 font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="btn-primary label-slide !min-h-10 px-4 py-2 disabled:cursor-not-allowed disabled:opacity-40" data-label={orderTranslations("addToCart")}
           >
-            {orderTranslations("addToCart")}
+            <span>{orderTranslations("addToCart")}</span>
           </button>
         </div>
       </div>

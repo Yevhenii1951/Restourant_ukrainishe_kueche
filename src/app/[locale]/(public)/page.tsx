@@ -10,6 +10,7 @@ import HomeSteps from "@/features/content/components/home/HomeSteps";
 import HomeFeatured from "@/features/content/components/home/HomeFeatured";
 import HomeOffer from "@/features/content/components/home/HomeOffer";
 import HomeServices from "@/features/content/components/home/HomeServices";
+import HomeEditorialScroll from "@/features/content/components/home/HomeEditorialScroll";
 import HomeCta from "@/features/content/components/home/HomeCta";
 
 export const dynamic = "force-dynamic";
@@ -53,6 +54,7 @@ export default async function HomePage({
       />
       <HomeSteps />
       <HomeFeatured items={featuredItems} locale={supportedLocale} />
+      <HomeEditorialScroll items={menu.items.filter((item) => item.image.storagePath).slice(0, 6)} locale={supportedLocale} />
       <HomeOffer
         title={content("lunchTitle")}
         lead={lunch?.intro || content("lunchLead")}

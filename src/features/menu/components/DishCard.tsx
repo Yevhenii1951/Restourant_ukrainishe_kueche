@@ -22,7 +22,7 @@ export default async function DishCard({
   const mayContain = item.allergens.filter((allergen) => allergen.containment === "may_contain");
 
   return (
-    <article className="premium-surface group flex flex-col gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand/25 hover:shadow-xl hover:shadow-brand-deep/15 sm:flex-row sm:p-5">
+    <article className="product-card premium-surface group flex flex-col gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand/25 hover:shadow-xl hover:shadow-brand-deep/15 sm:flex-row sm:p-5">
       {item.image.storagePath ? (
         <div className="relative h-40 w-full shrink-0 overflow-hidden rounded-xl bg-blue-smoke sm:h-36 sm:w-44">
           <Image
@@ -30,7 +30,14 @@ export default async function DishCard({
             alt={item.image.alt ?? item.name}
             fill
             sizes="(max-width: 640px) 100vw, 176px"
-            className="object-cover"
+            className="object-cover transition-opacity duration-500 group-hover:opacity-0"
+          />
+          <Image
+            src={item.image.storagePath}
+            alt=""
+            fill
+            sizes="(max-width: 640px) 100vw, 176px"
+            className="product-image-alt object-cover saturate-125"
           />
         </div>
       ) : null}

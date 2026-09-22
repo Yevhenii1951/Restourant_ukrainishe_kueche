@@ -43,9 +43,10 @@ export default async function SiteHeader(): Promise<React.ReactElement> {
             <CartBadge />
             <Link
               href="/reservierung"
-              className="btn-primary hidden !min-h-11 !px-5 sm:inline-flex"
+              className="btn-primary label-slide hidden !min-h-11 !px-5 sm:inline-flex"
+              data-label={navigationTranslations("reserve")}
             >
-              {navigationTranslations("reserve")}
+              <span>{navigationTranslations("reserve")}</span>
             </Link>
             <LocaleSwitcher variant="light" />
           </div>
