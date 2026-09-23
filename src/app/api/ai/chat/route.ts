@@ -115,8 +115,19 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   const call = classifyAiQuestion(message);
-  if (!call)
-    return jsonWithSession({ error: "assistant-unavailable" }, 503, sessionId);
+  if (!call) {
+    const answer =
+      "Ich kann Fragen zur Speisekarte, zu Öffnungszeiten, Lieferung, Reservierungszeiten und FAQ beantworten. Für Bestellungen oder persönliche Anliegen nutze bitte Speisekarte oder Kontakt.";
+    await appendAiExchange(
+      getServerPool(),
+      sessionId,
+      parsed.data.message,
+      answer,
+      undefined,
+      parsed.data.locale,
+    );
+    return jsonWithSession({ answer }, 200, sessionId);
+  }
   if (serverEnv.AI_PROVIDER_KEY && !paidAiCallsEnabled(serverEnv)) {
     return jsonWithSession({ error: "assistant-unavailable" }, 503, sessionId);
   }
