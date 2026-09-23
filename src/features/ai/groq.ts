@@ -24,7 +24,7 @@ export interface GroqAnswerInput {
   env: GroqAiEnv;
   userMessage: string;
   locale: AiLocale;
-  tool: AiToolName;
+  tool: AiToolName | "general";
   data: unknown;
   fetcher?: typeof fetch;
 }
