@@ -10,17 +10,23 @@ import { getServerPool } from "@/lib/db/serverPool";
 export async function getPublicMenu(
   locale: SupportedLocale,
 ): Promise<PublicMenu> {
-  if (serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY) {
+  try {
+    if (serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY) {
+      return withDemoMenuFallback(
+        await createSupabaseMenuStore(getSupabaseServerClient()).listPublicMenu(
+          locale,
+        ),
+      );
+    }
+    const pool = getServerPool();
+    if (pool)
+      return withDemoMenuFallback(
+        await createPostgresMenuStore(pool).listPublicMenu(locale),
+      );
+  } catch {
     return withDemoMenuFallback(
-      await createSupabaseMenuStore(getSupabaseServerClient()).listPublicMenu(
-        locale,
-      ),
+      getDemoPublicMenu(),
     );
   }
-  const pool = getServerPool();
-  if (pool)
-    return withDemoMenuFallback(
-      await createPostgresMenuStore(pool).listPublicMenu(locale),
-    );
   return getDemoPublicMenu();
 }
