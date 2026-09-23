@@ -115,7 +115,7 @@
 
 ## Non-Goals
 
-- **NG-1:** No customer accounts, loyalty programme or order history.
+- **NG-1:** No customer accounts, loyalty programme or persistent order history. A phone-identified status overview (`Meine Anfragen` page) is the only guest lookup surface; each order/reservation still keeps its opaque token link.
 - **NG-2:** No live production payments or representation of a real restaurant.
 - **NG-3:** No route optimization, courier tracking or driver application.
 - **NG-4:** No inventory, supplier, kitchen-display or tax-accounting system.
