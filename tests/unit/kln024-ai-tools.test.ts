@@ -26,6 +26,12 @@ describe("KLN-024 read-only AI boundary", () => {
     });
   });
 
+  it("routes Speisekarte questions to the menu tool", () => {
+    expect(classifyAiQuestion("Was ist auf der Speisekarte?")).toMatchObject({
+      tool: "searchMenu",
+    });
+  });
+
   it("rejects obvious PII before tool selection", async () => {
     const response = await POST(new Request("http://test/api/ai/chat", {
       method: "POST", headers: { "content-type": "application/json" },
