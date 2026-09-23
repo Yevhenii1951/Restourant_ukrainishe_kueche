@@ -81,7 +81,8 @@
     "gallery": "Gallery",
     "contact": "Contact",
     "directions": "Directions",
-    "meineAnfragen": "My requests"
+    "meineAnfragen": "My requests",
+    "closeMenu": "Close menu"
   },
   "meineAnfragen": {
     "title": "My requests",
