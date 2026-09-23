@@ -13,6 +13,8 @@
 
 ## Verification
 
+- KLN-030 in progress on `feature/kln-030-guest-anfragen` (stacked on `feature/kln-029-design-rebrand`): account-free «Meine Anfragen» overview — guest looks up own orders+reservations by phone (orders store no email). Spec NG-1 amended, ticket `docs/sdd/tickets/KLN-030-guest-anfragen.md` written. Unit `tests/unit/kln030-guest-domain.test.ts` (schema+merge), integration `tests/integration/kln030-guest-anfragen.test.ts` (phone-scoped store query) green; `npm run check` green (lint, typecheck, 199 unit, 93 integration). Page `/de/meine-anfragen` rendered + form submit returns the empty state (Playwright); footer link + sitemap added.
+
 - KLN-029: `npm run check` green (lint, typecheck, 195 unit, 92 integration). Playwright: hero video `hero.mp4` autoplays muted/loop 1920×1080 and is `display:none` under `prefers-reduced-motion` (poster/base image shows); hero flush under header, menu h1 48px gap; no horizontal overflow at 390/1440; contrast red-on-cream 6.66 / cream-on-red 6.66 / ink-on-cream 16.36 / gold-on-black 8.56; favicon `/icon.png` + title present. Marquee gone. Dev on `:3001` (existing server, log `/tmp/kalyna-dev.log`). The single console "error" is a dev-only React `eval()` CSP notice, not a bug.
 - KLN-029 tweak: HomeServices cards («Veranstaltungen & catering») — photo now left inside card (flex-row, 45% width), stacked on top on mobile (verified in Playwright).
 - `npm run db:local:migrate` applied `0021_ai_retention.sql` to `kalyna_dev`.

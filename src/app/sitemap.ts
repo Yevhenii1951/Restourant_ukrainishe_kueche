@@ -11,6 +11,7 @@ const INDEXABLE_PATHS = [
   "/kontakt",
   "/anfahrt",
   "/faq",
+  "/meine-anfragen",
   "/impressum",
   "/datenschutz",
   "/agb",

@@ -43,6 +43,7 @@ export default async function SiteFooter(): Promise<React.ReactElement> {
       links: [
         { href: "/anfahrt", label: navigationTranslations("directions") },
         { href: "/bestellen", label: navigationTranslations("order") },
+        { href: "/meine-anfragen", label: navigationTranslations("meineAnfragen") },
         { href: "/warenkorb", label: navigationTranslations("cart") },
       ],
     },
