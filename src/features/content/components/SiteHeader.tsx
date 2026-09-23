@@ -27,7 +27,6 @@ export default async function SiteHeader(): Promise<React.ReactElement> {
             className="flex items-center gap-3 transition-opacity hover:opacity-90"
           >
             <KalynaLogo />
-            <span className="hidden rounded-full border border-lime/45 bg-cream/70 px-2.5 py-1 text-[0.68rem] font-bold tracking-[0.14em] text-brand-dark sm:inline-flex">Portfolio-Demo</span>
           </Link>
           <nav
             aria-label={navigationTranslations("menu")}
