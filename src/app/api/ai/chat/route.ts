@@ -13,6 +13,7 @@ import {
   executeAiTool,
 } from "@/features/ai/tools";
 import { generateGroqAnswer } from "@/features/ai/groq";
+import { generalGroqAnswer } from "@/features/ai/general";
 import { getServerPool } from "@/lib/db/serverPool";
 import { serverEnv } from "@/lib/env/server";
 
@@ -42,6 +43,9 @@ function allowed(request: Request, sessionId: string): boolean {
   bucket.count += 1;
   return true;
 }
+
+const ASSISTANT_SCOPE_FALLBACK =
+  "Ich kann Fragen zur Speisekarte, zu Öffnungszeiten, Lieferung, Reservierungszeiten und FAQ beantworten. Für Bestellungen oder persönliche Anliegen nutze bitte Speisekarte oder Kontakt.";
 
 function toAnswer(tool: string, data: unknown): string {
   if (tool === "searchMenu" && Array.isArray(data)) {
@@ -117,7 +121,11 @@ export async function POST(request: Request): Promise<NextResponse> {
   const call = classifyAiQuestion(message);
   if (!call) {
     const answer =
-      "Ich kann Fragen zur Speisekarte, zu Öffnungszeiten, Lieferung, Reservierungszeiten und FAQ beantworten. Für Bestellungen oder persönliche Anliegen nutze bitte Speisekarte oder Kontakt.";
+      (await generalGroqAnswer(
+        serverEnv,
+        parsed.data.message,
+        parsed.data.locale,
+      )) ?? ASSISTANT_SCOPE_FALLBACK;
     await appendAiExchange(
       getServerPool(),
       sessionId,

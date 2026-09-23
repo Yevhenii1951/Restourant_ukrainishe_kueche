@@ -91,4 +91,37 @@ describe("KLN-024 read-only AI boundary", () => {
       temperature: 0.25,
     });
   });
+
+  it("accepts a general tool for unknown questions grounded in menu + FAQ", async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          choices: [{ message: { content: "Falafel führen wir nicht." } }],
+        }),
+        { status: 200 },
+      ),
+    );
+
+    await expect(
+      generateGroqAnswer({
+        env: { GROQ_API_KEY: "secret-key", AI_MONTHLY_BUDGET_EUR: "5" },
+        userMessage: "Ihr habt Falafel?",
+        locale: "de",
+        tool: "general",
+        data: { menu: [{ name: "Borschtsch" }], faq: [] },
+        fetcher,
+      }),
+    ).resolves.toBe("Falafel führen wir nicht.");
+
+    const [, init] = fetcher.mock.calls[0] ?? [];
+    expect(JSON.parse(String(init?.body))).toMatchObject({
+      model: "openai/gpt-oss-120b",
+      messages: expect.arrayContaining([
+        expect.objectContaining({
+          role: "user",
+          content: expect.stringContaining("Tool: general"),
+        }),
+      ]),
+    });
+  });
 });
