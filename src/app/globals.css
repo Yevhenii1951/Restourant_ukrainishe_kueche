@@ -2,8 +2,8 @@
 
 @theme {
   --font-sans:
-    "Sweet Sans", "Sweet Sans Text", var(--font-manrope), ui-sans-serif, system-ui,
-    -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    var(--font-manrope), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-display: "Grenette", var(--font-cormorant), Georgia, "Times New Roman", serif;
 
   /* Premium hospitality palette: kalyna cherry, smoked black, old gold and herbal green */
