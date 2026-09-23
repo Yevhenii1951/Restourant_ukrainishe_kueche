@@ -81,7 +81,7 @@ export async function executeAiTool(
 export function classifyAiQuestion(message: string): { tool: AiToolName; input: unknown } | null {
   const normalized = message.toLowerCase();
   if (/allerg|allergy|allergie/.test(normalized)) return null;
-  if (/\b(menu|karte|gericht|dish|страв)/.test(normalized)) return { tool: "searchMenu", input: { query: message } };
+  if (/\b(menu|speisekarte|karte|gericht|dish|страв)/.test(normalized)) return { tool: "searchMenu", input: { query: message } };
   if (/öffn|opening|годин|hours?/.test(normalized)) return { tool: "getOpeningHours", input: {} };
   const postalCode = message.match(/\b\d{5}\b/)?.[0];
   if (postalCode && /liefer|delivery|достав/.test(normalized)) return { tool: "getDeliveryInfo", input: { postalCode } };
