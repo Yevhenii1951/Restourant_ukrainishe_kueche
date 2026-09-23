@@ -6,17 +6,19 @@ import { routing } from "@/i18n/routing";
 
 interface LocaleSwitcherProps {
   variant?: "dark" | "light";
+  className?: string;
 }
 
 export default function LocaleSwitcher({
   variant = "light",
+  className = "",
 }: LocaleSwitcherProps): React.ReactElement {
   const currentLocale = useLocale();
   const pathname = usePathname();
   const isDark = variant === "dark";
 
   return (
-    <nav aria-label="Sprache" className="flex items-center gap-0.5">
+    <nav aria-label="Sprache" className={`flex items-center gap-0.5 ${className}`}>
       {routing.locales.map((locale) => (
         <Link
           key={locale}
