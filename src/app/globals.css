@@ -33,6 +33,7 @@
 
 @layer base {
   html {
+    overflow-x: clip;
     background: var(--color-brand-deep);
     font-size: 18px;
   }
