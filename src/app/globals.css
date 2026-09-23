@@ -2,9 +2,9 @@
 
 @theme {
   --font-sans:
-    var(--font-manrope), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-cormorant), Georgia, "Times New Roman", serif;
+    "Sweet Sans", "Sweet Sans Text", var(--font-manrope), ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Grenette", var(--font-cormorant), Georgia, "Times New Roman", serif;
 
   /* Premium hospitality palette: kalyna cherry, smoked black, old gold and herbal green */
   --color-brand: #7c1428;
@@ -34,6 +34,7 @@
 @layer base {
   html {
     background: var(--color-brand-deep);
+    font-size: 18px;
   }
 
   body {

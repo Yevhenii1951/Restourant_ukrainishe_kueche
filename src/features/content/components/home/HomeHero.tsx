@@ -43,10 +43,6 @@ export default async function HomeHero({
       />
       <div className="absolute inset-0 bg-gradient-to-r from-brand-deep/88 via-brand-deep/62 to-brand-deep/22" />
       <div className="relative mx-auto flex w-full max-w-6xl flex-col items-start gap-6 px-4 pb-16 pt-24 sm:px-8 sm:pb-20 sm:pt-32 lg:min-h-[42rem] lg:px-10 lg:pb-24 lg:pt-40">
-        <p className="inline-flex w-fit items-center gap-2.5 rounded-full border border-lime/45 bg-brand-deep/45 px-4 py-1.5 text-xs font-bold tracking-[0.16em] text-lime backdrop-blur-sm">
-          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-lime" />
-          {t("eyebrow")}
-        </p>
         <h1 className="max-w-3xl font-display text-5xl font-medium leading-[0.98] text-white sm:text-6xl lg:text-7xl">
           {title}
         </h1>
