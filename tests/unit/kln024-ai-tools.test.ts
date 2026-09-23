@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 
 import { POST } from "@/app/api/ai/chat/route";
+import { generateGroqAnswer, groqAiEnabled } from "@/features/ai/groq";
 import { AI_TOOL_INPUTS, classifyAiQuestion } from "@/features/ai/tools";
 
 describe("KLN-024 read-only AI boundary", () => {
@@ -28,5 +29,57 @@ describe("KLN-024 read-only AI boundary", () => {
       body: JSON.stringify({ locale: "de", message: "Meine E-Mail ist gast@example.test" }),
     }));
     expect(response.status).toBe(400);
+  });
+
+  it("fails closed for Groq without an explicit monthly budget", async () => {
+    const fetcher = vi.fn<typeof fetch>();
+
+    await expect(
+      generateGroqAnswer({
+        env: { GROQ_API_KEY: "configured" },
+        userMessage: "Was ist auf der Karte?",
+        locale: "de",
+        tool: "searchMenu",
+        data: [{ name: "Borschtsch" }],
+        fetcher,
+      }),
+    ).resolves.toBeNull();
+
+    expect(groqAiEnabled({ GROQ_API_KEY: "configured" })).toBe(false);
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
+  it("uses Groq to phrase answers from read-only tool data", async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          choices: [{ message: { content: "Heute passt Borschtsch gut." } }],
+        }),
+        { status: 200 },
+      ),
+    );
+
+    await expect(
+      generateGroqAnswer({
+        env: {
+          GROQ_API_KEY: "secret-key",
+          GROQ_MODEL: "llama-3.3-70b-versatile",
+          AI_MONTHLY_BUDGET_EUR: "5",
+        },
+        userMessage: "Was ist auf der Karte?",
+        locale: "de",
+        tool: "searchMenu",
+        data: [{ name: "Borschtsch", priceCents: 890 }],
+        fetcher,
+      }),
+    ).resolves.toBe("Heute passt Borschtsch gut.");
+
+    const [url, init] = fetcher.mock.calls[0] ?? [];
+    expect(url).toBe("https://api.groq.com/openai/v1/chat/completions");
+    expect(init?.headers).toMatchObject({ authorization: "Bearer secret-key" });
+    expect(JSON.parse(String(init?.body))).toMatchObject({
+      model: "llama-3.3-70b-versatile",
+      temperature: 0.25,
+    });
   });
 });

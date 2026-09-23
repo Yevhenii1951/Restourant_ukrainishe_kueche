@@ -149,6 +149,8 @@ Häufige optionale Variablen:
 | `STRIPE_WEBHOOK_SECRET` | Secret zur Stripe-Webhook-Signaturprüfung |
 | `BREVO_API_KEY` | Key für den transaktionalen E-Mail-Provider |
 | `AI_PROVIDER_KEY` | Provider-Key für KI-Assistentenantworten |
+| `GROQ_API_KEY` | Groq API-Key für den KI-Assistenten |
+| `GROQ_MODEL` | Optionales Groq-Modell, Standard: `llama-3.3-70b-versatile` |
 | `AI_MONTHLY_BUDGET_EUR` | Monatliche Budgetgrenze für KI-Nutzung |
 | `CRON_SECRET` | Secret für geschützte Cron-Endpunkte |
 | `BOOTSTRAP_ADMIN_AUTH_USER_ID` | Supabase Auth User ID für Admin-Bootstrap |

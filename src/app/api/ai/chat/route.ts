@@ -12,6 +12,7 @@ import {
   classifyAiQuestion,
   executeAiTool,
 } from "@/features/ai/tools";
+import { generateGroqAnswer } from "@/features/ai/groq";
 import { getServerPool } from "@/lib/db/serverPool";
 import { serverEnv } from "@/lib/env/server";
 
@@ -127,7 +128,14 @@ export async function POST(request: Request): Promise<NextResponse> {
   ).catch(() => null);
   if (data === null)
     return jsonWithSession({ error: "assistant-unavailable" }, 503, sessionId);
-  const answer = toAnswer(call.tool, data);
+  const answer =
+    (await generateGroqAnswer({
+      env: serverEnv,
+      userMessage: parsed.data.message,
+      locale: parsed.data.locale,
+      tool: call.tool,
+      data,
+    })) ?? toAnswer(call.tool, data);
   await appendAiExchange(
     getServerPool(),
     sessionId,
