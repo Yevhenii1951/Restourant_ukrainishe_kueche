@@ -14,6 +14,8 @@ const serverEnvSchema = z.object({
   BREVO_API_KEY: z.string().min(1).optional(),
   QUOTE_SIGNING_SECRET: z.string().min(32).optional(),
   AI_PROVIDER_KEY: z.string().min(1).optional(),
+  GROQ_API_KEY: z.string().min(1).optional(),
+  GROQ_MODEL: z.string().min(1).optional(),
   AI_MONTHLY_BUDGET_EUR: z
     .string()
     .regex(/^\d+(\.\d{1,2})?$/)
@@ -48,6 +50,8 @@ export function parseServerEnv(
     BREVO_API_KEY: optionalEnv(source.BREVO_API_KEY),
     QUOTE_SIGNING_SECRET: optionalEnv(source.QUOTE_SIGNING_SECRET),
     AI_PROVIDER_KEY: optionalEnv(source.AI_PROVIDER_KEY),
+    GROQ_API_KEY: optionalEnv(source.GROQ_API_KEY),
+    GROQ_MODEL: optionalEnv(source.GROQ_MODEL),
     AI_MONTHLY_BUDGET_EUR: optionalEnv(source.AI_MONTHLY_BUDGET_EUR),
     CRON_SECRET: optionalEnv(source.CRON_SECRET),
   });
