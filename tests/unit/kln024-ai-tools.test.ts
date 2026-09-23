@@ -72,7 +72,7 @@ describe("KLN-024 read-only AI boundary", () => {
       generateGroqAnswer({
         env: {
           GROQ_API_KEY: "secret-key",
-          GROQ_MODEL: "llama-3.3-70b-versatile",
+          GROQ_MODEL: "openai/gpt-oss-120b",
           AI_MONTHLY_BUDGET_EUR: "5",
         },
         userMessage: "Was ist auf der Karte?",
@@ -87,7 +87,7 @@ describe("KLN-024 read-only AI boundary", () => {
     expect(url).toBe("https://api.groq.com/openai/v1/chat/completions");
     expect(init?.headers).toMatchObject({ authorization: "Bearer secret-key" });
     expect(JSON.parse(String(init?.body))).toMatchObject({
-      model: "llama-3.3-70b-versatile",
+      model: "openai/gpt-oss-120b",
       temperature: 0.25,
     });
   });

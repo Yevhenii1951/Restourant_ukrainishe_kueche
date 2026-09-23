@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { AiLocale, AiToolName } from "./tools";
 
 const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
-const DEFAULT_GROQ_MODEL = "llama-3.3-70b-versatile";
+const DEFAULT_GROQ_MODEL = "openai/gpt-oss-120b";
 
 const groqResponseSchema = z.object({
   choices: z
