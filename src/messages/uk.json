@@ -81,7 +81,8 @@
     "gallery": "Галерея",
     "contact": "Контакти",
     "directions": "Як дістатися",
-    "meineAnfragen": "Мої запити"
+    "meineAnfragen": "Мої запити",
+    "closeMenu": "Закрити меню"
   },
   "meineAnfragen": {
     "title": "Мої запити",
