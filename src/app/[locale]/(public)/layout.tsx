@@ -31,7 +31,7 @@ export default async function PublicLayout({
       <main
         id="main"
         tabIndex={-1}
-        className="mx-auto w-full max-w-6xl flex-1 px-4 pt-10 sm:px-8 sm:pt-14"
+        className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-10 sm:px-8 sm:pb-24 sm:pt-14"
       >
         {children}
       </main>
