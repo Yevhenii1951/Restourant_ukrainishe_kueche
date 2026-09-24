@@ -13,6 +13,11 @@ export async function getPublicMenu(
 ): Promise<PublicMenu> {
   if (isDemoContentMode()) return getDemoPublicMenu();
   try {
+    const pool = getServerPool();
+    if (pool)
+      return withDemoMenuFallback(
+        await createPostgresMenuStore(pool).listPublicMenu(locale),
+      );
     if (serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY) {
       return withDemoMenuFallback(
         await createSupabaseMenuStore(getSupabaseServerClient()).listPublicMenu(
@@ -20,11 +25,6 @@ export async function getPublicMenu(
         ),
       );
     }
-    const pool = getServerPool();
-    if (pool)
-      return withDemoMenuFallback(
-        await createPostgresMenuStore(pool).listPublicMenu(locale),
-      );
   } catch {
     return withDemoMenuFallback(
       getDemoPublicMenu(),

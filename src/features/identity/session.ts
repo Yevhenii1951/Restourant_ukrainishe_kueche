@@ -2,9 +2,11 @@ import "server-only";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { clientPublicEnv } from "@/lib/env/client";
 import { serverEnv } from "@/lib/env/server";
+import { getServerPool } from "@/lib/db/serverPool";
 import { createSupabaseSessionClient } from "@/lib/supabase/session";
 import { type StaffContext } from "./domain";
 import { createSupabaseStaffStore } from "./supabaseStaffStore";
+import { createPostgresStaffStore } from "./postgresStaffStore";
 import { resolveCurrentStaff } from "./service";
 
 export async function getCurrentStaff(): Promise<StaffContext | null> {
@@ -24,6 +26,9 @@ export async function getCurrentStaff(): Promise<StaffContext | null> {
   if (userError || !userData.user?.email_confirmed_at) return null;
   if (userData.user.id !== data.claims.sub) return null;
 
-  const store = createSupabaseStaffStore(getSupabaseServerClient());
+  const pool = getServerPool();
+  const store = pool
+    ? createPostgresStaffStore(pool)
+    : createSupabaseStaffStore(getSupabaseServerClient());
   return resolveCurrentStaff(data.claims.sub, store);
 }

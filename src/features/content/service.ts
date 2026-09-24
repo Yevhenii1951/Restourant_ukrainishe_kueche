@@ -14,18 +14,18 @@ import { getServerPool } from "@/lib/db/serverPool";
 
 export async function getPublicContentEntries(): Promise<PublicContentEntry[]> {
   if (isDemoContentMode()) return getDemoPublicContentEntries();
-  if (serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY) {
-    const rows = await createSupabaseContentStore(
-      getSupabaseServerClient(),
-    ).listPublished();
-    return withDemoContentFallback(rows.map(toPublicEntry));
-  }
   const pool = getServerPool();
   if (pool) {
     const entries = (
       await createPostgresContentStore(pool).listPublished()
     ).map(toPublicEntry);
     return withDemoContentFallback(entries);
+  }
+  if (serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY) {
+    const rows = await createSupabaseContentStore(
+      getSupabaseServerClient(),
+    ).listPublished();
+    return withDemoContentFallback(rows.map(toPublicEntry));
   }
   return getDemoPublicContentEntries();
 }

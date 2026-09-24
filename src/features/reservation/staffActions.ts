@@ -3,13 +3,14 @@
 import { createCorrelationId } from "@/lib/correlationId";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import type { Pool } from "pg";
+import { insertAuditEvent } from "@/lib/db/audit";
 import { canManageReservations } from "@/features/identity/domain";
 import { getCurrentStaff } from "@/features/identity/session";
 import type { ActionResult } from "@/features/identity/staffActions";
 import { getReservationPool } from "./requestRuntime";
 import { combinationDraftSchema, validateCombination } from "./domain";
-import { createSupabaseReservationStore } from "./supabaseReservationStore";
+import { createPostgresReservationStore } from "./postgresReservationStore";
 import { ReservationStaffService } from "./staffService";
 import type { ReservationTransitionResult } from "./staffService";
 const tableActionSchema = z.object({
@@ -28,13 +29,14 @@ type TableResult = { id: string };
 type CombinationResult = { id: string };
 
 async function requireReservationManager() {
-  const actor = await getCurrentStaff();
-  if (!actor) return { actor: null as null };
-  if (!canManageReservations(actor)) return { actor: null as null };
-  return { actor };
+  const [actor, pool] = await Promise.all([getCurrentStaff(), getReservationPool()]);
+  if (!actor || !pool) return { actor: null as null, pool: null as null };
+  if (!canManageReservations(actor)) return { actor: null as null, pool: null as null };
+  return { actor, pool };
 }
 
 async function writeAudit(
+  pool: Pool,
   actorId: string,
   action: string,
   entityType: string,
@@ -42,13 +44,13 @@ async function writeAudit(
   afterData: Record<string, unknown>,
   correlationId: string,
 ): Promise<void> {
-  await getSupabaseServerClient().from("audit_events").insert({
-    actor_id: actorId,
+  await insertAuditEvent(pool, {
+    actorId,
     action,
-    entity_type: entityType,
-    entity_id: entityId,
-    after_data: afterData,
-    correlation_id: correlationId,
+    entityType,
+    entityId,
+    afterData,
+    correlationId,
   });
 }
 
@@ -73,8 +75,8 @@ export async function saveTableAction(
   formData: FormData,
 ): Promise<ActionResult<TableResult>> {
   const correlationId = createCorrelationId();
-  const { actor } = await requireReservationManager();
-  if (!actor) return { ok: false, code: "FORBIDDEN", correlationId };
+  const { actor, pool } = await requireReservationManager();
+  if (!actor || !pool) return { ok: false, code: "FORBIDDEN", correlationId };
   const parsed = tableActionSchema.safeParse({
     id: formData.get("id") ? String(formData.get("id")) : undefined,
     internalLabel: formData.get("internalLabel"),
@@ -84,10 +86,10 @@ export async function saveTableAction(
   if (!parsed.success) {
     return { ok: false, code: "VALIDATION_FAILED", fieldErrors: flattenFieldErrors(parsed.error), correlationId };
   }
-  const store = createSupabaseReservationStore(getSupabaseServerClient());
+  const store = createPostgresReservationStore(pool);
   try {
     const table = await store.saveTable({ ...parsed.data, id: parsed.data.id ?? undefined, active: true });
-    await writeAudit(actor.id, parsed.data.id ? "reservation.table.update" : "reservation.table.create", "restaurant_table", table.id, { internalLabel: table.internalLabel, capacity: table.capacity, area: table.area }, correlationId);
+    await writeAudit(pool, actor.id, parsed.data.id ? "reservation.table.update" : "reservation.table.create", "restaurant_table", table.id, { internalLabel: table.internalLabel, capacity: table.capacity, area: table.area }, correlationId);
     revalidatePath("/", "layout");
     return { ok: true, data: { id: table.id }, correlationId };
   } catch {
@@ -99,16 +101,16 @@ export async function setTableActiveAction(
   formData: FormData,
 ): Promise<ActionResult<{ id: string }>> {
   const correlationId = createCorrelationId();
-  const { actor } = await requireReservationManager();
-  if (!actor) return { ok: false, code: "FORBIDDEN", correlationId };
+  const { actor, pool } = await requireReservationManager();
+  if (!actor || !pool) return { ok: false, code: "FORBIDDEN", correlationId };
   const parsed = idSchema.safeParse({ id: formData.get("id"), active: formData.get("active") });
   if (!parsed.success) return { ok: false, code: "VALIDATION_FAILED", correlationId };
-  const store = createSupabaseReservationStore(getSupabaseServerClient());
+  const store = createPostgresReservationStore(pool);
   try {
     const current = (await store.listTables()).find((table) => table.id === parsed.data.id);
     if (!current) return { ok: false, code: "CONFLICT", correlationId };
     await store.saveTable({ ...current, active: parsed.data.active === "on" });
-    await writeAudit(actor.id, "reservation.table.toggle", "restaurant_table", current.id, { active: parsed.data.active === "on" }, correlationId);
+    await writeAudit(pool, actor.id, "reservation.table.toggle", "restaurant_table", current.id, { active: parsed.data.active === "on" }, correlationId);
     revalidatePath("/", "layout");
     return { ok: true, data: { id: current.id }, correlationId };
   } catch {
@@ -120,13 +122,13 @@ export async function saveCombinationAction(
   formData: FormData,
 ): Promise<ActionResult<CombinationResult>> {
   const correlationId = createCorrelationId();
-  const { actor } = await requireReservationManager();
-  if (!actor) return { ok: false, code: "FORBIDDEN", correlationId };
+  const { actor, pool } = await requireReservationManager();
+  if (!actor || !pool) return { ok: false, code: "FORBIDDEN", correlationId };
   const parsed = combinationDraftSchema.safeParse({ name: formData.get("name"), memberTableIds: formData.getAll("memberTableIds").map(String) });
   if (!parsed.success) {
     return { ok: false, code: "VALIDATION_FAILED", fieldErrors: flattenFieldErrors(parsed.error), correlationId };
   }
-  const store = createSupabaseReservationStore(getSupabaseServerClient());
+  const store = createPostgresReservationStore(pool);
   const validation = validateCombination(parsed.data, await store.listTables());
   if (!validation.ok) {
     return { ok: false, code: "VALIDATION_FAILED", fieldErrors: { memberTableIds: validation.errors ?? [] }, correlationId };
@@ -134,7 +136,7 @@ export async function saveCombinationAction(
   const idFromForm = formData.get("id") ? String(formData.get("id")) : undefined;
   try {
     const combination = await store.saveCombination({ id: idFromForm, name: parsed.data.name, active: true, memberTableIds: [...new Set(parsed.data.memberTableIds)] });
-    await writeAudit(actor.id, idFromForm ? "reservation.combination.update" : "reservation.combination.create", "table_combination", combination.id, { name: combination.name, capacity: combination.capacity, memberTableIds: combination.memberTableIds }, correlationId);
+    await writeAudit(pool, actor.id, idFromForm ? "reservation.combination.update" : "reservation.combination.create", "table_combination", combination.id, { name: combination.name, capacity: combination.capacity, memberTableIds: combination.memberTableIds }, correlationId);
     revalidatePath("/", "layout");
     return { ok: true, data: { id: combination.id }, correlationId };
   } catch {
@@ -146,16 +148,16 @@ export async function setCombinationActiveAction(
   formData: FormData,
 ): Promise<ActionResult<{ id: string }>> {
   const correlationId = createCorrelationId();
-  const { actor } = await requireReservationManager();
-  if (!actor) return { ok: false, code: "FORBIDDEN", correlationId };
+  const { actor, pool } = await requireReservationManager();
+  if (!actor || !pool) return { ok: false, code: "FORBIDDEN", correlationId };
   const parsed = idSchema.safeParse({ id: formData.get("id"), active: formData.get("active") });
   if (!parsed.success) return { ok: false, code: "VALIDATION_FAILED", correlationId };
-  const store = createSupabaseReservationStore(getSupabaseServerClient());
+  const store = createPostgresReservationStore(pool);
   try {
     const current = (await store.listCombinations()).find((item) => item.id === parsed.data.id);
     if (!current) return { ok: false, code: "CONFLICT", correlationId };
     await store.saveCombination({ id: current.id, name: current.name, active: parsed.data.active === "on", memberTableIds: current.memberTableIds });
-    await writeAudit(actor.id, "reservation.combination.toggle", "table_combination", current.id, { active: parsed.data.active === "on" }, correlationId);
+    await writeAudit(pool, actor.id, "reservation.combination.toggle", "table_combination", current.id, { active: parsed.data.active === "on" }, correlationId);
     revalidatePath("/", "layout");
     return { ok: true, data: { id: current.id }, correlationId };
   } catch {

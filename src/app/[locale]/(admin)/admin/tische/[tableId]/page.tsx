@@ -2,9 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentStaff } from "@/features/identity/session";
 import { canManageReservations } from "@/features/identity/domain";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { serverEnv } from "@/lib/env/server";
-import { createSupabaseReservationStore } from "@/features/reservation/supabaseReservationStore";
+import { getReservationPool } from "@/features/reservation/requestRuntime";
+import { createPostgresReservationStore } from "@/features/reservation/postgresReservationStore";
 import { TableForm } from "@/features/reservation/components/TableForm";
 import { TableRowToggle } from "@/features/reservation/components/TableRowToggle";
 
@@ -28,13 +27,12 @@ export default async function TischEditPage({
     );
   }
 
-  const storeAvailable =
-    Boolean(serverEnv.SUPABASE_URL) && Boolean(serverEnv.SUPABASE_SERVICE_ROLE_KEY);
-  const tables = storeAvailable
-    ? await createSupabaseReservationStore(getSupabaseServerClient()).listTables()
+  const pool = await getReservationPool();
+  const tables = pool
+    ? await createPostgresReservationStore(pool).listTables()
     : [];
   const table = tables.find((item) => item.id === tableId);
-  if (storeAvailable && !table) notFound();
+  if (pool && !table) notFound();
 
   return (
     <section className="space-y-6">
@@ -43,7 +41,7 @@ export default async function TischEditPage({
       </Link>
       <h1 className="font-display text-3xl font-semibold">Tisch bearbeiten</h1>
 
-      {!storeAvailable ? (
+      {!pool ? (
         <p className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800">
           Datenbank nicht konfiguriert.
         </p>

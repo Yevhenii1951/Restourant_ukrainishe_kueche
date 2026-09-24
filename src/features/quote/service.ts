@@ -82,9 +82,10 @@ interface QuoteServiceDeps {
 }
 
 function getStore(): QuoteStore | null {
-  if (serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY) return createSupabaseQuoteStore(getSupabaseServerClient());
   const pool = getServerPool();
-  return pool ? createPostgresQuoteStore(pool) : null;
+  if (pool) return createPostgresQuoteStore(pool);
+  if (serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY) return createSupabaseQuoteStore(getSupabaseServerClient());
+  return null;
 }
 
 /** Public, read-only delivery lookup used by the assistant and checkout UI. */

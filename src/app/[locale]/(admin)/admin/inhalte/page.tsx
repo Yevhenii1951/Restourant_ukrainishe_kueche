@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { serverEnv } from "@/lib/env/server";
+import { getServerPool } from "@/lib/db/serverPool";
 import { canManageContent } from "@/features/identity/domain";
 import { getCurrentStaff } from "@/features/identity/session";
-import { createSupabaseContentStore } from "@/features/content/supabaseContentStore";
+import { createPostgresContentStore } from "@/features/content/postgresContentStore";
 import { ContentEntryRowActions } from "@/features/content/components/ContentEntryRowActions";
 import type { ContentKey } from "@/features/content/domain";
 
@@ -31,10 +30,10 @@ export default async function InhaltePage({
   const staff = await getCurrentStaff();
   if (!staff) return null;
 
-  const entries =
-    serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY
-      ? await createSupabaseContentStore(getSupabaseServerClient()).listEntries()
-      : [];
+  const pool = getServerPool();
+  const entries = pool
+    ? await createPostgresContentStore(pool).listEntries()
+    : [];
 
   return (
     <section className="space-y-6">

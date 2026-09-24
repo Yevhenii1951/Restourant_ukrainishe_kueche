@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { getCurrentStaff } from "@/features/identity/session";
 import { canManageReservations } from "@/features/identity/domain";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { serverEnv } from "@/lib/env/server";
-import { createSupabaseReservationStore } from "@/features/reservation/supabaseReservationStore";
+import { getReservationPool } from "@/features/reservation/requestRuntime";
+import { createPostgresReservationStore } from "@/features/reservation/postgresReservationStore";
 import { TableForm } from "@/features/reservation/components/TableForm";
 import { TableRowToggle } from "@/features/reservation/components/TableRowToggle";
 
@@ -19,10 +18,9 @@ export default async function TischePage({
   const staff = await getCurrentStaff();
   if (!staff) return null;
 
-  const storeAvailable =
-    Boolean(serverEnv.SUPABASE_URL) && Boolean(serverEnv.SUPABASE_SERVICE_ROLE_KEY);
-  const tables = storeAvailable
-    ? await createSupabaseReservationStore(getSupabaseServerClient()).listTables()
+  const pool = await getReservationPool();
+  const tables = pool
+    ? await createPostgresReservationStore(pool).listTables()
     : [];
 
   if (!canManageReservations(staff)) {
@@ -50,7 +48,7 @@ export default async function TischePage({
         <TableForm />
       </div>
 
-      {!storeAvailable ? (
+      {!pool ? (
         <p className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800">
           Datenbank nicht konfiguriert – Liste leer.
         </p>

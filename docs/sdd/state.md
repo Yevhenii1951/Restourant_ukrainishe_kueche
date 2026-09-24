@@ -2,6 +2,7 @@
 
 ## Done
 
+- KLN-033 **pool-first staff/admin** (branch `feature/kln-033-pool-staff-admin`): every remaining Supabase/PostgREST data path moved to pg-pool-first SQL so staff login + admin forms work on the remote production DB (pool role `postgres.<ref>` bypasses RLS; remote schema lacks grants/embed → PGRST108/42501). Converted: staff store (`session.ts`/`staffActions.ts` → `createPostgresStaffStore(pool)`, pool-aware `withClient`; auth via Supabase Auth JWT unchanged), content admin (`contentActions`/`inhalte` incl. `[key]` editor → `createPostgresContentStore(pool)`), reservation staff (table/combination save now int `postgresReservationStore.ts` with `saveTable`/`saveCombination` incl. trigger-maintained capacity + transaction; `staffActions.ts` + tische/kombinationen pages pool-first), closures (`closureActions`/schliesszeiten → `postgresClosures.ts`), delivery admin (`adminActions`/lieferzonen/lieferzeiten → `postgresDelivery.ts`), quote store (`payments/runtime`, `order/runtime`, `quote/service` → pool-only), menu/content public services now pool-first. New shared `src/lib/db/audit.ts` `insertAuditEvent(pool, …)`. Integration test `tests/integration/kln033-pool-staff-admin.test.ts` (4 tests, incl. combination capacity + audit insert). Supabase fallback kept only where a sane `null` return exists (no `DATABASE_URL`).
 - KLN-032 content fill merged (PR #49, `7854405`): visitor site now serves the **demo-first layer** (`NEXT_PUBLIC_DEMO=true` in Vercel, default in schema) since remote DB/Storage stays unreachable (PGRST108/42501 on remote schema; API token `forbidden`). `demoMenu` mirrors the published seed catalog (same ids/prices → cart/checkout unaffected), **all 9 menu cards now ship photos** (added vegetarischer-borschtsch `1borsch.jpg`, wareniki-kirschen `vareniki3.jpg`, syrnyky `vareniki2.jpg`; banusch excluded — no photo). `demoContent` rewrite: gallery ~all `public/` photos (borsch 1/2 via URL-encoded paths), richer home/about/faq/lunch/events/catering. Gate = `src/lib/env/demoMode.ts` `isDemoContentMode()`; `.env.test.local` sets `NEXT_PUBLIC_DEMO=false` so tests keep the DB path. Verified live: speisekarte 9 cards all with images, galerie 19 imgs, catering/mittagstisch populated.
 - KLN-031 reservation fix merged (PR #42, `b4450cf`): reservation runtime moved to **pg-pool store** (pool role bypasses RLS; works on remote where PostgREST embed→PGRST108 fails). Prod smoke via Playwright: `/de/reservierung` shows available slots + submit returns token page — **reservation works in production**.
 - Post-030 adaptivity pass (`overflow-x: clip`, catering honeypot zero-size, AI chat dialog above mobile bar).
@@ -18,8 +19,9 @@
 
 ## Verification
 
+- KLN-033: `npm run check` green before merge — lint, typecheck, **203 unit, 97 integration** (new kln033 suite 4/4: table write/read+update, combination create/reconfigure w/ capacity, pool staff read, audit insert).
 - KLN-032 live checks done (menu/gallery/catering/mittagstisch all populated, all cards with photos). `npm run check` green before merge (lint, tsc, 199 unit, 93 integration).
-- Remaining staff/admin mutable forms and burger/admin inside the app still depend on Supabase auth against the remote DB (supabase-store path in `staffActions.ts`/`admin/tische`) — deferred until remote schema is fixed from inside Supabase.
+- Remaining: staff auth sign-in itself (Supabase Auth JWT) needs valid remote `auth.users` — prod admin/staff login must be browser-verified by a staff account after deploy.
 - KLN-030 in progress on `feature/kln-030-guest-anfragen` (stacked on `feature/kln-029-design-rebrand`): account-free «Meine Anfragen» overview — guest looks up own orders+reservations by phone (orders store no email). Spec NG-1 amended, ticket `docs/sdd/tickets/KLN-030-guest-anfragen.md` written. Unit `tests/unit/kln030-guest-domain.test.ts` (schema+merge), integration `tests/integration/kln030-guest-anfragen.test.ts` (phone-scoped store query) green; `npm run check` green (lint, typecheck, 199 unit, 93 integration). Page `/de/meine-anfragen` rendered + form submit returns the empty state (Playwright); footer link + sitemap added.
 
 - KLN-029: `npm run check` green (lint, typecheck, 195 unit, 92 integration). Playwright: hero video `hero.mp4` autoplays muted/loop 1920×1080 and is `display:none` under `prefers-reduced-motion` (poster/base image shows); hero flush under header, menu h1 48px gap; no horizontal overflow at 390/1440; contrast red-on-cream 6.66 / cream-on-red 6.66 / ink-on-cream 16.36 / gold-on-black 8.56; favicon `/icon.png` + title present. Marquee gone. Dev on `:3001` (existing server, log `/tmp/kalyna-dev.log`). The single console "error" is a dev-only React `eval()` CSP notice, not a bug.
@@ -40,6 +42,6 @@
 
 ## Launch Boundaries
 
-- Staff login and mutable admin forms remain Supabase-auth based; connect Supabase before using staff/admin operations.
+- Staff login and mutable admin forms now use the **pg-pool layer** for data; sign-in itself still needs Supabase Auth set up in remote Auth + a real staff `auth.users` account for a browser smoke test.
 - No production deployment URL, live payment enablement, live legal approval or live Supabase invite-email browser journey is claimed here.
 - Axe and p75 Web Vitals remain manual production-preview release checks; no automated axe runner is configured.
