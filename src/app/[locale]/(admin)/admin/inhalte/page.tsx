@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
 import { getServerPool } from "@/lib/db/serverPool";
 import { canManageContent } from "@/features/identity/domain";
 import { getCurrentStaff } from "@/features/identity/session";
@@ -26,7 +25,6 @@ export default async function InhaltePage({
   params: Promise<{ locale: string }>;
 }): Promise<React.ReactNode> {
   const { locale } = await params;
-  const t = await getTranslations("admin.content");
   const staff = await getCurrentStaff();
   if (!staff) return null;
 
@@ -38,13 +36,13 @@ export default async function InhaltePage({
   return (
     <section className="space-y-6">
       <header>
-        <h1 className="font-display text-3xl font-semibold">{t("title")}</h1>
-        <p className="text-ink/75">{t("intro")}</p>
+        <h1 className="font-display text-3xl font-semibold">Inhalte</h1>
+        <p className="text-ink/75">Bearbeitbare Seiteninhalte – jede Publikation ist versionspflichtig.</p>
       </header>
 
       {!canManageContent(staff) ? (
         <p className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-          {t("forbidden")}
+          Keine Berechtigung zum Bearbeiten von Inhalten (MANAGER oder höher).
         </p>
       ) : (
         <ul className="divide-y divide-ink/10 rounded-md border border-ink/10 bg-linen">
