@@ -21,7 +21,7 @@ export async function listClosures(pool: Pool): Promise<ClosureRow[]> {
     starts_at: Date;
     ends_at: Date;
     affected_services: string[];
-  }>("SELECT id, starts_at, ends_at, affected_services FROM closures ORDER BY starts_at");
+  }>("SELECT id, starts_at, ends_at, affected_services::text[] AS affected_services FROM closures ORDER BY starts_at");
   return result.rows.map((row) => ({
     id: row.id,
     startsAt: row.starts_at.toISOString(),

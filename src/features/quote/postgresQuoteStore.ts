@@ -39,7 +39,7 @@ export function createPostgresQuoteStore(db: Pool): QuoteStore {
       return result.rows.map((row) => ({ id: row.id, fulfilment: row.fulfilment, weekday: row.weekday, dateOverride: row.date_override, opensAt: row.opens_at.slice(0, 5), closesAt: row.closes_at.slice(0, 5), capacityPerSlot: row.capacity_per_slot, active: row.active }));
     },
     async listClosures(): Promise<ClosureRow[]> {
-      const result = await db.query<ClosureDbRow>("SELECT id, starts_at, ends_at, affected_services FROM closures");
+      const result = await db.query<ClosureDbRow>("SELECT id, starts_at, ends_at, affected_services::text[] AS affected_services FROM closures");
       return result.rows.map((row) => ({ id: row.id, startsAt: iso(row.starts_at)!, endsAt: iso(row.ends_at)!, affectedServices: row.affected_services }));
     },
   };
