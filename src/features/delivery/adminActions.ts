@@ -3,10 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createCorrelationId } from "@/lib/correlationId";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerPool } from "@/lib/db/serverPool";
 import { canManageReservations } from "@/features/identity/domain";
 import { getCurrentStaff } from "@/features/identity/session";
 import type { ActionResult } from "@/features/identity/staffActions";
+import { createDeliveryZone, createDeliveryWindow } from "./postgresDelivery";
 
 const zoneSchema = z.object({
   name: z.string().trim().min(1).max(80),
@@ -51,15 +52,15 @@ export async function saveDeliveryZoneAction(formData: FormData): Promise<Action
   if (!postalCodes.every((code) => /^\d{5}$/.test(code))) {
     return { ok: false, code: "VALIDATION_FAILED", fieldErrors: { postalCodes: ["PLZ muss genau fünf Ziffern haben."] }, correlationId };
   }
-  const db = getSupabaseServerClient();
-  const result = await db.from("delivery_zones").insert({
-    name: parsed.data.name, postal_codes: postalCodes, fee_cents: parsed.data.feeCents,
-    minimum_cents: parsed.data.minimumCents, free_delivery_cents: parsed.data.freeDeliveryCents, active: true,
-  }).select("id").single();
-  if (result.error || !result.data) return { ok: false, code: "CONFLICT", correlationId };
-  await db.from("audit_events").insert({ actor_id: actorId, action: "delivery.zone.create", entity_type: "delivery_zone", entity_id: result.data.id, after_data: { ...parsed.data, postalCodes }, correlation_id: correlationId });
+  const pool = getServerPool();
+  if (!pool) return { ok: false, code: "CONFLICT", correlationId };
+  const result = await createDeliveryZone(pool, {
+    name: parsed.data.name, postalCodes,
+    feeCents: parsed.data.feeCents, minimumCents: parsed.data.minimumCents,
+    freeDeliveryCents: parsed.data.freeDeliveryCents,
+  }, { actorId, correlationId });
   revalidatePath("/", "layout");
-  return { ok: true, data: { id: result.data.id }, correlationId };
+  return { ok: true, data: { id: result.id }, correlationId };
 }
 
 export async function saveDeliveryWindowAction(formData: FormData): Promise<ActionResult<{ id: string }>> {
@@ -70,10 +71,12 @@ export async function saveDeliveryWindowAction(formData: FormData): Promise<Acti
   if (!parsed.success || (parsed.success && parsed.data.closesAt <= parsed.data.opensAt)) {
     return { ok: false, code: "VALIDATION_FAILED", fieldErrors: parsed.success ? { closesAt: ["Ende muss nach Beginn liegen."] } : fieldErrors(parsed.error), correlationId };
   }
-  const db = getSupabaseServerClient();
-  const result = await db.from("service_windows").insert({ fulfilment: "delivery", weekday: parsed.data.weekday, opens_at: parsed.data.opensAt, closes_at: parsed.data.closesAt, capacity_per_slot: parsed.data.capacity, active: true }).select("id").single();
-  if (result.error || !result.data) return { ok: false, code: "CONFLICT", correlationId };
-  await db.from("audit_events").insert({ actor_id: actorId, action: "delivery.window.create", entity_type: "service_window", entity_id: result.data.id, after_data: parsed.data, correlation_id: correlationId });
+  const pool = getServerPool();
+  if (!pool) return { ok: false, code: "CONFLICT", correlationId };
+  const result = await createDeliveryWindow(pool, {
+    weekday: parsed.data.weekday, opensAt: parsed.data.opensAt,
+    closesAt: parsed.data.closesAt, capacity: parsed.data.capacity,
+  }, { actorId, correlationId });
   revalidatePath("/", "layout");
-  return { ok: true, data: { id: result.data.id }, correlationId };
+  return { ok: true, data: { id: result.id }, correlationId };
 }

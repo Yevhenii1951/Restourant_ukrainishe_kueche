@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { serverEnv } from "@/lib/env/server";
 import { canManageContent } from "@/features/identity/domain";
 import { getCurrentStaff } from "@/features/identity/session";
 import { isContentKey } from "@/features/content/domain";
 import { CONTENT_EDITOR_FIELDS } from "@/features/content/editorMeta";
-import { createSupabaseContentStore } from "@/features/content/supabaseContentStore";
+import { getServerPool } from "@/lib/db/serverPool";
+import { createPostgresContentStore } from "@/features/content/postgresContentStore";
 import ContentEntryEditor from "@/features/content/components/ContentEntryEditor";
 
 export const dynamic = "force-dynamic";
@@ -33,10 +32,10 @@ export default async function InhalteEditorPage({
     );
   }
 
-  const entry =
-    serverEnv.SUPABASE_URL && serverEnv.SUPABASE_SERVICE_ROLE_KEY
-      ? await createSupabaseContentStore(getSupabaseServerClient()).getEntry(key)
-      : null;
+  const pool = getServerPool();
+  const entry = pool
+    ? await createPostgresContentStore(pool).getEntry(key)
+    : null;
   if (!entry) notFound();
 
   return (

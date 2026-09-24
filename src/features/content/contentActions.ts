@@ -9,6 +9,8 @@ import type { ActionResult } from "@/features/identity/staffActions";
 import { getCurrentStaff } from "@/features/identity/session";
 import { CONTENT_KEY, CONTENT_SCHEMAS, type ContentKey } from "./domain";
 import { createSupabaseContentStore } from "./supabaseContentStore";
+import { createPostgresContentStore } from "./postgresContentStore";
+import { getServerPool } from "@/lib/db/serverPool";
 
 type ContentResult = { typedKey: ContentKey; version: number };
 
@@ -26,6 +28,13 @@ function parseCommonInput(formData: FormData) {
 
 function requireManager(actor: StaffContext | null): boolean {
   return actor !== null && canManageContent(actor);
+}
+
+function contentStore() {
+  const pool = getServerPool();
+  return pool
+    ? createPostgresContentStore(pool)
+    : createSupabaseContentStore(getSupabaseServerClient());
 }
 
 export async function saveContentAction(
@@ -80,7 +89,7 @@ export async function saveContentAction(
     };
   }
 
-  const store = createSupabaseContentStore(getSupabaseServerClient());
+  const store = contentStore();
   const result = await store.save({
     typedKey: parsedInput.data.typedKey,
     version: parsedInput.data.version,
@@ -116,7 +125,7 @@ export async function publishContentAction(
     };
   }
 
-  const store = createSupabaseContentStore(getSupabaseServerClient());
+  const store = contentStore();
   const result = await store
     .publish({
       typedKey: parsedInput.data.typedKey,
@@ -152,7 +161,7 @@ export async function archiveContentAction(
     };
   }
 
-  const store = createSupabaseContentStore(getSupabaseServerClient());
+  const store = contentStore();
   const result = await store
     .archive({
       typedKey: parsedInput.data.typedKey,

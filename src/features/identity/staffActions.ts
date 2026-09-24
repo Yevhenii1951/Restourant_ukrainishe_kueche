@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerPool } from "@/lib/db/serverPool";
 import { createCorrelationId } from "@/lib/correlationId";
 import {
   assertCanManageStaff,
@@ -13,6 +14,7 @@ import {
 import { StaffService } from "./service";
 import type { StaffInvitation } from "./store";
 import { createSupabaseStaffStore } from "./supabaseStaffStore";
+import { createPostgresStaffStore } from "./postgresStaffStore";
 import { getCurrentStaff } from "./session";
 
 export type ActionResult<T> =
@@ -52,8 +54,7 @@ export async function changeStaffRoleAction(
     };
   }
 
-  const client = getSupabaseServerClient();
-  const store = createSupabaseStaffStore(client);
+  const store = resolveStaffStore();
   const decision = await new StaffService(store, correlationId).changeRole(
     actor,
     parsed.data.targetId,
@@ -90,8 +91,7 @@ export async function setStaffActiveAction(
     };
   }
 
-  const client = getSupabaseServerClient();
-  const store = createSupabaseStaffStore(client);
+  const store = resolveStaffStore();
   const decision = await new StaffService(store, correlationId).setActiveStatus(
     actor,
     parsed.data.targetId,
@@ -159,7 +159,7 @@ export async function inviteStaffAction(
     inviterId: actor.id,
   };
   const service = new StaffService(
-    createSupabaseStaffStore(client),
+    resolveStaffStore(),
     correlationId,
   );
   try {
@@ -180,6 +180,13 @@ export async function inviteStaffAction(
     throw storeError;
   }
   return { ok: true, data: { invitationId: invitation.id }, correlationId };
+}
+
+function resolveStaffStore() {
+  const pool = getServerPool();
+  return pool
+    ? createPostgresStaffStore(pool)
+    : createSupabaseStaffStore(getSupabaseServerClient());
 }
 
 function flattenFieldErrors(error: z.ZodError): Record<string, string[]> {

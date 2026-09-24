@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { getCurrentStaff } from "@/features/identity/session";
 import { canManageReservations } from "@/features/identity/domain";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { serverEnv } from "@/lib/env/server";
-import { createSupabaseReservationStore } from "@/features/reservation/supabaseReservationStore";
+import { getReservationPool } from "@/features/reservation/requestRuntime";
+import { createPostgresReservationStore } from "@/features/reservation/postgresReservationStore";
 import { CombinationForm } from "@/features/reservation/components/CombinationForm";
 import { CombinationRowToggle } from "@/features/reservation/components/CombinationRowToggle";
 
@@ -19,10 +18,11 @@ export default async function KombinationenPage({
   const staff = await getCurrentStaff();
   if (!staff) return null;
 
-  const storeAvailable =
-    Boolean(serverEnv.SUPABASE_URL) && Boolean(serverEnv.SUPABASE_SERVICE_ROLE_KEY);
-  const store = createSupabaseReservationStore(getSupabaseServerClient());
-  const [tables, combinations] = storeAvailable
+  const pool = await getReservationPool();
+  const store = pool
+    ? createPostgresReservationStore(pool)
+    : null;
+  const [tables, combinations] = store
     ? await Promise.all([store.listTables(), store.listCombinations()])
     : [[], []];
   const tablesById = new Map(tables.map((table) => [table.id, table]));
@@ -53,7 +53,7 @@ export default async function KombinationenPage({
         <CombinationForm tables={tables} />
       </div>
 
-      {!storeAvailable ? (
+      {!store ? (
         <p className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800">
           Datenbank nicht konfiguriert – Liste leer.
         </p>
