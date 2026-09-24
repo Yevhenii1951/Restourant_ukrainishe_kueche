@@ -156,7 +156,7 @@ export function createPostgresReservationStore(db: Pool): ReservationStore {
       return result.rows.map((row) => ({ weekday: row.weekday, dateOverride: row.date_override, opensAt: row.opens_at.slice(0, 5), closesAt: row.closes_at.slice(0, 5), active: row.active }));
     },
     async listReservationClosures(): Promise<ReservationClosureInput[]> {
-      const result = await db.query<ClosureRow>("SELECT starts_at, ends_at, affected_services FROM closures WHERE 'reservation' = ANY(affected_services)");
+      const result = await db.query<ClosureRow>("SELECT starts_at, ends_at, affected_services::text[] AS affected_services FROM closures WHERE 'reservation' = ANY(affected_services)");
       return result.rows.map((row) => ({ startsAt: row.starts_at.toISOString(), endsAt: row.ends_at.toISOString(), affectedServices: row.affected_services }));
     },
     async listReservationBlocks(): Promise<BlockingIntervalInput[]> {

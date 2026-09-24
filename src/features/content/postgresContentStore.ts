@@ -18,16 +18,22 @@ type ContentEntryDbRow = {
   publication_state: string;
   version: number;
   published_version: number;
-  updated_at: string;
+  updated_at: string | Date;
   updated_by: string;
-  published_at: string;
+  published_at: string | Date | null;
 };
 
 const ENTRY_COLUMNS = `id, typed_key, payload, published_payload, publication_state,
   version, published_version, updated_at, updated_by, published_at`;
 
 function parseEntryRow(row: ContentEntryDbRow): ContentEntry {
-  return toContentEntry(CONTENT_ENTRY_SCHEMA.parse(row));
+  return toContentEntry(
+    CONTENT_ENTRY_SCHEMA.parse({
+      ...row,
+      updated_at: row.updated_at instanceof Date ? row.updated_at.toISOString() : row.updated_at,
+      published_at: row.published_at instanceof Date ? row.published_at.toISOString() : row.published_at,
+    }),
+  );
 }
 
 type Queryable = { query<T>(query: string, values?: unknown[]): Promise<{ rows: T[] }> };
