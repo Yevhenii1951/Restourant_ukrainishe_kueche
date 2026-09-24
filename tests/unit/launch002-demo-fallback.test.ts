@@ -30,13 +30,10 @@ describe("demo content fallback", () => {
   });
 
   it("falls back when a connected store returns no public data", () => {
+    const demoMenu = getDemoPublicMenu();
     expect(
-      withDemoMenuFallback({
-        items: [],
-        allergenReference: [],
-        additiveReference: [],
-      }).items,
-    ).toHaveLength(6);
-    expect(withDemoContentFallback([])).toHaveLength(7);
+      withDemoMenuFallback({ items: [], allergenReference: [], additiveReference: [] }).items,
+    ).toEqual(demoMenu.items);
+    expect(withDemoContentFallback([])).toEqual(getDemoPublicContentEntries());
   });
 });
