@@ -190,7 +190,7 @@
     "itemCount": "{count, plural, =0 {no dishes} one {1 dish} other {# dishes}}",
     "estimateNote": "Preliminary estimate based on the current menu. The final price is calculated in the restaurant when you order.",
     "checkout": "Checkout",
-    "checkoutSoon": "Checkout will follow in a later step (demo).",
+    "checkoutSoon": "Choose pickup or delivery on the order page and complete your order.",
     "blockedTitle": "Your selection changed",
     "blockedHint": "One or more dishes, options or quantities no longer match the current menu. Please adjust the affected lines before continuing.",
     "notOnMenu": "This dish is no longer on the menu.",
