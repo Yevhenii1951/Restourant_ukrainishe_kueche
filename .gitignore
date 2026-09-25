@@ -28,6 +28,10 @@ coverage/
 playwright-report/
 test-results/
 
+# local development documentation
+docs/sdd/
+docs/tdd/
+
 # editor and OS
 .vscode/
 .idea/
