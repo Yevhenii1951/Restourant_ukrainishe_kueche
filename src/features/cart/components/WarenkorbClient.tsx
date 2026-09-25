@@ -51,13 +51,12 @@ export default function WarenkorbClient({
         <p className="font-semibold">{formatEuroCents(totalEstimate, locale)}</p>
       </div>
       <p className="text-xs text-ink/55">{t("estimateNote")}</p>
-      <button
-        type="button"
-        disabled
-        className="w-full rounded-lg bg-kalyna px-4 py-2 font-medium text-white opacity-60"
+      <Link
+        href="/bestellen"
+        className="block w-full rounded-lg bg-kalyna px-4 py-2 text-center font-medium text-white hover:opacity-90"
       >
         {t("checkout")}
-      </button>
+      </Link>
       <p className="text-xs text-ink/55">{t("checkoutSoon")}</p>
     </div>
   );
