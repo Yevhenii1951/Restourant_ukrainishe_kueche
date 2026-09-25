@@ -4,6 +4,27 @@ Kalyna ist eine fiktive Full-Stack-Restaurantplattform für eine ukrainische Kü
 
 Die Anwendung zeigt eine produktionsnahe Webplattform: öffentliche Restaurantseiten, lokalisierte Speisekarte, Warenkorb und Checkout-Logik, Reservierungen, Admin-Workflows für Personal, Gutscheine, Catering-Anfragen, transaktionale E-Mail-Verarbeitung, Stripe-Testzahlungen, zustimmungsbasierte Kartenintegration und einen lesenden KI-Assistenten.
 
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/kontakt-page.webp" alt="Kontaktseite" width="100%"></td>
+    <td width="50%"><img src="docs/screenshots/catering-page.webp" alt="Catering-Seite" width="100%"></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/speisekarte-page.webp" alt="Speisekarte" width="100%"></td>
+    <td width="50%"><img src="docs/screenshots/ki-assistent-page.webp" alt="KI-Assistent auf der Startseite" width="100%"></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/screenshot-2026-09-25-11-18-45.webp" alt="Weitere Projektansicht vom 25. September 2026" width="100%"></td>
+    <td width="50%"><img src="docs/screenshots/admin-dashboard.webp" alt="Admin-Dashboard" width="100%"></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/admin-lieferzonen.webp" alt="Lieferzonen im Adminbereich" width="100%"></td>
+    <td width="50%"><img src="docs/screenshots/admin-login.webp" alt="Admin-Login" width="100%"></td>
+  </tr>
+</table>
+
 ## Wichtiger Demo-Hinweis
 
 - Kalyna ist ein Demo-Restaurant. Kontaktdaten, Verfügbarkeiten, Rechtstexte und Zahlungen dürfen nicht als echter Geschäftsbetrieb dargestellt werden.
@@ -85,7 +106,8 @@ db/
   migrations/                   geordnete SQL-Migrationen
   seeds/                        deterministische Demo-/Testdaten
 
-docs/sdd/                       Software-Design-Dokumentation und Tickets
+docs/sdd/                       lokale Software-Design-Dokumentation und Tickets
+docs/screenshots/               komprimierte README-Screenshots
 public/                         Bilder, Logo und Hero-Video-Assets
 tests/
   unit/                         schnelle Domain-/Helper-Tests
