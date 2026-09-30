@@ -113,6 +113,9 @@ export default async function SiteFooter(): Promise<React.ReactElement> {
           </p>
           <p className="text-sm text-cream/60">{translations("address")}</p>
         </div>
+        <p className="mt-3 text-center text-xs text-cream/50">
+          Webentwicklung: Yevhenii Riabokon · Portfolio-Demo · Bildmaterial aus offenen Bildquellen.
+        </p>
       </div>
     </footer>
   );
