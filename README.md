@@ -1,8 +1,32 @@
+<div align="center">
+
 # Kalyna – Ukrainische Küche in Kassel
+
+**Eine mehrsprachige Restaurantplattform für Speisekarte, Bestellung und operative Abläufe.**
+
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)
+![Supabase](https://img.shields.io/badge/Supabase-Auth%20%7C%20Postgres-3ECF8E?logo=supabase)
+
+</div>
+
+---
+
+## Überblick
 
 Kalyna ist eine produktionsnahe, mehrsprachige Full-Stack-Webplattform für ein fiktives ukrainisches Restaurant in Kassel. Das Projekt ist eine Portfolio-Demo: Es zeigt Architektur, Engineering-Praxis und einen realistischen e-commerce-ähnlichen Ablauf, ist aber kein echter Restaurantbetrieb.
 
 Die Anwendung deckt öffentliche Restaurantseiten, eine lokalisierte Speisekarte, Warenkorb und Checkout, Reservierungen, Catering-Anfragen, Gutscheine, einen Personal-/Adminbereich, transaktionale E-Mails, Stripe-Testzahlungen und einen lesenden KI-Assistenten ab.
+
+## Der Ablauf
+
+```
+Gast entdeckt Restaurant -> filtert Speisekarte -> erstellt Warenkorb
+       -> wählt Abholung/Lieferung -> prüft serverseitiges Angebot
+       -> bezahlt im Testmodus oder wählt Barzahlung -> verfolgt Status
+       -> Personal bearbeitet Bestellung im Adminbereich
+```
 
 > **Demo-Hinweis:** Kalyna ist ein Demo-Restaurant. Kontaktdaten, Verfügbarkeiten, Rechtstexte und Zahlungen dürfen nicht als echter Geschäftsbetrieb dargestellt werden. Stripe läuft ausschließlich im Testmodus. Deutsch ist die kanonische Inhaltssprache; Englisch und Ukrainisch dürfen feldweise auf Deutsch zurückfallen.
 
