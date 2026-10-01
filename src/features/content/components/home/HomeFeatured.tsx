@@ -57,7 +57,7 @@ export default async function HomeFeatured({
                 <Link href={`/speisekarte#${item.slug}`} className="block h-full">
                   <div className="relative aspect-[4/3] overflow-hidden bg-blue-smoke">
                     <Image
-                      src={item.image.storagePath ?? "/2borsch.jpg"}
+                      src={item.image.storagePath ?? "/borsch1.webp"}
                       alt={item.image.alt ?? item.name}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

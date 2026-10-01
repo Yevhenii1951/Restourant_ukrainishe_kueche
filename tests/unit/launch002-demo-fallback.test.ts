@@ -16,7 +16,7 @@ describe("demo content fallback", () => {
     expect(menu.items.length).toBeGreaterThanOrEqual(6);
     expect(menu.items.every((item) => item.image.storagePath)).toBe(true);
     expect(menu.items.map((item) => item.image.storagePath)).toContain(
-      "/2borsch.jpg",
+      "/borsch1.webp",
     );
   });
 
@@ -25,7 +25,7 @@ describe("demo content fallback", () => {
 
     expect(gallery?.items.length).toBeGreaterThanOrEqual(4);
     expect(gallery?.items.map((item) => item.storagePath)).toContain(
-      "/vareniki1.jpg",
+      "/vareniki1.webp",
     );
   });
 
