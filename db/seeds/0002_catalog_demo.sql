@@ -33,24 +33,24 @@ INSERT INTO additives (code, label_localized) VALUES
 INSERT INTO media_assets
   (id, storage_path, mime, alt_localized, license_status, license_source)
 VALUES
-  ('20000000-0000-0000-0000-000000000001', '/2borsch.jpg', 'image/jpeg',
-   '{"de":"Borschtsch mit Sauerrahm und Dill","en":"Borscht with sour cream and dill","uk":"Борщ зі сметаною та кропом"}',
-   'unverified', NULL),
-  ('20000000-0000-0000-0000-000000000002', '/vareniki1.jpg', 'image/jpeg',
-   '{"de":"Wareniki mit Kartoffeln und Röstzwiebeln","en":"Varenyky with potatoes and fried onions","uk":"Вареники з картоплею та смаженою цибулею"}',
-   'unverified', NULL),
-  ('20000000-0000-0000-0000-000000000003', '/deruni1.jpg', 'image/jpeg',
-   '{"de":"Deruny mit Sauerrahm","en":"Potato pancakes with sour cream","uk":"Деруни зі сметаною"}',
-   'unverified', NULL),
-  ('20000000-0000-0000-0000-000000000004', '/kotleta_po_Kievski1.jpg', 'image/jpeg',
-   '{"de":"Paniertes Kiewer Kotelett","en":"Breaded Chicken Kyiv","uk":"Панірована котлета по-київськи"}',
-   'unverified', NULL),
-  ('20000000-0000-0000-0000-000000000005', '/golubtsi1.jpg', 'image/jpeg',
-   '{"de":"Holubzi in Tomatensauce","en":"Cabbage rolls in tomato sauce","uk":"Голубці в томатному соусі"}',
-   'unverified', NULL),
-  ('20000000-0000-0000-0000-000000000006', '/uzvar1.jpg', 'image/jpeg',
-   '{"de":"Uzvar aus getrockneten Früchten","en":"Uzvar made from dried fruit","uk":"Узвар із сухофруктів"}',
-   'unverified', NULL);
+  ('20000000-0000-0000-0000-000000000001', '/borsch1.webp', 'image/webp',
+   '{"de":"Borschtsch","en":"Borscht","uk":"Борщ"}',
+   'unverified', 'magnific.com (declared by project owner; license document not archived)'),
+  ('20000000-0000-0000-0000-000000000002', '/vareniki1.webp', 'image/webp',
+   '{"de":"Wareniki","en":"Varenyky","uk":"Вареники"}',
+   'unverified', 'magnific.com (declared by project owner; license document not archived)'),
+  ('20000000-0000-0000-0000-000000000003', '/deruni1.webp', 'image/webp',
+   '{"de":"Deruny","en":"Potato pancakes","uk":"Деруни"}',
+   'unverified', 'magnific.com (declared by project owner; license document not archived)'),
+  ('20000000-0000-0000-0000-000000000004', '/kotleta_po_kievski.webp', 'image/webp',
+   '{"de":"Kiewer Kotelett","en":"Chicken Kyiv","uk":"Котлета по-київськи"}',
+   'unverified', 'magnific.com (declared by project owner; license document not archived)'),
+  ('20000000-0000-0000-0000-000000000005', '/golubtsi1.webp', 'image/webp',
+   '{"de":"Holubzi","en":"Cabbage rolls","uk":"Голубці"}',
+   'unverified', 'magnific.com (declared by project owner; license document not archived)'),
+  ('20000000-0000-0000-0000-000000000006', '/uzvar1.webp', 'image/webp',
+   '{"de":"Uzvar","en":"Uzvar","uk":"Узвар"}',
+   'unverified', 'magnific.com (declared by project owner; license document not archived)');
 
 INSERT INTO categories (id, slug, name_localized, sort_order, publication_state) VALUES
   ('10000000-0000-0000-0000-000000000001', 'suppen',

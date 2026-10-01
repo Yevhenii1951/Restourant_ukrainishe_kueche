@@ -48,9 +48,9 @@ describe("KLN-005 menu row validation", () => {
         },
       ],
       additives: [],
-      image_storage_path: "/2borsch.jpg",
+      image_storage_path: "/borsch1.webp",
       image_alt_localized: { de: "Borschtsch mit Dill" },
-      image_mime: "image/jpeg",
+      image_mime: "image/webp",
     };
     expect(() => MENU_ITEM_ROW_SCHEMA.parse(row)).not.toThrow();
   });
@@ -132,9 +132,9 @@ describe("KLN-005 DTO mapping", () => {
       },
     ],
     additives: [],
-    image_storage_path: "/2borsch.jpg",
+    image_storage_path: "/borsch1.webp",
     image_alt_localized: { de: "Borschtsch mit Dill" },
-    image_mime: "image/jpeg",
+    image_mime: "image/webp",
   };
 
   it("flattens localized fields for the requested locale", () => {
@@ -151,7 +151,7 @@ describe("KLN-005 DTO mapping", () => {
       { code: "milk", label: "Milch", containment: "contains" },
     ]);
     expect(dto.image.alt).toBe("Borschtsch mit Dill");
-    expect(dto.image.storagePath).toBe("/2borsch.jpg");
+    expect(dto.image.storagePath).toBe("/borsch1.webp");
   });
 
   it("declares only the supported locales", () => {

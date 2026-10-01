@@ -35,7 +35,7 @@ const ITEMS: PublicMenuItem[] = [
     spicy: false,
     popular: true,
     image: {
-      storagePath: "/2borsch.jpg",
+      storagePath: "/borsch1.webp",
       alt: "Borschtsch mit Sauerrahm und Dill",
     },
     sortOrder: 1,
@@ -61,7 +61,7 @@ const ITEMS: PublicMenuItem[] = [
     spicy: false,
     popular: true,
     image: {
-      storagePath: "/1borsch.jpg",
+      storagePath: "/borsch2.webp",
       alt: "Vegetarischer Borschtsch mit Sauerrahm",
     },
     sortOrder: 2,
@@ -87,7 +87,7 @@ const ITEMS: PublicMenuItem[] = [
     vegetarian: true,
     spicy: false,
     popular: true,
-    image: { storagePath: "/vareniki1.jpg", alt: "Wareniki mit Kartoffeln" },
+    image: { storagePath: "/vareniki1.webp", alt: "Wareniki mit Kartoffeln" },
     sortOrder: 1,
     categorySortOrder: 2,
     allergens: [
@@ -113,7 +113,7 @@ const ITEMS: PublicMenuItem[] = [
     spicy: false,
     popular: false,
     image: {
-      storagePath: "/vareniki3.jpg",
+      storagePath: "/vareniki3.webp",
       alt: "Wareniki mit Kirschen und Sauerrahm",
     },
     sortOrder: 1,
@@ -139,7 +139,7 @@ const ITEMS: PublicMenuItem[] = [
     vegetarian: true,
     spicy: false,
     popular: true,
-    image: { storagePath: "/deruni1.jpg", alt: "Deruny mit Sauerrahm" },
+    image: { storagePath: "/deruni1.webp", alt: "Deruny mit Sauerrahm" },
     sortOrder: 2,
     categorySortOrder: 2,
     allergens: [
@@ -165,7 +165,7 @@ const ITEMS: PublicMenuItem[] = [
     spicy: false,
     popular: true,
     image: {
-      storagePath: "/kotleta_po_Kievski1.jpg",
+      storagePath: "/kotleta_po_kievski.webp",
       alt: "Paniertes Kiewer Kotelett",
     },
     sortOrder: 3,
@@ -191,7 +191,7 @@ const ITEMS: PublicMenuItem[] = [
     vegetarian: false,
     spicy: false,
     popular: false,
-    image: { storagePath: "/golubtsi1.jpg", alt: "Holubzi in Tomatensauce" },
+    image: { storagePath: "/golubtsi1.webp", alt: "Holubzi in Tomatensauce" },
     sortOrder: 5,
     categorySortOrder: 2,
     allergens: [{ code: "celery", label: "Sellerie", containment: "contains" }],
@@ -212,7 +212,7 @@ const ITEMS: PublicMenuItem[] = [
     vegetarian: true,
     spicy: false,
     popular: true,
-    image: { storagePath: "/vareniki2.jpg", alt: "Syrnyky mit Sauerrahm" },
+    image: { storagePath: "/vareniki2.webp", alt: "Syrnyky mit Sauerrahm" },
     sortOrder: 2,
     categorySortOrder: 4,
     allergens: [
@@ -237,7 +237,7 @@ const ITEMS: PublicMenuItem[] = [
     spicy: false,
     popular: false,
     image: {
-      storagePath: "/uzvar1.jpg",
+      storagePath: "/uzvar1.webp",
       alt: "Uzvar aus getrockneten Früchten",
     },
     sortOrder: 1,

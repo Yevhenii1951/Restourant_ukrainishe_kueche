@@ -44,88 +44,72 @@ export function getDemoPublicContentEntries(): PublicContentEntry[] {
       payload: {
         items: [
           {
-            storagePath: "/2borsch.jpg",
-            alt: { de: "Borschtsch mit Sauerrahm und Dill" },
+            storagePath: "/borsch1.webp",
+            alt: { de: "Borschtsch" },
           },
           {
-            storagePath: "/1borsch.jpg",
-            alt: { de: "Borschtsch-Variation aus der Küche" },
+            storagePath: "/borsch2.webp",
+            alt: { de: "Borschtsch" },
           },
           {
-            storagePath: "/borsch%201.jpg",
-            alt: { de: "Klassischer Borschtsch, frisch angerichtet" },
+            storagePath: "/vareniki1.webp",
+            alt: { de: "Wareniki" },
           },
           {
-            storagePath: "/borsch%202.jpg",
-            alt: { de: "Borschtsch mit Sauerrahm, in der Schale serviert" },
+            storagePath: "/vareniki2.webp",
+            alt: { de: "Wareniki" },
           },
           {
-            storagePath: "/vareniki1.jpg",
-            alt: { de: "Wareniki mit Kartoffeln und Röstzwiebeln" },
+            storagePath: "/vareniki3.webp",
+            alt: { de: "Wareniki" },
           },
           {
-            storagePath: "/vareniki2.jpg",
-            alt: { de: "Gefüllte Teigtaschen auf dem Teller" },
+            storagePath: "/deruni1.webp",
+            alt: { de: "Deruny" },
           },
           {
-            storagePath: "/vareniki3.jpg",
-            alt: { de: "Wareniki mit fruchtiger Füllung" },
+            storagePath: "/deruni2.webp",
+            alt: { de: "Deruny" },
           },
           {
-            storagePath: "/deruni1.jpg",
-            alt: { de: "Deruny mit Sauerrahm und Dill" },
+            storagePath: "/deruni3.webp",
+            alt: { de: "Deruny" },
           },
           {
-            storagePath: "/deruni2.jpg",
-            alt: { de: "Knusprige Kartoffelpuffer, goldbraun gebraten" },
+            storagePath: "/golubtsi1.webp",
+            alt: { de: "Holubzi" },
           },
           {
-            storagePath: "/golubtsi1.jpg",
-            alt: { de: "Holubzi in Tomatensauce" },
+            storagePath: "/golubtsi2.webp",
+            alt: { de: "Holubzi" },
           },
           {
-            storagePath: "/golubtsi2.jpg",
-            alt: { de: "Kohlrouladen, angerichtet mit Sauce" },
+            storagePath: "/golubtsi3.webp",
+            alt: { de: "Holubzi" },
           },
           {
-            storagePath: "/kotleta1.jpg",
-            alt: { de: "Paniertes Kotelett auf dem Teller" },
+            storagePath: "/golubtsi4.webp",
+            alt: { de: "Holubzi" },
           },
           {
-            storagePath: "/kotleta2.jpg",
-            alt: { de: "Golden gebratene Kotelette" },
+            storagePath: "/kotleta1.webp",
+            alt: { de: "Kotelett" },
           },
           {
-            storagePath: "/kotleta_po_Kievski1.jpg",
-            alt: { de: "Paniertes Kiewer Kotelett" },
+            storagePath: "/kotleta2.webp",
+            alt: { de: "Kotelett" },
           },
           {
-            storagePath: "/kotleta_po_Kievski2.jpg",
-            alt: { de: "Kiewer Kotelett mit Kräuterbutter" },
+            storagePath: "/kotleta_po_kievski.webp",
+            alt: { de: "Kiewer Kotelett" },
           },
           {
-            storagePath: "/pampushki1.jpg",
-            alt: { de: "Pampushky mit Knoblauch" },
+            storagePath: "/sirniki1.webp",
+            alt: { de: "Syrnyky" },
           },
           {
-            storagePath: "/pampushki2.jpg",
-            alt: { de: "Hefeteigbrötchen – Pampushky" },
-          },
-          {
-            storagePath: "/pampushki3.jpg",
-            alt: { de: "Warme Pampushky aus dem Ofen" },
-          },
-          {
-            storagePath: "/kutja.jpg",
-            alt: { de: "Kutja – süßer Getreidebrei" },
-          },
-          {
-            storagePath: "/uzvar1.jpg",
-            alt: { de: "Uzvar aus getrockneten Früchten" },
-          },
-          {
-            storagePath: "/uzvar2.jpg",
-            alt: { de: "Uzvar in einer Karaffe" },
+            storagePath: "/uzvar1.webp",
+            alt: { de: "Uzvar" },
           },
         ],
       },

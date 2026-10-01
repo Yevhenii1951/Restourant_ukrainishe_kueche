@@ -57,11 +57,11 @@ VALUES
    'published', 1),
   ('gallery',
    '{"items":[
-      {"storagePath":"/2borsch.jpg","alt":{"de":"Borschtsch mit Sauerrahm und Dill"}},
-      {"storagePath":"/uzvar1.jpg","alt":{"de":"Uzvar aus getrockneten Früchten"}}]}',
+      {"storagePath":"/borsch1.webp","alt":{"de":"Borschtsch"}},
+      {"storagePath":"/uzvar1.webp","alt":{"de":"Uzvar"}}]}',
    '{"items":[
-      {"storagePath":"/2borsch.jpg","alt":{"de":"Borschtsch mit Sauerrahm und Dill"}},
-      {"storagePath":"/uzvar1.jpg","alt":{"de":"Uzvar aus getrockneten Früchten"}}]}',
+      {"storagePath":"/borsch1.webp","alt":{"de":"Borschtsch"}},
+      {"storagePath":"/uzvar1.webp","alt":{"de":"Uzvar"}}]}',
    'published', 1),
   ('catering',
    '{"intro":{"de":"Feiern und Veranstaltungen ab 10 Gästen."},
