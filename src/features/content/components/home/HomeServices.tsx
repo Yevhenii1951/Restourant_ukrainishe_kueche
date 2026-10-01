@@ -10,7 +10,7 @@ export default async function HomeServices(): Promise<React.ReactElement> {
   const services = [
     {
       href: "/events",
-      image: "/beautiful-girl-in-national-dress.jpg",
+      image: "/borsch1.webp",
       alt: "",
       title: content("eventsTitle"),
       lead: content("eventsLead"),
