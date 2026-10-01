@@ -41,7 +41,6 @@ export default async function HomeHero({
         aria-hidden="true"
       >
         <source src="/videos/hero.webm" type="video/webm" />
-        <source src="/videos/hero.mp4" type="video/mp4" />
       </video>
       <div className="absolute inset-0 bg-gradient-to-r from-brand-deep/88 via-brand-deep/62 to-brand-deep/22" />
       <div className="relative mx-auto flex w-full max-w-6xl flex-col items-start gap-6 px-4 pb-16 pt-24 sm:px-8 sm:pb-20 sm:pt-32 lg:min-h-[42rem] lg:px-10 lg:pb-24 lg:pt-40">
